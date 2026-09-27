@@ -11,21 +11,21 @@
 - **Antes de começar a sessão:** `git pull origin main` e rebase ou merge na sua branch.
 - **1 aprovação** de qualquer pessoa do time para mergear. A revisão pode ser rápida: rodou? faz sentido? não mexeu no que não devia?
 - Squash merge.
-- A Vercel gera um **link de preview** em cada PR. Coloquem no PR e marquem a designer quando houver mudança visual.
+- A Vercel gera um **link de preview** em cada PR. **PR com mudança visual precisa da aprovação do Caike**, que decide o que levar para a designer validar.
 
 ## Trabalhando com o Claude Code
 
 1. Abra o Claude Code na raiz do projeto. Ele lê o `CLAUDE.md` automaticamente.
 2. Diga quem você é e o que vai fazer:
-   > Sou o Dev 3. Leia docs/equipe/dev-3.md e vamos fazer a próxima tarefa da Sprint 1.
+   > Sou o Kaike. Leia docs/equipe/kaike.md e vamos fazer a próxima tarefa da Sprint 1.
 3. Para telas, passe o link do frame do Figma (ver [DESIGN.md](DESIGN.md)).
 4. Antes de abrir o PR, peça: *"rode lint e build e corrija o que quebrar"*.
 5. **Revise o que o Claude gerou antes de commitar.** Vibe coding não é commitar sem ler.
 
 ## Migrations (banco)
 
-- O schema completo é criado pelo Dev 2 na Sprint 0.
-- Precisa de uma coluna ou tabela nova? Crie **um arquivo novo** em `supabase/migrations/` (nunca edite uma migration já mergeada), avise no grupo e marque o Dev 2 no PR.
+- O schema completo é criado pelo Josué na Sprint 0.
+- Precisa de uma coluna ou tabela nova? Crie **um arquivo novo** em `supabase/migrations/` (nunca edite uma migration já mergeada), avise no grupo e marque o Josué no PR.
 - Depois de aplicar uma migration, regenere os tipos (`src/types/database.ts`) no mesmo PR.
 
 ## Definição de pronto

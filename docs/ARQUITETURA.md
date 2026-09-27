@@ -10,7 +10,7 @@
 | Estilo | **Tailwind CSS** + **shadcn/ui** | Componentes prontos e acessíveis, customizados com os tokens do Figma |
 | Formulários | react-hook-form + **zod** | Os mesmos schemas validam no cliente e no servidor |
 | Backend | **Supabase** | Resolve de uma vez Postgres, Auth, Storage (fotos) e **Realtime (chat)**. Ninguém escreve backend "na mão" |
-| Deploy | **Vercel** | Grátis, deploy automático da `main` e **preview por PR** (a designer revisa por ali) |
+| Deploy | **Vercel** | Grátis, deploy automático da `main` e **preview por PR** (é por esse link que o Caike mostra as telas para a designer) |
 | Design | **Figma + Figma MCP no Claude Code** | Ver [DESIGN.md](DESIGN.md) |
 
 ### Ambientes
@@ -38,50 +38,48 @@ finds/
 ├── .mcp.json                     # Figma MCP (compartilhado)
 ├── docs/
 ├── supabase/
-│   ├── migrations/               # SQL versionado — dono: Dev 2
-│   └── seed/                     # dados e fotos do seed — dono: Dev 3
+│   ├── migrations/               # SQL versionado — dono: Josué
+│   └── seed/                     # dados e fotos do seed — dono: Alexandre
 ├── scripts/
-│   └── seed.ts                   # popula o banco via service_role — dono: Dev 3
+│   └── seed.ts                   # popula o banco via service_role — dono: Alexandre
 └── src/
     ├── app/
-    │   ├── (auth)/               # layout sem navbar — Dev 1
+    │   ├── (auth)/               # layout: Caike · páginas: Kaike
     │   │   ├── entrar/
     │   │   ├── cadastro/
     │   │   ├── verificar-email/
     │   │   └── completar-perfil/
-    │   └── (main)/               # layout com navbar — Dev 1 (layout)
-    │       ├── page.tsx          # feed/home — Dev 3
-    │       ├── busca/            # Dev 3
-    │       ├── anuncios/[id]/    # detalhe — Dev 3
-    │       ├── anuncios/[id]/editar/   # Dev 2
-    │       ├── anunciar/         # escolher tipo + formulário — Dev 2
-    │       ├── meus-anuncios/    # Dev 2
-    │       ├── favoritos/        # Dev 3
-    │       ├── mensagens/        # chat — Dev 4
-    │       ├── negociacoes/      # transações — Dev 4
-    │       ├── roommates/        # match — Dev 1
-    │       ├── perfil/[username]/      # perfil público — Dev 3
-    │       └── configuracoes/    # editar perfil + perfil de convivência — Dev 1
-    ├── components/
-    │   ├── ui/                   # shadcn customizado — Dev 1 (compartilhado)
-    │   ├── layout/               # navbar, footer, containers — Dev 1
-    │   ├── auth/                 # Dev 1
-    │   ├── profile/              # Dev 1 / Dev 3
-    │   ├── match/                # Dev 1
-    │   ├── listings/             # formulários: Dev 2 / cards e detalhe: Dev 3
-    │   ├── discovery/            # filtros, busca — Dev 3
-    │   ├── chat/                 # Dev 4
-    │   └── transactions/         # Dev 4
+    │   ├── (main)/               # layout com navbar: Caike
+    │   │   ├── page.tsx          # feed/home — Kaike
+    │   │   ├── busca/            # Kaike
+    │   │   ├── anuncios/[id]/    # detalhe — Kaike
+    │   │   ├── anuncios/[id]/editar/   # Josué
+    │   │   ├── anunciar/         # escolher tipo + formulário — Josué
+    │   │   ├── meus-anuncios/    # Josué
+    │   │   ├── favoritos/        # Alexandre
+    │   │   ├── mensagens/        # chat — Alexandre
+    │   │   ├── negociacoes/      # transações — Alexandre
+    │   │   ├── roommates/        # match — Kaike
+    │   │   ├── perfil/[username]/      # perfil público — Kaike
+    │   │   └── configuracoes/    # editar perfil + perfil de convivência — Kaike
+    │   └── (marketing)/          # landing page para deslogados — Caike
+    ├── components/               # VISUAL — Caike cria os de destaque; os outros usam
+    │   ├── ui/                   # shadcn customizado com o tema — Caike
+    │   ├── layout/               # navbar, footer, containers — Caike
+    │   ├── auth/  profile/  match/  listings/  discovery/  chat/  transactions/
+    │   └── listings/form/        # campos dos formulários de anúncio — Josué (com ui/)
     ├── lib/
-    │   ├── supabase/             # client.ts, server.ts, middleware.ts — Dev 1
+    │   ├── supabase/             # client.ts, server.ts, middleware.ts — Josué
     │   ├── validations/          # schemas zod por domínio (cada dono cuida do seu)
-    │   ├── match.ts              # algoritmo de compatibilidade — Dev 1
+    │   ├── match.ts              # algoritmo de compatibilidade — Kaike
     │   └── utils.ts
     └── types/
-        └── database.ts           # GERADO por `supabase gen types` — não editar
+        └── database.ts           # GERADO por `supabase gen types` — Josué, não editar
 ```
 
 **Regra de ouro:** cada pasta tem um dono. Se precisar mexer na pasta de outra pessoa, avise no grupo ou peça no PR. Pastas compartilhadas (`components/ui`, `lib/supabase`, `migrations`) só mudam com aviso.
+
+**Visual × lógica:** o Caike é dono do visual de todas as telas e pode ajustar JSX e estilo em qualquer página; a lógica (dados, actions, validações) é do dono da rota. Detalhes em [DESIGN.md](DESIGN.md#divisão-visual--lógica).
 
 ## Modelo de dados
 

@@ -19,31 +19,34 @@ Um marketplace **fechado para a comunidade da UFU**, onde a pessoa do outro lado
 
 | # | Feature | Notas | Dono |
 |---|---|---|---|
-| 1 | Cadastro e login com e-mail **@ufu.br** | Valida o domínio + confirmação de e-mail do Supabase | Dev 1 |
-| 2 | Onboarding em 2 etapas | Cadastro leve (nome, username, e-mail, senha). Campus é pedido só ao tentar agir (anunciar, conversar, favoritar) | Dev 1 |
-| 3 | Criar, editar e excluir anúncio dos **4 tipos**, com fotos | Uma tabela `listings` com `type` + campos específicos em `details` | Dev 2 |
-| 4 | Feed + busca + filtros | Tipo, campus/cidade, categoria, faixa de preço, texto | Dev 3 |
-| 5 | Página de detalhe do anúncio | Galeria, informações, card do anunciante, botão de contato | Dev 3 |
-| 6 | Perfil (editar o próprio + ver o público) | Foto, bio, campus, anúncios ativos | Dev 1 / Dev 3 |
-| 7 | "Meus anúncios" | Ativos / rascunhos / encerrados | Dev 2 |
-| 8 | Chat por anúncio, em tempo real | Só texto. Uma conversa por par (anúncio, interessado) | Dev 4 |
-| 9 | **Match de roommates (versão simples)** | Tags "sou" e "procuro" + score de compatibilidade (ver ARQUITETURA) | Dev 1 |
-| 10 | Dados de seed realistas | ~50 anúncios com fotos, ~12 usuários, conversas | Dev 3 |
-| 11 | Deploy com URL pública | Vercel + Supabase | Dev 2 |
+| 1 | Identidade visual do Figma adaptada para desktop | Tema, componentes, layouts, validados com a designer | Caike |
+| 2 | Cadastro e login com e-mail **@ufu.br** | Valida o domínio + confirmação de e-mail do Supabase | Kaike |
+| 3 | Onboarding em 2 etapas | Cadastro leve (nome, username, e-mail, senha). Campus é pedido só ao tentar agir (anunciar, conversar, favoritar) | Kaike |
+| 4 | Criar, editar e excluir anúncio dos **4 tipos**, com fotos | Uma tabela `listings` com `type` + campos específicos em `details` | Josué |
+| 5 | Feed + busca + filtros | Tipo, campus/cidade, categoria, faixa de preço, texto | Kaike |
+| 6 | Página de detalhe do anúncio | Galeria, informações, card do anunciante, botão de contato | Kaike |
+| 7 | Perfil (editar o próprio + ver o público) | Foto, bio, campus, anúncios ativos | Kaike |
+| 8 | "Meus anúncios" | Ativos / rascunhos / encerrados | Josué |
+| 9 | Chat por anúncio, em tempo real | Só texto. Uma conversa por par (anúncio, interessado) | Alexandre |
+| 10 | **Match de roommates (versão simples)** | Tags "sou" e "procuro" + score de compatibilidade (ver ARQUITETURA) | Kaike |
+| 11 | Dados de seed realistas | ~50 anúncios com fotos, ~12 usuários, conversas | Alexandre |
+| 12 | Deploy com URL pública | Vercel + Supabase | Josué |
+
+> O **Caike** faz a parte visual de todas as features acima (ver [DESIGN.md](DESIGN.md#divisão-visual--lógica)). A coluna "Dono" indica quem cuida da lógica e monta a página.
 
 ### 🟡 P1: incrementos (entram quando o P0 estiver de pé)
 
 | Feature | Custo | Dono |
 |---|---|---|
-| Rascunhos de anúncio | Baixo: o campo `status` já existe desde o schema inicial | Dev 2 |
-| Último acesso ("ativo há 2h") | Baixo | Dev 1 |
-| Favoritos | Baixo | Dev 3 |
-| Denúncias (modal + registro no banco, sem painel) | Baixo | Dev 3 |
-| Transação com confirmação dupla (pendente → confirmada → concluída / cancelada com motivo) | Médio | Dev 4 |
-| Avaliações após transação concluída + nota média no perfil | Médio | Dev 4 |
-| Landing page para usuário deslogado | Baixo | Dev 3 + Designer |
-| Contador de mensagens não lidas | Baixo | Dev 4 |
-| Recuperar senha | Baixo | Dev 1 |
+| Rascunhos de anúncio | Baixo: o campo `status` já existe desde o schema inicial | Josué |
+| Último acesso ("ativo há 2h") | Baixo | Kaike |
+| Favoritos | Baixo | Alexandre |
+| Denúncias (modal + registro no banco, sem painel) | Baixo | Alexandre |
+| Transação com confirmação dupla (pendente → confirmada → concluída / cancelada com motivo) | Médio | Alexandre |
+| Avaliações após transação concluída + nota média no perfil | Médio | Alexandre |
+| Landing page para usuário deslogado | Baixo | Caike |
+| Contador de mensagens não lidas | Baixo | Alexandre |
+| Recuperar senha | Baixo | Kaike |
 
 ### ⚪ Backlog (entra na apresentação como "próximos passos", não será implementado)
 
