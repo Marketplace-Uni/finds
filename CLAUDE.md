@@ -39,3 +39,8 @@ _A preencher na Sprint 0 (dev, lint, build, gerar tipos do Supabase, rodar o see
 1. Rode lint e build e corrija os erros.
 2. Resuma o que mudou e sugira a mensagem de commit.
 3. Lembre a pessoa de marcar o checkbox em `docs/equipe/<pessoa>.md`.
+
+## Base de Dados e Tipagens (Supabase)
+Sempre que houver uma alteração na estrutura da base de dados, o Dev 2 irá atualizar as migrations. Para atualizares as tipagens localmente, executa:
+`npx supabase gen types typescript --linked > src/types/database.ts`
+Não edites o ficheiro `database.ts` manualmente.

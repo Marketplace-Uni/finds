@@ -17,16 +17,16 @@
 
 ## Sprint 0 · 27–28/09 · Banco e infra ⚠️ bloqueia o time
 
-- [ ] Criar os projetos Supabase `finds-dev` e `finds-demo`; convidar o time
-- [ ] Migrations com **todas as tabelas** de ARQUITETURA.md (inclusive as do P1), enums, índices (`listings(type, status, campus_id)`, `created_at`)
-- [ ] Trigger: ao criar usuário em `auth.users`, cria a linha em `profiles` (username/nome vêm do metadata do cadastro)
-- [ ] Trigger de `updated_at` em `listings`
-- [ ] **RLS em todas as tabelas** (ver tabela em ARQUITETURA.md)
-- [ ] Buckets `listing-images` e `avatars` + policies
-- [ ] Dados de referência: universidade UFU, campi, lista de `traits` (confirmar com o Caike, que valida com a designer)
-- [ ] `src/lib/supabase/` (client, server, middleware de sessão) + `.env.example`, assim que o Caike subir o projeto
-- [ ] Gerar `src/types/database.ts` e documentar o comando no CLAUDE.md
-- [ ] Criar o projeto na Vercel ligado ao repo, com as env vars (produção → demo, previews → dev)
+- [X] Criar os projetos Supabase `finds-dev` e `finds-demo`; convidar o time
+- [X] Migrations com **todas as tabelas** de ARQUITETURA.md (inclusive as do P1), enums, índices (`listings(type, status, campus_id)`, `created_at`)
+- [X] Trigger: ao criar usuário em `auth.users`, cria a linha em `profiles` (username/nome vêm do metadata do cadastro)
+- [X] Trigger de `updated_at` em `listings`
+- [X] **RLS em todas as tabelas** (ver tabela em ARQUITETURA.md)
+- [X] Buckets `listing-images` e `avatars` + policies
+- [X] Dados de referência: universidade UFU, campi, lista de `traits` (confirmar com o Caike, que valida com a designer)
+- [X] `src/lib/supabase/` (client, server, middleware de sessão) + `.env.example`, assim que o Caike subir o projeto
+- [X] Gerar `src/types/database.ts` e documentar o comando no CLAUDE.md
+- [X] Criar o projeto na Vercel ligado ao repo, com as env vars (produção → demo, previews → dev)
 
 ## Sprint 1 · 29/09–04/10 · Produto e Serviço de ponta a ponta
 
