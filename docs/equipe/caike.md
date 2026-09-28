@@ -23,11 +23,12 @@ Você também é **dono do visual de todas as telas**: pode ajustar JSX e estilo
 
 - [ ] Proteger a `main` no GitHub (merge só via PR)
 - [X] Figma: ativar o Education e conectar o MCP
-- [ ] Pedir para a designer dar acesso ao arquivo do Figma
-- [ ] **Inventário das ~80 telas** → preencher a tabela "mobile → desktop" em DESIGN.md
-- [ ] Extrair os **tokens** (cores, tipografia, espaçamentos, raios, sombras) via MCP para o tema do Tailwind + fontes da identidade
+- [X] Acesso ao arquivo do Figma (leitura funcionando)
+- [X] **Inventário das 86 telas** → tabela "mobile → desktop" em DESIGN.md
+- [X] Extrair os **tokens** (cores, tipografia, raios) via MCP para o tema + fontes da identidade
+- [ ] **Instalar o Node.js** na máquina (não está instalado: sem ele não dá para rodar o projeto, o lint nem o build)
 - [ ] Layouts `(auth)` (sem navbar) e `(main)` (navbar desktop)
-- [ ] Conversa com a designer: tirar dúvidas da identidade, confirmar categorias e tags de convivência, pedir o **logo em SVG**
+- [ ] Conversa com a designer: tirar dúvidas da identidade, confirmar categorias e tags de convivência, pedir o **logo em SVG** e decidir os 2 pontos abertos em DESIGN.md
 
 ## Sprint 1 · 29/09–04/10 · Telas do núcleo
 
