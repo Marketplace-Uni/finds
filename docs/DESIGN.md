@@ -137,6 +137,46 @@ O design foi feito antes do escopo atual, então **algumas features do P0 não t
 
 Para essas, o caminho é **compor a partir do padrão já estabelecido** (card, grid, modal, chips) e validar com a Lia no checkpoint, em vez de esperar tela nova.
 
+## Especificação dos componentes-padrão (Sprint 1, Caike)
+
+Medidas tiradas dos frames `Menu App` (`99:993`) e `Produto` (`151:483`). No mobile tudo é posicionado em absoluto; no desktop, recompor com layout de fluxo.
+
+### Feed / home
+
+- Fundo creme; **barra de busca** pílula (`rounded-md`, fundo `muted`) com placeholder *"O que você está procurando hoje?"* e ícone de lupa.
+- **Chips de categoria** em pílula, alternando `secondary` (limão), `primary` (laranja), `accent` (salmão), `nav` (marrom) e uma variante só de contorno. Categorias vistas: Móveis, Livros, Utensílios, Materiais, Decoração, Eletrônicos, Esportivo.
+- **Banner "Faça um anúncio!"** em `primary`, `rounded-xl`, com o mascote **Zeca** e a legenda *"o Zeca vai te ajudar nessa…"* em Anonymous Pro.
+- Seção **"Suas recomendações"** com cards de anúncio.
+- No mobile há uma **barra inferior escura** (home, chat, favoritos, perfil) → no desktop vira a **navbar do topo**.
+
+### Card de anúncio (`ListingCard`)
+
+Fundo `muted`, `rounded-lg`, imagem ocupando quase todo o card e **coração de favoritar no canto superior direito**. No detalhe, os cards relacionados são 129×150.
+
+### Detalhe do anúncio
+
+| Elemento | Especificação |
+|---|---|
+| Galeria | 360×330, `rounded-[15px]`, carrossel com bolinhas + coração sobreposto |
+| Título | Montserrat **Bold 25px** |
+| Preço | Montserrat **Bold 25px** (mesmo peso do título) |
+| Rótulos de seção | Montserrat Medium 14px ("Descrição", "Categorias", "Características") |
+| Categorias | Chips com **hashtag** (`#eletrodomésticos`, `#tecnologia`) |
+| Características | Chips de estado (`usado`, `detalhes de uso`) |
+| Aviso | Card `muted` de 160px, **"Não caia em golpes!"** em `primary` + ícone de alerta |
+| Card do anunciante | Avatar redondo com borda `secondary`, nome Bold 14px, **"última vez visto em 14:29"** e botão "Seguir" |
+| CTA | Botão `primary` largo, `rounded-lg`: **"CHAT COM O VENDEDOR"** |
+| Rodapé | "Do mesmo vendedor:" + "Exibir mais" + 3 cards |
+
+No desktop: galeria à esquerda, e título/preço/chips/card do anunciante/CTA na coluna da direita, fixos no scroll. O aviso "Não caia em golpes!" e "Do mesmo vendedor" ficam abaixo, na largura total.
+
+> **"última vez visto em 14:29"** confirma o `formatLastSeen()` que o Kaike entrega.
+
+### Dois pontos para decidir com a Lia
+
+1. **Botão "Seguir" o vendedor** — seguir usuários não está no [ESCOPO.md](ESCOPO.md), nem no P0 nem no P1. Sugestão: **não implementar** e tirar do layout.
+2. **Fonte Inter** aparece solta em alguns textos ("Do mesmo vendedor", "Exibir mais", "Seguir"), enquanto o resto é Montserrat. Parece default do Figma, não intenção. Tratado como **Montserrat** no código até ela confirmar.
+
 ## Trabalhando com a designer
 
 Ela não programa e não usa o Claude. O papel dela é ser a **guardiã da identidade**: opinar, validar e apontar o que ficou fora do padrão. Tudo passa pelo Caike.
