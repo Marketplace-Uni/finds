@@ -12,7 +12,7 @@
 - `<ReviewsList userId>` + nota média: o Kaike coloca no perfil
 - `<UnreadBadge>`: o Caike coloca na navbar
 
-**O que você recebe do Caike:** layout do chat em 2 painéis (Sprint 1); card de status da negociação, modais e botão de favorito (Sprint 2).
+**O que você recebe do Caike:** os links dos frames do Figma das suas telas e o padrão visual (tema, `ui/`, padrão de modal). Suas telas (chat, negociação, modais) você monta a partir do Figma via MCP, e o Caike aprova o visual no PR.
 
 ---
 
@@ -21,6 +21,7 @@
 - [ ] Montar em `supabase/seed/` (JSON) ~50 anúncios realistas: ~20 produtos, ~12 serviços, ~10 roommate, ~8 república, espalhados pelos campi
 - [ ] ~12 usuários fictícios com nome, bio, campus, tags de convivência variadas (para o match ter contraste)
 - [ ] Fotos: de preferência **reais** (coisas do time, da casa, de repúblicas de amigos) ou de bancos gratuitos (Unsplash/Pexels)
+- [ ] Figma: ativar o Education e conectar o MCP (ver DESIGN.md)
 - [ ] Mini-teste do Supabase Realtime (entender `postgres_changes` antes do chat)
 
 ## Sprint 1 · 29/09–04/10 · Seed + Chat
@@ -28,12 +29,13 @@
 - [ ] `scripts/seed.ts` (usa a `service_role`, **idempotente**: limpa e recria). Rodar no `finds-dev` **até 30/09** e avisar o time
 - [ ] Server action `startConversation(listingId)`: cria ou reabre (não pode conversar com o próprio anúncio; exige perfil completo)
 - [ ] `<StartChatButton>` ("Tenho interesse") → **avisar o Kaike quando estiver pronto**
-- [ ] `/mensagens`: lista de conversas (foto do anúncio, outro usuário, última mensagem, horário) + conversa aberta, no layout do Caike
+- [ ] `/mensagens`: lista de conversas (foto do anúncio, outro usuário, última mensagem, horário) + conversa aberta, no **layout de 2 painéis** (a partir do Figma)
 - [ ] Enviar mensagem + **recebimento em tempo real** (Realtime)
 - [ ] Auto-scroll, horário das mensagens, estado vazio ("nenhuma conversa ainda")
 
 ## Sprint 2 · 05/10–11/10 · Negociação e engajamento
 
+- [ ] Card de status da negociação dentro do chat, a partir do Figma
 - [ ] "Propor negociação" no chat → `pending`; a outra parte aceita (`confirmed`) ou recusa (`cancelled` + motivo)
 - [ ] "Marcar como concluído" para cada parte; quando as duas marcarem → `completed`
 - [ ] Cancelar com motivo obrigatório em `pending` ou `confirmed`

@@ -32,7 +32,7 @@ Um marketplace **fechado para a comunidade da UFU**, onde a pessoa do outro lado
 | 11 | Dados de seed realistas | ~50 anúncios com fotos, ~12 usuários, conversas | Alexandre |
 | 12 | Deploy com URL pública | Vercel + Supabase | Josué |
 
-> O **Caike** faz a parte visual de todas as features acima (ver [DESIGN.md](DESIGN.md#divisão-visual--lógica)). A coluna "Dono" indica quem cuida da lógica e monta a página.
+> Cada dono faz a feature inteira, inclusive as telas (a partir do Figma). O **Caike** define o padrão visual e aprova o visual de todo PR (ver [DESIGN.md](DESIGN.md#divisão-visual--lógica)).
 
 ### 🟡 P1: incrementos (entram quando o P0 estiver de pé)
 

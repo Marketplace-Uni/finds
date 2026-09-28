@@ -31,4 +31,4 @@ Time: 4 devs + 1 designer. Desenvolvimento de 27/09 a 20/10/2026, usando Claude 
 
 ## Rodando o projeto
 
-_Será preenchido na Sprint 0, quando o projeto for criado (ver [caike.md](docs/equipe/caike.md))._
+_Será preenchido na Sprint 0, quando o projeto for criado (ver [kaike.md](docs/equipe/kaike.md))._

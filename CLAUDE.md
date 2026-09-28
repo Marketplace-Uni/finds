@@ -29,10 +29,10 @@ _A preencher na Sprint 0 (dev, lint, build, gerar tipos do Supabase, rodar o see
 
 ## Visual e Figma
 
-- **O Caike é dono do visual.** Ele cria o tema, `src/components/ui`, os layouts e os componentes visuais de destaque (recebem dados por props, sem acessar o banco).
-- **Para Josué, Kaike e Alexandre:** monte as páginas com os componentes existentes. Se o componente visual ainda não existir, faça uma versão simples com `src/components/ui` e avise que o Caike vai refinar. Não invente estilo novo.
+- **O Caike é dono do visual.** Ele cria o tema, `src/components/ui`, a navbar e os componentes-padrão (`ListingCard`, grid, detalhe do anúncio, estados vazio/erro, modal), e aprova o visual de todo PR.
+- **Cada dev monta as telas da própria feature** a partir do Figma, reutilizando `src/components/ui` e os componentes-padrão. Siga o estilo das telas que o Caike já fez. Não invente estilo novo.
 - **Estilo:** só tokens do tema (nada de hex ou tamanhos arbitrários). Reutilize `src/components/ui` antes de criar componente novo.
-- **Figma (normalmente com o Caike):** quando receber um link de frame, use o Figma MCP (contexto de design + screenshot). Se o frame for mobile, adapte para desktop seguindo a tabela de padrões em `docs/DESIGN.md`. Peça sempre um frame específico, não a página inteira (há limite de chamadas).
+- **Figma:** quando receber um link de frame, use o Figma MCP (contexto de design + screenshot). Se o frame for mobile, adapte para desktop seguindo a tabela de padrões em `docs/DESIGN.md`. Peça sempre um frame específico, não a página inteira (há limite de chamadas).
 
 ## Ao terminar uma tarefa
 
