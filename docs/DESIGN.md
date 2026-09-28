@@ -64,12 +64,47 @@ Regras gerais:
 
 ## Inventário de telas (Sprint 0, Caike)
 
-As ~80 telas mobile devem virar **~20–25 páginas + modais** no desktop:
+O arquivo do Figma tem **uma página** (`Prototipo final`, id `21:47`) com **86 frames** mobile (393×852), que viram **~22 páginas + modais** no desktop. O visual de todas é do Caike; a coluna "Dev" indica quem faz a lógica.
 
-| Tela(s) mobile no Figma | Vira no desktop | Rota / componente | Prioridade | Dev da feature |
-|---|---|---|---|---|
-| _ex.: Home, Home com filtro aberto, Filtros_ | _Feed com sidebar_ | `/` | P0 | Kaike |
-| … | … | … | … | … |
+| Tela(s) mobile no Figma | Qtd | Vira no desktop | Rota / componente | Prio | Dev |
+|---|---|---|---|---|---|
+| Pág. inicial, Pág. carregamento | 2 | Splash não existe na web: vira a **landing** + estado de carregamento | `(marketing)/` | P1 | Caike |
+| Login/ Sign in, Sign in, Login, Menu sign in | 4 | **Tela dividida** (arte + formulário) | `/entrar` | P0 | Kaike |
+| Recuperar senha | 1 | Mesma tela dividida | `/recuperar-senha` | P1 | Kaike |
+| Profile setup 1.0–1.6 | 7 | **Wizard centralizado** (~720px) com indicador de passos | `/cadastro` + `/completar-perfil` | P0 | Kaike |
+| Pop up, Pop up 2 | 2 | **Modais** | `components/ui/dialog` | P0 | Caike |
+| Sair | 1 | Item do **dropdown do avatar** | `layout/navbar` | P0 | Caike |
+| Menu App, Menu chat | 2 | **Navbar no topo** + feed em grid de 3–4 colunas | `/` | P0 | Kaike |
+| Busca 1.0, Resultados de busca, Sem resultado, Campus, Filtros, Ordenar por, Busca localização | 7 | **Sidebar de filtros fixa** + grid; "Filtros", "Ordenar" e "Campus" deixam de ser telas | `/busca` | P0 | Kaike |
+| Mapa localização | 1 | **Fora do escopo** (não há mapa no P0/P1) | — | ❌ | — |
+| Produto | 1 | **Galeria à esquerda** + coluna de infos e card do anunciante à direita | `/anuncios/[id]` | P0 | Kaike |
+| Anúncio de roomate | 1 | Mesmo layout de detalhe, com os `details` de moradia | `/anuncios/[id]` | P0 | Kaike |
+| Perfil, Perfil de vendedor | 2 | Página de perfil com anúncios ativos e avaliações | `/perfil/[username]` | P0 | Kaike |
+| Editar perfil | 1 | Página com **menu lateral** | `/configuracoes` | P0 | Kaike |
+| Chat | 1 | **2 painéis** (conversas à esquerda, conversa à direita) | `/mensagens` | P0 | Alexandre |
+| Favoritos | 1 | Grid igual ao do feed | `/favoritos` | P1 | Alexandre |
+| Denuncia | 1 | **Modal** | `components/ui/dialog` | P1 | Alexandre |
+| Anúncio 1.0 | 1 | Escolha do tipo (4 cards) | `/anunciar` | P0 | Josué |
+| Anúncio P 1.1–1.6 | 6 | Wizard — ramo **produto** | `/anunciar/produto` | P0 | Josué |
+| Anuncio S 1.0–1.4, Anuncio VS 1.0–1.6 | 12 | Wizard — **serviço**, 2 ramos: "procuro" (S) e "ofereço" (VS) | `/anunciar/servico` | P0 | Josué |
+| Anuncio RM 1.0–1.6 | 7 | Wizard — **roommate** ("procuro lugar e alguém pra dividir") | `/anunciar/roommate` | P0 | Josué |
+| Anuncio R 1.0–1.8, Anuncio RP 1.0–1.8 | 18 | Wizard — **república/vaga** ("já tenho onde morar"). R e RP são duas iterações quase idênticas: **usar só uma** | `/anunciar/republica` | P0 | Josué |
+| Rascunhos, Excluir rascunho | 2 | Aba "Rascunhos" + modal de confirmação | `/meus-anuncios` | P1 | Josué |
+| Planos 1.0–1.2, Finalização, Retorno | 5 | **Fora do escopo:** "Boost de anúncio" é monetização, não está no ESCOPO.md e o texto ainda é lorem ipsum | — | ❌ | — |
+
+### Telas que o Figma não tem (decidir com a Lia)
+
+O design foi feito antes do escopo atual, então **algumas features do P0 não têm tela desenhada**:
+
+| Falta | Onde entra | Quem depende |
+|---|---|---|
+| **Match de roommates** ⭐ (lista ordenada por score, badge "87% compatível", tags em comum) | `/roommates` | Kaike — é o **destaque da demo** |
+| **Perfil de convivência** (chips "eu sou" / "procuro") | `/configuracoes/convivencia` | Kaike |
+| **Negociação** (propor, aceitar, concluir, cancelar) e `/negociacoes` | dentro do chat | Alexandre |
+| **Avaliação** (1–5 estrelas) e lista de avaliações no perfil | modal + `/perfil` | Alexandre |
+| **Meus anúncios** completo (abas Ativos/Encerrados; só "Rascunhos" existe) | `/meus-anuncios` | Josué |
+
+Para essas, o caminho é **compor a partir do padrão já estabelecido** (card, grid, modal, chips) e validar com a Lia no checkpoint, em vez de esperar tela nova.
 
 ## Trabalhando com a designer
 
