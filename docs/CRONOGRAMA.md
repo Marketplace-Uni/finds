@@ -26,7 +26,7 @@ Os sprints terminam no **domingo**, com uma call de review de 30 min.
 |---|---|
 | Todo dia (async, no grupo) | Check-in de 1 linha: `✅ fiz X · 🔜 vou fazer Y · 🚧 travado em Z` |
 | Fim de cada sessão | Marcar os checkboxes no seu arquivo em `docs/equipe/` |
-| Início de cada sprint | Caike manda para cada dev os links dos frames do Figma das telas da sprint |
+| Quarta de cada sprint | Caike entrega os componentes visuais da sprint (ver [DESIGN.md](DESIGN.md#divisão-visual--lógica)) |
 | ~01/10, ~08/10, ~15/10 | Caike valida as telas com a designer (ver [DESIGN.md](DESIGN.md#trabalhando-com-a-designer)) |
 | Domingo (30 min, call) | Review: cada um mostra o que fez rodando + ajustamos a próxima sprint |
 | 19/10 (1h, call) | **Bug bash:** todo mundo executa o roteiro da demo tentando quebrar |

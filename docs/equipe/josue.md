@@ -11,7 +11,7 @@
 - Schemas zod dos anúncios (o Kaike usa para exibir os `details` de cada tipo)
 - Ambientes `finds-dev` e `finds-demo` + deploy na Vercel
 
-**O que você recebe do Caike:** os links dos frames do Figma das suas telas e o padrão visual (tema, `ui/`, card de anúncio). Suas telas (wizard, seletor de fotos, meus anúncios) você monta a partir do Figma via MCP, e o Caike aprova o visual no PR.
+**O que você recebe do Caike:** wizard de formulário + seletor de fotos (Sprint 1), abas de "Meus anúncios" (Sprint 2).
 
 ---
 
@@ -26,16 +26,14 @@
 - [X] Dados de referência: universidade UFU, campi, lista de `traits` (confirmar com o Caike, que valida com a designer)
 - [X] `src/lib/supabase/` (client, server, middleware de sessão) + `.env.example`, assim que o Kaike subir o projeto
 - [X] Gerar `src/types/database.ts` e documentar o comando no CLAUDE.md
-- [ ] Figma: ativar o Education e conectar o MCP (ver DESIGN.md)
 - [X] Criar o projeto na Vercel ligado ao repo, com as env vars (produção → demo, previews → dev)
 
 ## Sprint 1 · 29/09–04/10 · Produto e Serviço de ponta a ponta
 
 - [ ] `src/lib/validations/listings.ts`: schema base + `details` por tipo
 - [ ] Server actions: criar, editar, excluir anúncio + upload de fotos (até 6, primeira = capa)
-- [ ] Wizard de formulário (passos, navegação) + seletor de fotos, a partir do Figma
 - [ ] `/anunciar`: escolher o tipo (4 cards)
-- [ ] Formulário de **Produto** montado no wizard → redireciona para o detalhe
+- [ ] Formulário de **Produto** montado no wizard do Caike → redireciona para o detalhe
 - [ ] Formulário de **Serviço** (modalidade presencial/online/flexível, unidade de preço)
 - [ ] `/anuncios/[id]/editar` + excluir (só o dono)
 - [ ] Usar o gate de perfil completo (Kaike) ao entrar em `/anunciar`
@@ -45,7 +43,7 @@
 - [ ] Formulário de **Roommate** (oferece/procura vaga, tipo de moradia, bairro, data de entrada)
 - [ ] Formulário de **República** (vagas, gênero, bairro, comodidades)
 - [ ] **Rascunho:** botão "Salvar rascunho" em qualquer passo; retomar depois
-- [ ] `/meus-anuncios` (visual a partir do Figma): abas Ativos / Rascunhos / Encerrados; ações pausar, encerrar, excluir, editar
+- [ ] `/meus-anuncios`: abas Ativos / Rascunhos / Encerrados; ações pausar, encerrar, excluir, editar
 
 ## Sprint 3 · 12/10–18/10 · Produção
 

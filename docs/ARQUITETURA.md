@@ -44,7 +44,7 @@ finds/
 │   └── seed.ts                   # popula o banco via service_role — dono: Alexandre
 └── src/
     ├── app/
-    │   ├── (auth)/               # layout e páginas: Kaike
+    │   ├── (auth)/               # layout: Caike · páginas: Kaike
     │   │   ├── entrar/
     │   │   ├── cadastro/
     │   │   ├── verificar-email/
@@ -63,7 +63,7 @@ finds/
     │   │   ├── perfil/[username]/      # perfil público — Kaike
     │   │   └── configuracoes/    # editar perfil + perfil de convivência — Kaike
     │   └── (marketing)/          # landing page para deslogados — Caike
-    ├── components/               # Caike: ui/, layout e componentes-padrão · demais: cada dev na sua feature
+    ├── components/               # VISUAL — Caike cria os de destaque; os outros usam
     │   ├── ui/                   # shadcn customizado com o tema — Caike
     │   ├── layout/               # navbar, footer, containers — Caike
     │   ├── auth/  profile/  match/  listings/  discovery/  chat/  transactions/
@@ -79,7 +79,7 @@ finds/
 
 **Regra de ouro:** cada pasta tem um dono. Se precisar mexer na pasta de outra pessoa, avise no grupo ou peça no PR. Pastas compartilhadas (`components/ui`, `lib/supabase`, `migrations`) só mudam com aviso.
 
-**Visual × lógica:** cada dev faz a feature inteira (lógica + telas a partir do Figma); o Caike define o padrão visual, aprova o visual de todo PR e pode ajustar JSX e estilo em qualquer página. Detalhes em [DESIGN.md](DESIGN.md#divisão-visual--lógica).
+**Visual × lógica:** o Caike é dono do visual de todas as telas e pode ajustar JSX e estilo em qualquer página; a lógica (dados, actions, validações) é do dono da rota. Detalhes em [DESIGN.md](DESIGN.md#divisão-visual--lógica).
 
 ## Modelo de dados
 

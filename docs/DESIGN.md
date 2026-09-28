@@ -2,13 +2,13 @@
 
 Todo o design do Finds (nome, logo, identidade, ~80 telas) já existe no Figma, **feito para mobile**. O trabalho é **adaptar**, não redesenhar do zero.
 
-**Quem faz:** o **Caike** é o dono do visual. Ele define o padrão (tema, componentes base, primeiras telas) e é o único canal com a designer, que não programa e não usa o Claude: ela **opina e valida**. **Cada dev monta as telas da própria feature** a partir do Figma, usando o **Claude conectado ao Figma (Figma MCP)** e seguindo o padrão do Caike.
+**Quem faz:** o **Caike** é o dono do front-end. Ele adapta as telas usando o **Claude conectado ao Figma (Figma MCP)** e é o único canal com a designer, que não programa e não usa o Claude: ela **opina e valida**, e o Caike implementa.
 
 ## Claude + Figma MCP
 
 O repositório tem um `.mcp.json` com o servidor MCP oficial da Figma. Com ele, o Claude Code lê direto do arquivo: layout, componentes, variáveis de cor e tipografia, e screenshots dos frames.
 
-**Os 4 devs configuram** na Sprint 0, porque cada um monta as próprias telas.
+Só o Caike **precisa** configurar. Os outros devs podem configurar se quiserem consultar uma tela, mas o caminho normal é usar os componentes que o Caike já adaptou.
 
 ### Setup (uma vez)
 
@@ -19,19 +19,20 @@ O repositório tem um `.mcp.json` com o servidor MCP oficial da Figma. Com ele, 
 
 ### Uso no dia a dia
 
-1. Pegue o link do frame: o Caike manda os links das telas de cada um, ou clique com o botão direito no frame → **Copy link to selection**.
+1. No Figma, clique com o botão direito no frame → **Copy link to selection**.
 2. No Claude Code:
-   > Monte a tela `/mensagens` baseada neste frame do Figma: `<link>`. É um design mobile: adapte para desktop seguindo os padrões de docs/DESIGN.md, use os tokens do tema e os componentes de `src/components/ui`, e siga o estilo do `ListingCard` e do detalhe do anúncio.
+   > Crie o componente `ListingCard` baseado neste frame do Figma: `<link>`. É um design mobile: adapte para desktop seguindo os padrões de docs/DESIGN.md, use os tokens do tema e os componentes de `src/components/ui`. Ele recebe os dados por props.
 3. **Economize chamadas:** passe o link de **um frame específico**, nunca da página inteira.
 
 ## Divisão visual × lógica
 
 | Quem | Faz |
 |---|---|
-| **Caike** | Tema, `ui/`, navbar/layout e os **componentes-padrão** (`ListingCard`, grid, detalhe do anúncio, estados vazio/erro, modal), que mostram como uma tela do Finds fica no desktop. Passa os links dos frames para cada dev e **aprova o visual de todo PR** |
-| **Dev da feature** | A feature inteira: rota, dados, server actions, validações **e as telas**, montadas a partir do Figma via MCP com os componentes de `ui/` e os componentes-padrão |
+| **Caike** | Tema, `ui/`, layouts, navbar e os **componentes visuais de destaque** de cada tela (recebem dados por props, não acessam o banco) |
+| **Dev da feature** | Rota, busca de dados, server actions, validações, estado. **Monta a página** com os componentes do Caike |
+| Elementos simples (campos, listas) | O dev da feature monta com `ui/`, e o Caike aprova o visual no PR |
 
-**Por quê:** o Caike é quem tem menos tempo livre, então não pode ser o gargalo. Ele define o padrão e garante a consistência; o volume de telas fica distribuído entre quem tem mais tempo.
+**Ritmo semanal:** o Caike entrega os componentes da sprint **até quarta-feira**. Os outros devs começam pela lógica e integram a interface na segunda metade da semana. Se o componente atrasar, o dev monta provisoriamente com `ui/` e o Caike refina depois.
 
 ## Tokens de design
 
