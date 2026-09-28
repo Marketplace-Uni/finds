@@ -36,12 +36,43 @@ Só o Caike **precisa** configurar. Os outros devs podem configurar se quiserem 
 
 ## Tokens de design
 
-Na Sprint 0, o Caike extrai do Figma (via MCP) as **cores, fontes, tamanhos, espaçamentos, raios e sombras** para o tema do Tailwind. A partir daí:
+Extraídos do Figma via MCP na Sprint 0 e aplicados em [`app/globals.css`](../app/globals.css).
 
 - ❌ Nunca usar cor ou tamanho "solto" no código (`#3A7BFF`, `text-[17px]`)
 - ✅ Sempre os tokens (`bg-primary`, `text-muted-foreground`, `rounded-lg`)
 
 Se faltar um token, peça ao Caike em vez de improvisar.
+
+### Cores
+
+| Token | Hex | Onde aparece no Figma |
+|---|---|---|
+| `background` | `#feffd5` | fundo creme de todas as telas |
+| `foreground` | `#2b201a` | texto forte, barra de navegação |
+| `primary` | `#f3421a` | laranja da marca: logo, CTA, chip ativo |
+| `secondary` | `#cfdd4a` | verde-limão: chips de categoria |
+| `card` / `muted` / `input` | `#eff0c3` | cards, imagens, barra de busca |
+| `accent` / `border` | `#e68c72` | salmão: bordas e acentos suaves |
+| `muted-foreground` | `#bfc085` | texto de placeholder |
+| `nav` | `#2b201a` | barra de navegação (inferior no mobile, topo no desktop) |
+| `destructive` | `#c0281a` | ⚠️ **não existe no Figma** — provisório, confirmar com a Lia |
+
+### Tipografia
+
+- **Montserrat** (Regular 400 / SemiBold 600) — fonte principal, em todo o produto
+- **Anonymous Pro** — textos de apoio do mascote (**Zeca**) e detalhes
+
+As duas estão no **Google Fonts**, carregadas via `next/font` em `app/layout.tsx`. Tamanhos observados no mobile: 9, 10, 11, 12 e 16px (sobem no desktop).
+
+### Raios
+
+O design é bem arredondado: `12px` (imagem pequena), `21px` (busca e chips), `30px` (card de anúncio), `34px` (banner) e `76px` (botão pílula) → `rounded-sm`, `rounded-md`, `rounded-lg`, `rounded-xl` e `rounded-pill`.
+
+### Ícones
+
+A Lia usou um kit cujos ícones têm os **mesmos nomes do `lucide-react`** (`Search`, `Bell`, `MapPin`, `Heart`, `Home`, `MessageCircle`, `User`), que é o padrão do shadcn/ui. Use o `lucide-react` direto, sem exportar SVG do Figma.
+
+> Ainda não há **sombras** nem escala de **espaçamento** definidas: o design não usa sombra e o espaçamento é posicional (absoluto). No desktop, usar a escala padrão do Tailwind.
 
 ## Padrões de adaptação mobile → desktop
 

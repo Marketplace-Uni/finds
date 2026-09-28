@@ -1,26 +1,104 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Tema do Finds
+   Cores e tipografia extraídas do Figma (arquivo "Paginas-finds")
+   via Figma MCP na Sprint 0. Não usar cor solta no código:
+   sempre os tokens semânticos abaixo (bg-primary, text-muted-foreground…).
+   ============================================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* --- Paleta da marca (valores crus, use os tokens semânticos) --- */
+  --finds-creme: #feffd5; /* fundo da página */
+  --finds-creme-escuro: #eff0c3; /* cards, inputs, superfícies */
+  --finds-laranja: #f3421a; /* cor da marca, CTA */
+  --finds-limao: #cfdd4a; /* chips, destaques */
+  --finds-marrom: #2b201a; /* texto forte, barra de navegação */
+  --finds-salmao: #e68c72; /* acentos e bordas suaves */
+  --finds-oliva: #bfc085; /* texto placeholder */
+
+  /* --- Tokens semânticos (padrão shadcn/ui) --- */
+  --background: var(--finds-creme);
+  --foreground: var(--finds-marrom);
+
+  --card: var(--finds-creme-escuro);
+  --card-foreground: var(--finds-marrom);
+
+  --popover: var(--finds-creme);
+  --popover-foreground: var(--finds-marrom);
+
+  --primary: var(--finds-laranja);
+  --primary-foreground: var(--finds-creme);
+
+  --secondary: var(--finds-limao);
+  --secondary-foreground: var(--finds-marrom);
+
+  --accent: var(--finds-salmao);
+  --accent-foreground: var(--finds-marrom);
+
+  --muted: var(--finds-creme-escuro);
+  --muted-foreground: var(--finds-oliva);
+
+  /* Não existe cor de erro no Figma: provisória, confirmar com a Lia */
+  --destructive: #c0281a;
+  --destructive-foreground: var(--finds-creme);
+
+  --border: var(--finds-salmao);
+  --input: var(--finds-creme-escuro);
+  --ring: var(--finds-laranja);
+
+  /* Navegação: no mobile é a barra inferior escura; no desktop, a navbar do topo */
+  --nav: var(--finds-marrom);
+  --nav-foreground: var(--finds-creme);
+
+  /* --- Raios (o design é bem arredondado) --- */
+  --finds-radius-sm: 12px; /* imagem de card pequeno */
+  --finds-radius-md: 21px; /* barra de busca, chips */
+  --finds-radius-lg: 30px; /* card de anúncio */
+  --finds-radius-xl: 34px; /* banner destacado */
+  --finds-radius-pill: 76px; /* botão pílula */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-nav: var(--nav);
+  --color-nav-foreground: var(--nav-foreground);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Montserrat é a fonte da identidade; Anonymous Pro aparece nos textos
+     de apoio do mascote (Zeca) e em detalhes. */
+  --font-sans: var(--font-montserrat);
+  --font-mono: var(--font-anonymous-pro);
+
+  --radius-sm: var(--finds-radius-sm);
+  --radius-md: var(--finds-radius-md);
+  --radius-lg: var(--finds-radius-lg);
+  --radius-xl: var(--finds-radius-xl);
+  --radius-pill: var(--finds-radius-pill);
+
+  /* Largura máxima do conteúdo no desktop (ver docs/DESIGN.md) */
+  --container-conteudo: 1280px;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
 }
