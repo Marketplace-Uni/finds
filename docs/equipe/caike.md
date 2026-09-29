@@ -33,7 +33,7 @@ Você também é **dono do visual de todas as telas**: pode ajustar JSX e estilo
 ## Sprint 1 · 29/09–04/10 · Telas do núcleo
 
 Componentes, em ordem de prioridade:
-- [ ] Navbar completa (estados logado/deslogado, dropdown do avatar), **até 29/09**
+- [X] Navbar completa (estados logado/deslogado, dropdown do avatar), **até 29/09**
 - [ ] `ListingCard` + grid do feed + sidebar de filtros (visual) → Kaike, **até 30/09**
 - [ ] Layout de autenticação em tela dividida (arte + formulário) → Kaike, **até 30/09**
 - [ ] Layout do detalhe do anúncio (galeria + coluna de infos + card do anunciante) → Kaike, **até 01/10**
