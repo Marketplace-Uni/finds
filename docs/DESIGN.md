@@ -176,10 +176,11 @@ No desktop: galeria à esquerda, e título/preço/chips/card do anunciante/CTA n
 
 > **"última vez visto em 14:29"** confirma o `formatLastSeen()` que o Kaike entrega.
 
-### Dois pontos para decidir com a Lia
+### Pontos para decidir com a Lia
 
 1. **Botão "Seguir" o vendedor** — seguir usuários não está no [ESCOPO.md](ESCOPO.md), nem no P0 nem no P1. Sugestão: **não implementar** e tirar do layout.
 2. **Fonte Inter** aparece solta em alguns textos ("Do mesmo vendedor", "Exibir mais", "Seguir"), enquanto o resto é Montserrat. A Lia confirmou que usou só Montserrat e Anonymous Pro, então é **resíduo do default do Figma**: tratado como Montserrat no código. Vale ela corrigir no arquivo para não voltar a confundir.
+3. **Typo "ordernar"** na barra de filtros de `Resultados de busca` (deveria ser "ordenar"). No código já está correto.
 
 ## Trabalhando com a designer
 

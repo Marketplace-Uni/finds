@@ -1,4 +1,13 @@
+import { Heart } from "lucide-react";
+
 import { Navbar } from "@/src/components/layout/navbar";
+import { ListingCard } from "@/src/components/listings/listing-card";
+import {
+  ListingGrid,
+  ListingGridSkeleton,
+} from "@/src/components/listings/listing-grid";
+import { EmptyState, ErrorState } from "@/src/components/ui/states";
+import { Button } from "@/src/components/ui/button";
 
 /**
  * Página de apoio do Caike: mostra a navbar nos dois estados e a paleta,
@@ -15,6 +24,38 @@ const cores = [
   { token: "card / muted", classe: "bg-card", hex: "#eff0c3" },
   { token: "accent / border", classe: "bg-accent", hex: "#e68c72" },
   { token: "muted-foreground", classe: "bg-muted-foreground", hex: "#bfc085" },
+];
+
+/** Exemplos com os dados do próprio Figma, para conferir o visual. */
+const exemplos = [
+  {
+    href: "/anuncios/1",
+    title: "Mesa digitalizadora",
+    price: 150,
+    location: "Uberlândia, MG",
+  },
+  {
+    href: "/anuncios/2",
+    title: "Aula de cálculo 1 para engenharia",
+    price: 60,
+    priceNote: "por hora",
+    location: "Santa Mônica",
+    typeLabel: "Serviço",
+  },
+  {
+    href: "/anuncios/3",
+    title: "Vaga em república perto do campus Umuarama",
+    price: 550,
+    priceNote: "por mês",
+    location: "Umuarama",
+    typeLabel: "República",
+  },
+  {
+    href: "/anuncios/4",
+    title: "Procuro alguém para dividir apartamento de 2 quartos",
+    location: "Uberlândia, MG",
+    typeLabel: "Roommate",
+  },
 ];
 
 const raios = [
@@ -47,6 +88,52 @@ export default function PreviewVisualPage() {
       </section>
 
       <div className="mx-auto flex w-full max-w-conteudo flex-col gap-10 px-6">
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Card de anúncio e grid</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Quatro variações: com e sem preço, com complemento de preço, com chip de
+            tipo e com o slot de favoritar. O último card não tem imagem, para mostrar
+            o vazio.
+          </p>
+          <ListingGrid>
+            {exemplos.map((exemplo) => (
+              <ListingCard
+                key={exemplo.href}
+                {...exemplo}
+                favoriteSlot={
+                  <button
+                    type="button"
+                    aria-label="Favoritar"
+                    className="grid size-8 place-items-center rounded-pill bg-background/80 text-foreground"
+                  >
+                    <Heart className="size-4" aria-hidden />
+                  </button>
+                }
+              />
+            ))}
+          </ListingGrid>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Carregando</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Esqueleto com a mesma altura do card, para o layout não pular.
+          </p>
+          <ListingGridSkeleton count={4} />
+        </section>
+
+        <section>
+          <h2 className="mb-4 text-xl font-bold">Estado vazio e erro</h2>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <EmptyState
+              title="Nenhum anúncio por aqui ainda"
+              description="Tente mudar os filtros ou buscar por outro termo."
+              action={<Button className="rounded-pill">Limpar filtros</Button>}
+            />
+            <ErrorState />
+          </div>
+        </section>
+
         <section>
           <h2 className="mb-3 text-xl font-bold">Cores</h2>
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
