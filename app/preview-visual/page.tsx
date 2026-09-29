@@ -3,6 +3,7 @@ import { Heart } from "lucide-react";
 import { Navbar } from "@/src/components/layout/navbar";
 import { LogoFinds } from "@/src/components/layout/logo-finds";
 import { ListingCard } from "@/src/components/listings/listing-card";
+import { ListingDetail } from "@/src/components/listings/listing-detail";
 import {
   ListingGrid,
   ListingGridSkeleton,
@@ -124,6 +125,61 @@ export default function PreviewVisualPage() {
               />
             ))}
           </ListingGrid>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Detalhe do anúncio</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Galeria à esquerda; título, preço, chips, anunciante e CTA à direita,
+            acompanhando o scroll. Os botões de chat, favoritar e denunciar são
+            slots — aqui preenchidos com exemplos.
+          </p>
+          <ListingDetail
+            title="Mesa digitalizadora"
+            price={150}
+            description={
+              "Mesa digitalizadora usada por um ano, funcionando perfeitamente. " +
+              "Acompanha caneta e cabo USB.\n\nVendo porque troquei por um modelo maior."
+            }
+            images={[]}
+            categories={["eletrodomésticos", "tecnologia"]}
+            attributes={["usado", "detalhes de uso"]}
+            specs={[
+              { label: "Categoria", value: "Eletrônicos" },
+              { label: "Campus", value: "Santa Mônica" },
+            ]}
+            seller={{
+              name: "Fulano de Tal",
+              username: "fulano",
+              lastSeen: "última vez visto em 14:29",
+            }}
+            favoriteSlot={
+              <button
+                type="button"
+                aria-label="Favoritar"
+                className="grid size-9 shrink-0 place-items-center rounded-pill bg-card text-foreground"
+              >
+                <Heart className="size-5" aria-hidden />
+              </button>
+            }
+            chatSlot={
+              <Button className="w-full rounded-lg py-6 text-base font-bold">
+                CHAT COM O VENDEDOR
+              </Button>
+            }
+            reportSlot={
+              <Button variant="ghost" className="rounded-pill text-muted-foreground">
+                Denunciar anúncio
+              </Button>
+            }
+            relatedSlot={
+              <ListingGrid className="lg:grid-cols-3 xl:grid-cols-4">
+                {exemplos.slice(0, 3).map((exemplo) => (
+                  <ListingCard key={exemplo.href} {...exemplo} />
+                ))}
+              </ListingGrid>
+            }
+          />
         </section>
 
         <section>
