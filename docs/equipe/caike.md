@@ -26,7 +26,7 @@ Você também é **dono do visual de todas as telas**: pode ajustar JSX e estilo
 - [X] Acesso ao arquivo do Figma (leitura funcionando)
 - [X] **Inventário das 86 telas** → tabela "mobile → desktop" em DESIGN.md
 - [X] Extrair os **tokens** (cores, tipografia, raios) via MCP para o tema + fontes da identidade
-- [ ] **Instalar o Node.js** na máquina (não está instalado: sem ele não dá para rodar o projeto, o lint nem o build)
+- [X] **Instalar o Node.js** na máquina (v24.21.0 + npm 11.19.0)
 - [ ] Layouts `(auth)` (sem navbar) e `(main)` (navbar desktop)
 - [ ] Conversa com a designer: tirar dúvidas da identidade, confirmar categorias e tags de convivência, pedir o **logo em SVG** e decidir os 2 pontos abertos em DESIGN.md
 
