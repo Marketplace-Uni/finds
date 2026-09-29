@@ -210,6 +210,7 @@ Contrato dos parâmetros — quem é dono da rota lê os `searchParams` e filtra
 1. **Botão "Seguir" o vendedor** — seguir usuários não está no [ESCOPO.md](ESCOPO.md), nem no P0 nem no P1. Sugestão: **não implementar** e tirar do layout.
 2. **Fonte Inter** aparece solta em alguns textos ("Do mesmo vendedor", "Exibir mais", "Seguir"), enquanto o resto é Montserrat. A Lia confirmou que usou só Montserrat e Anonymous Pro, então é **resíduo do default do Figma**: tratado como Montserrat no código. Vale ela corrigir no arquivo para não voltar a confundir.
 3. **Typo "ordernar"** na barra de filtros de `Resultados de busca` (deveria ser "ordenar"). No código já está correto.
+4. **Balões do chat têm a mesma cor** (`#eff0c3`) nos dois lados: só o alinhamento e o canto reto distinguem quem falou. Implementado fiel ao Figma, mas vale perguntar se ela quer a mensagem própria em `secondary` (limão) — numa conversa longa, a leitura fica bem mais rápida.
 
 ## Trabalhando com a designer
 

@@ -2,13 +2,20 @@ import { Heart } from "lucide-react";
 
 import { Navbar } from "@/src/components/layout/navbar";
 import { LogoFinds } from "@/src/components/layout/logo-finds";
+import { AuthArt } from "@/src/components/layout/auth-art";
 import { ListingCard } from "@/src/components/listings/listing-card";
+import { ListingDetail } from "@/src/components/listings/listing-detail";
 import {
   ListingGrid,
   ListingGridSkeleton,
 } from "@/src/components/listings/listing-grid";
 import { EmptyState, ErrorState } from "@/src/components/ui/states";
 import { Button } from "@/src/components/ui/button";
+import { WizardShell } from "@/src/components/ui/wizard";
+import { TextField, TextAreaField } from "@/src/components/ui/field";
+import { PhotoPicker } from "@/src/components/ui/photo-picker";
+import { ConversationList } from "@/src/components/chat/conversation-list";
+import { ChatPanel } from "@/src/components/chat/chat-panel";
 import { FiltersSidebar } from "@/src/components/discovery/filters-sidebar";
 
 /**
@@ -124,6 +131,213 @@ export default function PreviewVisualPage() {
               />
             ))}
           </ListingGrid>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Tela dividida de entrar / criar conta</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Layout do grupo <code>(auth)</code>, sem navbar. A ilustração do Figma é
+            imagem rasterizada e não foi exportada, então o painel usa logo e
+            tipografia até a Lia mandar a arte. No celular sobra só o formulário.
+          </p>
+          <div className="grid overflow-hidden rounded-lg border border-border lg:grid-cols-2">
+            <AuthArt />
+            <div className="flex flex-col items-center justify-center gap-6 px-6 py-12">
+              <div className="flex w-full max-w-sm flex-col gap-4">
+                <h3 className="text-center text-xl font-semibold text-foreground">
+                  Entrar
+                </h3>
+                <TextField
+                  label="E-mail"
+                  htmlFor="demo-email"
+                  type="email"
+                  placeholder="voce@ufu.br"
+                  hint="Use seu e-mail @ufu.br."
+                />
+                <TextField
+                  label="Senha"
+                  htmlFor="demo-senha"
+                  type="password"
+                  placeholder="••••••••"
+                />
+                <Button className="rounded-pill py-6 font-bold">Entrar</Button>
+                <Button variant="ghost" className="rounded-pill text-muted-foreground">
+                  Esqueci minha senha
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Chat em 2 painéis</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Lista de conversas à esquerda, conversa à direita. No mobile são duas
+            telas; no desktop convivem. Repare que os dois lados usam a mesma cor de
+            balão, como no Figma — muda o alinhamento e o canto reto.
+          </p>
+          <div className="flex h-[520px] gap-4 rounded-lg bg-card/50 p-4">
+            <ConversationList
+              conversations={[
+                {
+                  id: "1",
+                  href: "#",
+                  name: "Fulano de Tal",
+                  listingTitle: "Mesa digitalizadora",
+                  lastMessage: "Oii, tudo bem e com você?",
+                  time: "12:00",
+                  active: true,
+                },
+                {
+                  id: "2",
+                  href: "#",
+                  name: "Beltrana Souza",
+                  listingTitle: "Vaga em república",
+                  lastMessage: "Mensagem não lida",
+                  time: "ontem",
+                  unread: true,
+                },
+                {
+                  id: "3",
+                  href: "#",
+                  name: "Ciclano Lima",
+                  listingTitle: "Aula de cálculo 1",
+                  lastMessage: "Combinado então!",
+                  time: "seg",
+                },
+              ]}
+            />
+            <ChatPanel
+              peer={{
+                name: "Fulano de Tal",
+                lastSeen: "última vez visto às 14:59",
+                profileHref: "/perfil/fulano",
+              }}
+              messages={[
+                { id: "a", content: "Oii, tudo bem?", time: "12:00" },
+                {
+                  id: "b",
+                  content: "Oii, tudo bem e com você?",
+                  time: "12:00",
+                  mine: true,
+                  read: true,
+                },
+                {
+                  id: "c",
+                  content: "Tudo! A mesa ainda está disponível?",
+                  time: "12:01",
+                },
+                {
+                  id: "d",
+                  content:
+                    "Está sim! Posso levar no Santa Mônica amanhã de tarde, se quiser ver pessoalmente.",
+                  time: "12:02",
+                  mine: true,
+                },
+              ]}
+            />
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Wizard de formulário</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Casca dos formulários em passos (anunciar, completar perfil). O rótulo
+            é uma pílula laranja, como no Figma. O seletor de fotos é a única parte
+            que roda no cliente — experimente adicionar imagens.
+          </p>
+          <div className="rounded-lg bg-card/50 p-6">
+            <WizardShell
+              title="Descreva seu produto"
+              subtitle="o que você vai anunciar por aqui?"
+              step={2}
+              totalSteps={6}
+              backHref="/anunciar"
+              secondaryAction={
+                <Button variant="ghost" className="rounded-pill text-muted-foreground">
+                  Salvar rascunho
+                </Button>
+              }
+            >
+              <TextField
+                label="Título"
+                htmlFor="demo-titulo"
+                name="titulo"
+                placeholder="Mesa digitalizadora"
+                hint="Seja específico: marca, modelo e estado."
+              />
+              <TextAreaField
+                label="Descrição"
+                htmlFor="demo-descricao"
+                name="descricao"
+                placeholder="Conte o que está vendendo, como está conservado e por que está vendendo."
+              />
+              <TextField
+                label="Preço"
+                htmlFor="demo-preco"
+                name="preco"
+                type="number"
+                placeholder="150"
+                error="Informe um preço maior que zero."
+              />
+              <PhotoPicker />
+            </WizardShell>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Detalhe do anúncio</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Galeria à esquerda; título, preço, chips, anunciante e CTA à direita,
+            acompanhando o scroll. Os botões de chat, favoritar e denunciar são
+            slots — aqui preenchidos com exemplos.
+          </p>
+          <ListingDetail
+            title="Mesa digitalizadora"
+            price={150}
+            description={
+              "Mesa digitalizadora usada por um ano, funcionando perfeitamente. " +
+              "Acompanha caneta e cabo USB.\n\nVendo porque troquei por um modelo maior."
+            }
+            images={[]}
+            categories={["eletrodomésticos", "tecnologia"]}
+            attributes={["usado", "detalhes de uso"]}
+            specs={[
+              { label: "Categoria", value: "Eletrônicos" },
+              { label: "Campus", value: "Santa Mônica" },
+            ]}
+            seller={{
+              name: "Fulano de Tal",
+              username: "fulano",
+              lastSeen: "última vez visto em 14:29",
+            }}
+            favoriteSlot={
+              <button
+                type="button"
+                aria-label="Favoritar"
+                className="grid size-9 shrink-0 place-items-center rounded-pill bg-card text-foreground"
+              >
+                <Heart className="size-5" aria-hidden />
+              </button>
+            }
+            chatSlot={
+              <Button className="w-full rounded-lg py-6 text-base font-bold">
+                CHAT COM O VENDEDOR
+              </Button>
+            }
+            reportSlot={
+              <Button variant="ghost" className="rounded-pill text-muted-foreground">
+                Denunciar anúncio
+              </Button>
+            }
+            relatedSlot={
+              <ListingGrid className="lg:grid-cols-3 xl:grid-cols-4">
+                {exemplos.slice(0, 3).map((exemplo) => (
+                  <ListingCard key={exemplo.href} {...exemplo} />
+                ))}
+              </ListingGrid>
+            }
+          />
         </section>
 
         <section>
