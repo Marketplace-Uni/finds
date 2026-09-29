@@ -2,6 +2,7 @@ import { Heart } from "lucide-react";
 
 import { Navbar } from "@/src/components/layout/navbar";
 import { LogoFinds } from "@/src/components/layout/logo-finds";
+import { AuthArt } from "@/src/components/layout/auth-art";
 import { ListingCard } from "@/src/components/listings/listing-card";
 import { ListingDetail } from "@/src/components/listings/listing-detail";
 import {
@@ -130,6 +131,42 @@ export default function PreviewVisualPage() {
               />
             ))}
           </ListingGrid>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Tela dividida de entrar / criar conta</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Layout do grupo <code>(auth)</code>, sem navbar. A ilustração do Figma é
+            imagem rasterizada e não foi exportada, então o painel usa logo e
+            tipografia até a Lia mandar a arte. No celular sobra só o formulário.
+          </p>
+          <div className="grid overflow-hidden rounded-lg border border-border lg:grid-cols-2">
+            <AuthArt />
+            <div className="flex flex-col items-center justify-center gap-6 px-6 py-12">
+              <div className="flex w-full max-w-sm flex-col gap-4">
+                <h3 className="text-center text-xl font-semibold text-foreground">
+                  Entrar
+                </h3>
+                <TextField
+                  label="E-mail"
+                  htmlFor="demo-email"
+                  type="email"
+                  placeholder="voce@ufu.br"
+                  hint="Use seu e-mail @ufu.br."
+                />
+                <TextField
+                  label="Senha"
+                  htmlFor="demo-senha"
+                  type="password"
+                  placeholder="••••••••"
+                />
+                <Button className="rounded-pill py-6 font-bold">Entrar</Button>
+                <Button variant="ghost" className="rounded-pill text-muted-foreground">
+                  Esqueci minha senha
+                </Button>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section>
