@@ -66,7 +66,7 @@ const exemplos = [
  */
 const begesCandidatos = [
   { rotulo: "A · original do Figma", hex: "#feffd5" },
-  { rotulo: "B · mais claro (aplicado agora)", hex: "#feffe6" },
+  { rotulo: "B · aprovado pela Lia ✅", hex: "#feffe6" },
   { rotulo: "C · bem mais claro", hex: "#fffff2" },
 ];
 
