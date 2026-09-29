@@ -9,7 +9,10 @@
 
 :root {
   /* --- Paleta da marca (valores crus, use os tokens semânticos) --- */
-  --finds-creme: #feffd5; /* fundo da página */
+  /* O bege do Figma é #feffd5. Em área grande na web ele pesa mais do que num
+     frame de 393px, então a Lia pediu um tom mais claro (29/09). Provisório:
+     ela escolhe o definitivo no comparador de /preview-visual. */
+  --finds-creme: #feffe6; /* fundo da página */
   --finds-creme-escuro: #eff0c3; /* cards, inputs, superfícies */
   --finds-laranja: #f3421a; /* cor da marca, CTA */
   --finds-limao: #cfdd4a; /* chips, destaques */

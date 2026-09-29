@@ -18,7 +18,7 @@ import { FiltersSidebar } from "@/src/components/discovery/filters-sidebar";
 export const metadata = { title: "Finds · padrão visual" };
 
 const cores = [
-  { token: "background", classe: "bg-background", hex: "#feffd5" },
+  { token: "background", classe: "bg-background", hex: "#feffe6" },
   { token: "primary", classe: "bg-primary", hex: "#f3421a" },
   { token: "secondary", classe: "bg-secondary", hex: "#cfdd4a" },
   { token: "foreground / nav", classe: "bg-nav", hex: "#2b201a" },
@@ -57,6 +57,16 @@ const exemplos = [
     location: "Uberlândia, MG",
     typeLabel: "Roommate",
   },
+];
+
+/**
+ * Comparador do bege de fundo, para a Lia escolher. Aqui os hex são o próprio
+ * assunto, por isso vão inline em vez de token — é a única exceção na base.
+ */
+const begesCandidatos = [
+  { rotulo: "A · original do Figma", hex: "#feffd5" },
+  { rotulo: "B · mais claro (aplicado agora)", hex: "#feffe6" },
+  { rotulo: "C · bem mais claro", hex: "#fffff2" },
 ];
 
 const raios = [
@@ -164,6 +174,42 @@ export default function PreviewVisualPage() {
               action={<Button className="rounded-pill">Limpar filtros</Button>}
             />
             <ErrorState />
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Qual bege de fundo? (para a Lia)</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            O mesmo conteúdo sobre os três tons. O card, os chips e o texto não
+            mudam — só o fundo. Repare como o contraste com o card cresce do A para
+            o C.
+          </p>
+          <div className="grid gap-4 lg:grid-cols-3">
+            {begesCandidatos.map((bege) => (
+              <div
+                key={bege.hex}
+                className="flex flex-col gap-3 rounded-lg border border-border p-4"
+                style={{ backgroundColor: bege.hex }}
+              >
+                <p className="text-sm font-bold text-foreground">{bege.rotulo}</p>
+                <p className="font-mono text-xs text-foreground/70">{bege.hex}</p>
+                <div className="rounded-lg bg-card p-3">
+                  <p className="text-sm font-semibold text-foreground">
+                    Mesa digitalizadora
+                  </p>
+                  <p className="text-sm font-medium text-foreground">R$ 150,00</p>
+                  <p className="text-xs text-primary">Uberlândia, MG</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <span className="rounded-pill bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+                    Móveis
+                  </span>
+                  <span className="rounded-pill bg-muted px-3 py-1 text-xs font-semibold text-foreground">
+                    Livros
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 
