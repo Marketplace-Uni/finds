@@ -10,6 +10,9 @@ import {
 } from "@/src/components/listings/listing-grid";
 import { EmptyState, ErrorState } from "@/src/components/ui/states";
 import { Button } from "@/src/components/ui/button";
+import { WizardShell } from "@/src/components/ui/wizard";
+import { TextField, TextAreaField } from "@/src/components/ui/field";
+import { PhotoPicker } from "@/src/components/ui/photo-picker";
 import { FiltersSidebar } from "@/src/components/discovery/filters-sidebar";
 
 /**
@@ -125,6 +128,52 @@ export default function PreviewVisualPage() {
               />
             ))}
           </ListingGrid>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Wizard de formulário</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Casca dos formulários em passos (anunciar, completar perfil). O rótulo
+            é uma pílula laranja, como no Figma. O seletor de fotos é a única parte
+            que roda no cliente — experimente adicionar imagens.
+          </p>
+          <div className="rounded-lg bg-card/50 p-6">
+            <WizardShell
+              title="Descreva seu produto"
+              subtitle="o que você vai anunciar por aqui?"
+              step={2}
+              totalSteps={6}
+              backHref="/anunciar"
+              secondaryAction={
+                <Button variant="ghost" className="rounded-pill text-muted-foreground">
+                  Salvar rascunho
+                </Button>
+              }
+            >
+              <TextField
+                label="Título"
+                htmlFor="demo-titulo"
+                name="titulo"
+                placeholder="Mesa digitalizadora"
+                hint="Seja específico: marca, modelo e estado."
+              />
+              <TextAreaField
+                label="Descrição"
+                htmlFor="demo-descricao"
+                name="descricao"
+                placeholder="Conte o que está vendendo, como está conservado e por que está vendendo."
+              />
+              <TextField
+                label="Preço"
+                htmlFor="demo-preco"
+                name="preco"
+                type="number"
+                placeholder="150"
+                error="Informe um preço maior que zero."
+              />
+              <PhotoPicker />
+            </WizardShell>
+          </div>
         </section>
 
         <section>
