@@ -23,17 +23,18 @@ Você também é **dono do visual de todas as telas**: pode ajustar JSX e estilo
 
 - [ ] Proteger a `main` no GitHub (merge só via PR)
 - [X] Figma: ativar o Education e conectar o MCP
-- [ ] Pedir para a designer dar acesso ao arquivo do Figma
-- [ ] **Inventário das ~80 telas** → preencher a tabela "mobile → desktop" em DESIGN.md
-- [ ] Extrair os **tokens** (cores, tipografia, espaçamentos, raios, sombras) via MCP para o tema do Tailwind + fontes da identidade
+- [X] Acesso ao arquivo do Figma (leitura funcionando)
+- [X] **Inventário das 86 telas** → tabela "mobile → desktop" em DESIGN.md
+- [X] Extrair os **tokens** (cores, tipografia, raios) via MCP para o tema + fontes da identidade
+- [X] **Instalar o Node.js** na máquina (v24.21.0 + npm 11.19.0)
 - [ ] Layouts `(auth)` (sem navbar) e `(main)` (navbar desktop)
-- [ ] Conversa com a designer: tirar dúvidas da identidade, confirmar categorias e tags de convivência, pedir o **logo em SVG**
+- [ ] Conversa com a designer: confirmar categorias e tags de convivência, escolher o bege do fundo no comparador e decidir os pontos abertos em DESIGN.md (logo em SVG ✅ recebido em 29/09)
 
 ## Sprint 1 · 29/09–04/10 · Telas do núcleo
 
 Componentes, em ordem de prioridade:
-- [ ] Navbar completa (estados logado/deslogado, dropdown do avatar), **até 29/09**
-- [ ] `ListingCard` + grid do feed + sidebar de filtros (visual) → Kaike, **até 30/09**
+- [X] Navbar completa (estados logado/deslogado, dropdown do avatar), **até 29/09**
+- [X] `ListingCard` + grid do feed + sidebar de filtros (visual) → Kaike, **até 30/09**
 - [ ] Layout de autenticação em tela dividida (arte + formulário) → Kaike, **até 30/09**
 - [ ] Layout do detalhe do anúncio (galeria + coluna de infos + card do anunciante) → Kaike, **até 01/10**
 - [ ] Wizard de formulário (passos, navegação) + seletor de fotos → Josué, **até 01/10**
