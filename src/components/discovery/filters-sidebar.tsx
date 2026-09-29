@@ -53,8 +53,13 @@ function Legend({ children }: { children: string }) {
   );
 }
 
-/** Caixa de seleção nativa, estilizada com os tokens do tema. */
-function CheckOption({
+/**
+ * Chip selecionável, no lugar de checkbox/radio nativo: é o vocabulário
+ * visual do Finds (os chips de categoria do feed e os de característica do
+ * detalhe). O input fica escondido e o label reage com `peer-checked`, então
+ * continua sendo um formulário comum, sem JavaScript.
+ */
+function ChipOption({
   name,
   option,
   checked,
@@ -65,18 +70,26 @@ function CheckOption({
   checked?: boolean;
   type?: "checkbox" | "radio";
 }) {
-  const id = `${name}-${option.value}`;
+  const id = `${name}-${option.value || "todos"}`;
   return (
-    <div className="flex items-center gap-2">
+    <div>
       <input
         id={id}
         type={type}
         name={name}
         value={option.value}
         defaultChecked={checked}
-        className="size-4 accent-primary"
+        className="peer sr-only"
       />
-      <label htmlFor={id} className="text-sm text-foreground">
+      <label
+        htmlFor={id}
+        className={cn(
+          "inline-flex cursor-pointer items-center rounded-pill px-3 py-1.5 text-sm font-semibold",
+          "bg-muted text-foreground transition-colors hover:bg-accent/40",
+          "peer-checked:bg-primary peer-checked:text-primary-foreground",
+          "peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2",
+        )}
+      >
         {option.label}
       </label>
     </div>
@@ -108,9 +121,9 @@ export function FiltersSidebar({
 
         <fieldset>
           <Legend>Tipo</Legend>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {TYPE_OPTIONS.map((option) => (
-              <CheckOption
+              <ChipOption
                 key={option.value}
                 name="tipo"
                 option={option}
@@ -123,9 +136,9 @@ export function FiltersSidebar({
         {categories.length > 0 ? (
           <fieldset>
             <Legend>Categoria</Legend>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-wrap gap-2">
               {categories.map((option) => (
-                <CheckOption
+                <ChipOption
                   key={option.value}
                   name="categoria"
                   option={option}
@@ -139,15 +152,15 @@ export function FiltersSidebar({
         {campuses.length > 0 ? (
           <fieldset>
             <Legend>Campus</Legend>
-            <div className="flex flex-col gap-1.5">
-              <CheckOption
+            <div className="flex flex-wrap gap-2">
+              <ChipOption
                 name="campus"
                 type="radio"
                 option={{ value: "", label: "Todos" }}
                 checked={!selected.campus}
               />
               {campuses.map((option) => (
-                <CheckOption
+                <ChipOption
                   key={option.value}
                   name="campus"
                   type="radio"
@@ -161,9 +174,9 @@ export function FiltersSidebar({
 
         <fieldset>
           <Legend>Condição</Legend>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {CONDITION_OPTIONS.map((option) => (
-              <CheckOption
+              <ChipOption
                 key={option.value}
                 name="condicao"
                 option={option}
@@ -210,9 +223,9 @@ export function FiltersSidebar({
 
         <fieldset>
           <Legend>Ordenar por</Legend>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {SORT_OPTIONS.map((option) => (
-              <CheckOption
+              <ChipOption
                 key={option.value}
                 name="ordem"
                 type="radio"
