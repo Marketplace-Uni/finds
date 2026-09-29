@@ -37,8 +37,8 @@ Componentes, em ordem de prioridade:
 - [X] `ListingCard` + grid do feed + sidebar de filtros (visual) → Kaike, **até 30/09**
 - [ ] Layout de autenticação em tela dividida (arte + formulário) → Kaike, **até 30/09**
 - [X] Layout do detalhe do anúncio (galeria + coluna de infos + card do anunciante) → Kaike, **até 01/10**
-- [ ] Wizard de formulário (passos, navegação) + seletor de fotos → Josué, **até 01/10**
-- [ ] Layout do chat em 2 painéis (lista de conversas, balões de mensagem, campo de envio) → Alexandre, **até 01/10**
+- [X] Wizard de formulário (passos, navegação) + seletor de fotos → Josué, **até 01/10**
+- [X] Layout do chat em 2 painéis (lista de conversas, balões de mensagem, campo de envio) → Alexandre, **até 01/10**
 - [ ] 🎨 **Checkpoint com a designer (~01/10):** tema, navbar, feed e card, **antes** de replicar o padrão
 
 ## Sprint 2 · 05/10–11/10 · Telas completas

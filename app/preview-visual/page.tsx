@@ -13,6 +13,8 @@ import { Button } from "@/src/components/ui/button";
 import { WizardShell } from "@/src/components/ui/wizard";
 import { TextField, TextAreaField } from "@/src/components/ui/field";
 import { PhotoPicker } from "@/src/components/ui/photo-picker";
+import { ConversationList } from "@/src/components/chat/conversation-list";
+import { ChatPanel } from "@/src/components/chat/chat-panel";
 import { FiltersSidebar } from "@/src/components/discovery/filters-sidebar";
 
 /**
@@ -128,6 +130,76 @@ export default function PreviewVisualPage() {
               />
             ))}
           </ListingGrid>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Chat em 2 painéis</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Lista de conversas à esquerda, conversa à direita. No mobile são duas
+            telas; no desktop convivem. Repare que os dois lados usam a mesma cor de
+            balão, como no Figma — muda o alinhamento e o canto reto.
+          </p>
+          <div className="flex h-[520px] gap-4 rounded-lg bg-card/50 p-4">
+            <ConversationList
+              conversations={[
+                {
+                  id: "1",
+                  href: "#",
+                  name: "Fulano de Tal",
+                  listingTitle: "Mesa digitalizadora",
+                  lastMessage: "Oii, tudo bem e com você?",
+                  time: "12:00",
+                  active: true,
+                },
+                {
+                  id: "2",
+                  href: "#",
+                  name: "Beltrana Souza",
+                  listingTitle: "Vaga em república",
+                  lastMessage: "Mensagem não lida",
+                  time: "ontem",
+                  unread: true,
+                },
+                {
+                  id: "3",
+                  href: "#",
+                  name: "Ciclano Lima",
+                  listingTitle: "Aula de cálculo 1",
+                  lastMessage: "Combinado então!",
+                  time: "seg",
+                },
+              ]}
+            />
+            <ChatPanel
+              peer={{
+                name: "Fulano de Tal",
+                lastSeen: "última vez visto às 14:59",
+                profileHref: "/perfil/fulano",
+              }}
+              messages={[
+                { id: "a", content: "Oii, tudo bem?", time: "12:00" },
+                {
+                  id: "b",
+                  content: "Oii, tudo bem e com você?",
+                  time: "12:00",
+                  mine: true,
+                  read: true,
+                },
+                {
+                  id: "c",
+                  content: "Tudo! A mesa ainda está disponível?",
+                  time: "12:01",
+                },
+                {
+                  id: "d",
+                  content:
+                    "Está sim! Posso levar no Santa Mônica amanhã de tarde, se quiser ver pessoalmente.",
+                  time: "12:02",
+                  mine: true,
+                },
+              ]}
+            />
+          </div>
         </section>
 
         <section>
