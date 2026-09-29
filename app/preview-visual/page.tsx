@@ -8,6 +8,7 @@ import {
 } from "@/src/components/listings/listing-grid";
 import { EmptyState, ErrorState } from "@/src/components/ui/states";
 import { Button } from "@/src/components/ui/button";
+import { FiltersSidebar } from "@/src/components/discovery/filters-sidebar";
 
 /**
  * Página de apoio do Caike: mostra a navbar nos dois estados e a paleta,
@@ -112,6 +113,38 @@ export default function PreviewVisualPage() {
               />
             ))}
           </ListingGrid>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Sidebar de filtros + grid</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Como a busca fica no desktop: as telas &quot;filtros&quot;,
+            &quot;campus&quot; e &quot;ordenar&quot; do mobile somem e viram esta
+            coluna. É um formulário GET, então funciona sem JavaScript.
+          </p>
+          <div className="flex flex-col gap-8 lg:flex-row">
+            <FiltersSidebar
+              q="mesa"
+              campuses={[
+                { value: "santa-monica", label: "Santa Mônica" },
+                { value: "umuarama", label: "Umuarama" },
+                { value: "gloria", label: "Glória" },
+              ]}
+              categories={[
+                { value: "moveis", label: "Móveis" },
+                { value: "eletronicos", label: "Eletrônicos" },
+                { value: "livros", label: "Livros" },
+              ]}
+              selected={{ tipo: ["produto"], campus: "santa-monica" }}
+            />
+            <div className="min-w-0 flex-1">
+              <ListingGrid className="lg:grid-cols-2 xl:grid-cols-3">
+                {exemplos.map((exemplo) => (
+                  <ListingCard key={exemplo.href} {...exemplo} />
+                ))}
+              </ListingGrid>
+            </div>
+          </div>
         </section>
 
         <section>

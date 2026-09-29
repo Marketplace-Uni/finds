@@ -176,6 +176,24 @@ No desktop: galeria à esquerda, e título/preço/chips/card do anunciante/CTA n
 
 > **"última vez visto em 14:29"** confirma o `formatLastSeen()` que o Kaike entrega.
 
+### Sidebar de filtros
+
+As telas `Filtros`, `Campus` e `Ordenar por` somem no desktop e viram uma coluna fixa de 256px à esquerda do grid. É um **formulário GET**: o estado vai para a URL e funciona sem JavaScript, então não é client component.
+
+Contrato dos parâmetros — quem é dono da rota lê os `searchParams` e filtra:
+
+| Parâmetro | Tipo | Valores |
+|---|---|---|
+| `q` | texto | termo de busca, preservado em campo escondido |
+| `tipo` | múltiplo | `produto`, `servico`, `roommate`, `republica` |
+| `categoria` | múltiplo | vem dos dados de referência |
+| `campus` | único | vem dos dados de referência; vazio = todos |
+| `condicao` | múltiplo | `novo`, `usado` |
+| `preco_min` / `preco_max` | número | em reais |
+| `ordem` | único | `recentes` (padrão), `relevantes`, `menor-preco`, `maior-preco` |
+
+**Adaptação:** o Figma usa um **slider** de faixa de preço (R$ 0–900). No desktop são dois campos "de / até", mais precisos e sem depender de JavaScript. A ordenação, que no mobile é uma tela própria, entra na mesma sidebar.
+
 ### Pontos para decidir com a Lia
 
 1. **Botão "Seguir" o vendedor** — seguir usuários não está no [ESCOPO.md](ESCOPO.md), nem no P0 nem no P1. Sugestão: **não implementar** e tirar do layout.

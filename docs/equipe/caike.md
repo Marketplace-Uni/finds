@@ -34,7 +34,7 @@ Você também é **dono do visual de todas as telas**: pode ajustar JSX e estilo
 
 Componentes, em ordem de prioridade:
 - [X] Navbar completa (estados logado/deslogado, dropdown do avatar), **até 29/09**
-- [ ] `ListingCard` + grid do feed + sidebar de filtros (visual) → Kaike, **até 30/09**
+- [X] `ListingCard` + grid do feed + sidebar de filtros (visual) → Kaike, **até 30/09**
 - [ ] Layout de autenticação em tela dividida (arte + formulário) → Kaike, **até 30/09**
 - [ ] Layout do detalhe do anúncio (galeria + coluna de infos + card do anunciante) → Kaike, **até 01/10**
 - [ ] Wizard de formulário (passos, navegação) + seletor de fotos → Josué, **até 01/10**
