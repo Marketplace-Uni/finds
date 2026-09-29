@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import { Montserrat, Anonymous_Pro } from "next/font/google";
 import "./globals.css";
 
+// A Lia usa a família completa da Montserrat (thin a bold, com itálicos).
+// Como é fonte variável, um único arquivo por estilo cobre todos os pesos.
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
+  style: ["normal", "italic"],
 });
 
 const anonymousPro = Anonymous_Pro({

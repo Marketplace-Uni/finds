@@ -59,10 +59,14 @@ Se faltar um token, peça ao Caike em vez de improvisar.
 
 ### Tipografia
 
-- **Montserrat** (Regular 400 / SemiBold 600) — fonte principal, em todo o produto
+Confirmado pela Lia em 28–29/09:
+
+- **Montserrat** — fonte principal, usada na **família completa** (thin a bold, com itálicos)
 - **Anonymous Pro** — textos de apoio do mascote (**Zeca**) e detalhes
 
-As duas estão no **Google Fonts**, carregadas via `next/font` em `app/layout.tsx`. Tamanhos observados no mobile: 9, 10, 11, 12 e 16px (sobem no desktop).
+As duas estão no **Google Fonts**, carregadas via `next/font` em `app/layout.tsx`. Como a Montserrat é fonte variável, todos os pesos vêm juntos; o itálico é carregado explicitamente. Tamanhos observados no mobile: 9, 10, 11, 12, 14, 16 e 25px (sobem no desktop).
+
+> ⚠️ **Não usar o guia de tipografia da Lia.** Ela avisou que o guia está **desatualizado** ("as tipografias no guia tão erradas, pq eu mudei depois"). A **fonte de verdade são os frames das telas**, de onde os tokens deste documento foram extraídos — o guia não está no arquivo `Paginas-finds` e não foi usado.
 
 ### Raios
 
@@ -175,7 +179,7 @@ No desktop: galeria à esquerda, e título/preço/chips/card do anunciante/CTA n
 ### Dois pontos para decidir com a Lia
 
 1. **Botão "Seguir" o vendedor** — seguir usuários não está no [ESCOPO.md](ESCOPO.md), nem no P0 nem no P1. Sugestão: **não implementar** e tirar do layout.
-2. **Fonte Inter** aparece solta em alguns textos ("Do mesmo vendedor", "Exibir mais", "Seguir"), enquanto o resto é Montserrat. Parece default do Figma, não intenção. Tratado como **Montserrat** no código até ela confirmar.
+2. **Fonte Inter** aparece solta em alguns textos ("Do mesmo vendedor", "Exibir mais", "Seguir"), enquanto o resto é Montserrat. A Lia confirmou que usou só Montserrat e Anonymous Pro, então é **resíduo do default do Figma**: tratado como Montserrat no código. Vale ela corrigir no arquivo para não voltar a confundir.
 
 ## Trabalhando com a designer
 
