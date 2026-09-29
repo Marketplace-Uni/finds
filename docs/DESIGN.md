@@ -72,6 +72,17 @@ As duas estão no **Google Fonts**, carregadas via `next/font` em `app/layout.ts
 
 O design é bem arredondado: `12px` (imagem pequena), `21px` (busca e chips), `30px` (card de anúncio), `34px` (banner) e `76px` (botão pílula) → `rounded-sm`, `rounded-md`, `rounded-lg`, `rounded-xl` e `rounded-pill`.
 
+### Logo
+
+A Lia entregou o wordmark vetorizado em 29/09. O arquivo original dela está em [`public/logo-finds.svg`](../../public/logo-finds.svg); no código, use o componente `LogoFinds`.
+
+Duas diferenças entre o componente e o arquivo, ambas propositais:
+
+- **viewBox recortado.** O export do Illustrator vem num canvas de 1920×1080 e o desenho ocupa só 1076×362 no meio — usar o arquivo como está deixaria a marca minúscula cercada de espaço vazio. O componente usa `viewBox="422.01 348.68 1075.99 361.96"`, o bounding box real.
+- **`currentColor`** no lugar do laranja fixo, então a mesma marca serve no fundo creme e no marrom da navbar. Para o laranja da marca, `text-primary`.
+
+Proporção ~**2.97:1**: defina a altura (`h-7` na navbar) e deixe a largura automática.
+
 ### Ícones
 
 A Lia usou um kit cujos ícones têm os **mesmos nomes do `lucide-react`** (`Search`, `Bell`, `MapPin`, `Heart`, `Home`, `MessageCircle`, `User`), que é o padrão do shadcn/ui. Use o `lucide-react` direto, sem exportar SVG do Figma.

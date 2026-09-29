@@ -28,7 +28,7 @@ Você também é **dono do visual de todas as telas**: pode ajustar JSX e estilo
 - [X] Extrair os **tokens** (cores, tipografia, raios) via MCP para o tema + fontes da identidade
 - [X] **Instalar o Node.js** na máquina (v24.21.0 + npm 11.19.0)
 - [ ] Layouts `(auth)` (sem navbar) e `(main)` (navbar desktop)
-- [ ] Conversa com a designer: tirar dúvidas da identidade, confirmar categorias e tags de convivência, pedir o **logo em SVG** e decidir os 2 pontos abertos em DESIGN.md
+- [ ] Conversa com a designer: confirmar categorias e tags de convivência, escolher o bege do fundo no comparador e decidir os pontos abertos em DESIGN.md (logo em SVG ✅ recebido em 29/09)
 
 ## Sprint 1 · 29/09–04/10 · Telas do núcleo
 

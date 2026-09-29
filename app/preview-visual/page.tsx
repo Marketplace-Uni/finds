@@ -1,6 +1,7 @@
 import { Heart } from "lucide-react";
 
 import { Navbar } from "@/src/components/layout/navbar";
+import { LogoFinds } from "@/src/components/layout/logo-finds";
 import { ListingCard } from "@/src/components/listings/listing-card";
 import {
   ListingGrid,
@@ -174,6 +175,32 @@ export default function PreviewVisualPage() {
               action={<Button className="rounded-pill">Limpar filtros</Button>}
             />
             <ErrorState />
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Logo</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Vetor da Lia, com o viewBox recortado no desenho. Herda a cor do texto,
+            então serve nos dois fundos. Proporção ~2.97:1.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="flex flex-col items-start gap-4 rounded-lg bg-card p-6">
+              <LogoFinds className="h-14 w-auto text-primary" />
+              <LogoFinds className="h-7 w-auto text-primary" />
+              <LogoFinds className="h-4 w-auto text-primary" />
+              <span className="text-xs text-muted-foreground">
+                laranja da marca, sobre superfície clara
+              </span>
+            </div>
+            <div className="flex flex-col items-start gap-4 rounded-lg bg-nav p-6">
+              <LogoFinds className="h-14 w-auto text-primary" />
+              <LogoFinds className="h-7 w-auto text-nav-foreground" />
+              <LogoFinds className="h-4 w-auto text-secondary" />
+              <span className="text-xs text-nav-foreground/70">
+                laranja, creme e limão sobre o marrom da navbar
+              </span>
+            </div>
           </div>
         </section>
 

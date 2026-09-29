@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Heart, MapPin, MessageCircle, Plus, Search } from "lucide-react";
 
 import { Button } from "@/src/components/ui/button";
+import { LogoFinds } from "@/src/components/layout/logo-finds";
 import { UserMenu, type NavbarUser } from "@/src/components/layout/user-menu";
 
 type NavbarProps = {
@@ -24,12 +25,8 @@ export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarPr
   return (
     <header className="bg-nav text-nav-foreground">
       <div className="mx-auto flex h-16 max-w-conteudo items-center gap-4 px-6">
-        {/* TODO: trocar pelo logo em SVG quando a Lia enviar (hoje é imagem no Figma). */}
-        <Link
-          href="/"
-          className="font-sans text-2xl font-bold tracking-tight text-primary"
-        >
-          finds
+        <Link href="/" className="shrink-0 text-primary" aria-label="Finds, página inicial">
+          <LogoFinds className="h-7 w-auto" />
         </Link>
 
         <form action="/busca" className="relative min-w-0 flex-1">
