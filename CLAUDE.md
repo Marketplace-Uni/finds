@@ -14,7 +14,13 @@ Next.js (App Router) + TypeScript, Tailwind + shadcn/ui, react-hook-form + zod, 
 
 ## Comandos
 
-_A preencher na Sprint 0 (dev, lint, build, gerar tipos do Supabase, rodar o seed)._
+- `npm install` — instala as dependências
+- `npm run dev` — servidor de desenvolvimento em http://localhost:3000
+- `npm run lint` — ESLint
+- `npm run build` — build de produção
+- `npm test` — testes (Vitest)
+- `npx supabase gen types typescript --linked > src/types/database.ts` — gera os tipos do banco (ver "Base de Dados e Tipagens" abaixo)
+- Rodar o seed: **a definir** — depende de `scripts/seed.ts` (Alexandre, ainda não entregue)
 
 ## Convenções
 
@@ -44,3 +50,5 @@ _A preencher na Sprint 0 (dev, lint, build, gerar tipos do Supabase, rodar o see
 Sempre que houver uma alteração na estrutura da base de dados, o Dev 2 irá atualizar as migrations. Para atualizares as tipagens localmente, executa:
 `npx supabase gen types typescript --linked > src/types/database.ts`
 Não edites o ficheiro `database.ts` manualmente.
+
+⚠️ No PowerShell, o `>` grava em UTF-16 por padrão e quebra o ESLint (achamos isso na Sprint 0). Prefira `... | Out-File -Encoding utf8 src/types/database.ts`, ou rode o comando via bash/WSL.
