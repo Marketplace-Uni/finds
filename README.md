@@ -31,4 +31,14 @@ Time: 4 devs + 1 designer. Desenvolvimento de 27/09 a 20/10/2026, usando Claude 
 
 ## Rodando o projeto
 
-_Será preenchido na Sprint 0, quando o projeto for criado (ver [kaike.md](docs/equipe/kaike.md))._
+1. Instale as dependências: `npm install`
+2. Crie um `.env.local` na raiz com as variáveis do Supabase (peça os valores no grupo do time):
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=
+   SUPABASE_SERVICE_ROLE_KEY=
+   ```
+3. Rode o servidor de desenvolvimento: `npm run dev` e abra http://localhost:3000
+4. Antes de abrir um PR: `npm run lint`, `npm run build` e `npm test`
+
+Popular o banco local com dados de demonstração (seed): **a definir**, depende de `scripts/seed.ts` (Alexandre, ainda não entregue).
