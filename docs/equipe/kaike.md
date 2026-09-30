@@ -19,14 +19,14 @@
 
 ## Sprint 0 · 27–28/09 · Projeto no ar ⚠️ bloqueia o time: fazer primeiro
 
-- [ ] Criar o projeto Next.js (App Router, TypeScript, Tailwind, ESLint) e **dar push o quanto antes**
-- [ ] `.gitattributes` com `* text=auto eol=lf` (evita diff falso entre Windows e Mac/Linux)
-- [ ] Instalar e configurar o shadcn/ui (o Caike aplica o tema depois)
-- [ ] **Criar `page.tsx` placeholder para TODAS as rotas** de ARQUITETURA.md, para cada dev só preencher a sua sem conflito
-- [ ] Preencher "Comandos" no `CLAUDE.md` e "Rodando o projeto" no `README.md`
-- [ ] Estudar o Supabase Auth com Next (`@supabase/ssr`): cadastro, login, confirmação de e-mail, sessão
-- [ ] Listar com o Caike os filtros e as informações que aparecem no feed e no detalhe (a partir do Figma)
-- [ ] Rascunhar `src/lib/match.ts` com testes simples (é TypeScript puro, não depende de nada)
+- [x] Criar o projeto Next.js (App Router, TypeScript, Tailwind, ESLint) e **dar push o quanto antes** — já existia, mas estava em `app/` na raiz; movido para `src/app/` (padrão de ARQUITETURA.md)
+- [x] `.gitattributes` com `* text=auto eol=lf` (evita diff falso entre Windows e Mac/Linux)
+- [x] Instalar e configurar o shadcn/ui (o Caike aplica o tema depois) — já veio pronto no PR do Caike (`components.json`, `src/components/ui/`)
+- [x] **Criar `page.tsx` placeholder para TODAS as rotas** de ARQUITETURA.md, para cada dev só preencher a sua sem conflito — exceto `(marketing)/`, que colidiria com `(main)/page.tsx` na rota `/`; falta o Caike definir como as duas convivem antes de criar o placeholder dela
+- [x] Preencher "Comandos" no `CLAUDE.md` e "Rodando o projeto" no `README.md`
+- [ ] Estudar o Supabase Auth com Next (`@supabase/ssr`): cadastro, login, confirmação de e-mail, sessão — depende de `src/lib/supabase/` (Josué), que ainda não existe no repositório apesar do checklist dele marcar como pronto
+- [ ] Listar com o Caike os filtros e as informações que aparecem no feed e no detalhe (a partir do Figma) — precisa de conversa direta com ele
+- [x] Rascunhar `src/lib/match.ts` com testes simples (é TypeScript puro, não depende de nada)
 
 ## Sprint 1 · 29/09–04/10 · Cadastro, feed e detalhe
 
