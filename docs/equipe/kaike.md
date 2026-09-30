@@ -30,13 +30,13 @@
 
 ## Sprint 1 · 29/09–04/10 · Cadastro, feed e detalhe
 
-- [ ] `/cadastro`: nome, username, e-mail, senha; valida o domínio @ufu.br (zod no cliente + checagem no servidor)
-- [ ] `/entrar`, logout, `/verificar-email` ("confira sua caixa de entrada")
-- [ ] `/completar-perfil?next=...`: escolha do campus, depois redireciona para `next`
-- [ ] `requireCompleteProfile()` + `useCompleteProfileGate()` + modal. **Avisar no grupo quando estiver pronto**
-- [ ] Feed: query paginada ("carregar mais") + filtros com **estado na URL** (`?tipo=produto&campus=...`): tipo, campus/cidade, categoria, faixa de preço
-- [ ] Busca por texto → `/busca?q=` (título + descrição)
-- [ ] `/anuncios/[id]`: buscar o anúncio + fotos + anunciante e exibir os `details` do tipo (usa os schemas do Josué)
+- [ ] `/cadastro`: nome, username, e-mail, senha; valida o domínio @ufu.br (zod no cliente + checagem no servidor) — schema pronto (`src/lib/validations/auth.ts`) e UI com validação client-side funcionando (react-hook-form); falta o `signUp` via Server Action, bloqueado por `src/lib/supabase` não existir ainda (ver "Não mexer" e conversa com o Josué)
+- [ ] `/entrar`, logout, `/verificar-email` ("confira sua caixa de entrada") — `/verificar-email` pronto; `/entrar` com UI e validação client-side prontas; `signInWithPassword`/logout bloqueados pelo mesmo motivo acima
+- [ ] `/completar-perfil?next=...`: escolha do campus, depois redireciona para `next` — não iniciado: além do bloqueio de `lib/supabase`, precisa da lista de campus vinda do banco
+- [ ] `requireCompleteProfile()` + `useCompleteProfileGate()` + modal. **Avisar no grupo quando estiver pronto** — não iniciado, mesmo bloqueio
+- [ ] Feed: query paginada ("carregar mais") + filtros com **estado na URL** (`?tipo=produto&campus=...`): tipo, campus/cidade, categoria, faixa de preço — helper de parse dos filtros da URL pronto e testado (`src/lib/listings-filters.ts`), usando o mesmo vocabulário do `<FiltersSidebar>`; falta a query real, mesmo bloqueio
+- [ ] Busca por texto → `/busca?q=` (título + descrição) — usa o mesmo helper acima; falta a query real (`ilike`), mesmo bloqueio
+- [ ] `/anuncios/[id]`: buscar o anúncio + fotos + anunciante e exibir os `details` do tipo (usa os schemas do Josué) — não iniciado: bloqueado por `lib/supabase` e pelos schemas de `details` por tipo (ainda não entregues pelo Josué)
 
 ## Sprint 2 · 05/10–11/10 · Perfil e Match ⭐
 
