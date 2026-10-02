@@ -25,7 +25,12 @@ export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarPr
   return (
     <header className="bg-nav text-nav-foreground">
       <div className="mx-auto flex h-16 max-w-conteudo items-center gap-4 px-6">
-        <Link href="/" className="shrink-0 text-primary" aria-label="Finds, página inicial">
+        {/* Logo em creme: a Lia apontou que o laranja não contrasta no marrom. */}
+        <Link
+          href="/"
+          className="shrink-0 text-nav-foreground"
+          aria-label="Finds, página inicial"
+        >
           <LogoFinds className="h-7 w-auto" />
         </Link>
 
@@ -65,11 +70,12 @@ export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarPr
               </Link>
             </Button>
 
+            {/* Ícones maiores e da mesma altura do avatar, a pedido da Lia. */}
             <Button
               asChild
               variant="ghost"
               size="icon"
-              className="text-nav-foreground hover:bg-white/10"
+              className="size-10 text-nav-foreground hover:bg-white/10 [&_svg]:size-5"
             >
               <Link href="/favoritos" aria-label="Favoritos">
                 <Heart aria-hidden />
@@ -80,12 +86,12 @@ export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarPr
               asChild
               variant="ghost"
               size="icon"
-              className="relative text-nav-foreground hover:bg-white/10"
+              className="relative size-10 text-nav-foreground hover:bg-white/10 [&_svg]:size-5"
             >
               <Link href="/mensagens" aria-label="Mensagens">
                 <MessageCircle aria-hidden />
                 {unreadCount > 0 ? (
-                  <span className="absolute -top-0.5 -right-0.5 grid min-w-4 place-items-center rounded-pill bg-primary px-1 text-[10px] leading-4 font-bold text-primary-foreground">
+                  <span className="absolute top-0.5 right-0.5 grid min-w-4 place-items-center rounded-pill bg-primary px-1 text-[10px] leading-4 font-bold text-primary-foreground">
                     {unreadCount > 9 ? "9+" : unreadCount}
                   </span>
                 ) : null}
