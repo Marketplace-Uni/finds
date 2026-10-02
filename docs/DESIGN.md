@@ -225,7 +225,7 @@ Primeira revisão dela sobre o `/preview-visual`. Nenhuma estrutura foi question
 
 Risco a conversar antes de aplicar em cheio: hoje o **laranja significa ação** (CTA, chip selecionado). Se ele passar a aparecer decorativamente, a pessoa perde a pista do que é clicável. A proposta é variar livremente em tags, chips e fundos decorativos, **mantendo o laranja exclusivo para ação**, e usar gradientes só em áreas grandes (painel de auth, banner "Faça um anúncio").
 
-**Pendente:** o **SVG do Zeca** para os estados vazio e de erro, que ela ofereceu mandar.
+**Adiado para a Sprint 2:** o **Zeca nos estados vazio e de erro**. O SVG do mascote **ainda não existe** — a Lia precisa criar. Até lá, `EmptyState` e `ErrorState` seguem com ícones genéricos, que funcionam; a troca é pontual quando o arquivo chegar.
 
 ### Pontos para decidir com a Lia
 

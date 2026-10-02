@@ -39,10 +39,12 @@ Componentes, em ordem de prioridade:
 - [X] Layout do detalhe do anúncio (galeria + coluna de infos + card do anunciante) → Kaike, **até 01/10**
 - [X] Wizard de formulário (passos, navegação) + seletor de fotos → Josué, **até 01/10**
 - [X] Layout do chat em 2 painéis (lista de conversas, balões de mensagem, campo de envio) → Alexandre, **até 01/10**
-- [ ] 🎨 **Checkpoint com a designer (~01/10):** tema, navbar, feed e card, **antes** de replicar o padrão
+- [X] 🎨 **Checkpoint com a designer (~01/10):** tema, navbar, feed e card — ela revisou o `/preview-visual` e devolveu 10 anotações; 9 já aplicadas (ver DESIGN.md)
 
 ## Sprint 2 · 05/10–11/10 · Telas completas
 
+- [ ] **Zeca nos estados vazio e de erro** — a Lia ainda vai **criar o SVG** do mascote; encaixar em `EmptyState` / `ErrorState` quando chegar
+- [ ] Definir com a Lia até onde variar as cores da paleta e usar gradientes, sem perder o laranja como cor de ação (ver DESIGN.md)
 - [ ] Seletor de tags de convivência (chips "eu sou" / "procuro") + card com o badge **"87% compatível"** e as tags em comum → Kaike, **até 07/10**
 - [ ] Cabeçalho do perfil (avatar, campus, "ativo há", nota média) → Kaike, **até 07/10**
 - [ ] Abas de "Meus anúncios" + estados do card (rascunho, pausado, vendido) → Josué, **até 07/10**
