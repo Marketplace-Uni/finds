@@ -18,17 +18,17 @@
 
 ## Sprint 0 · 27–28/09 · Conteúdo do seed
 
-- [ ] Montar em `supabase/seed/` (JSON) ~50 anúncios realistas: ~20 produtos, ~12 serviços, ~10 roommate, ~8 república, espalhados pelos campi
-- [ ] ~12 usuários fictícios com nome, bio, campus, tags de convivência variadas (para o match ter contraste)
-- [ ] Fotos: de preferência **reais** (coisas do time, da casa, de repúblicas de amigos) ou de bancos gratuitos (Unsplash/Pexels)
-- [ ] Mini-teste do Supabase Realtime (entender `postgres_changes` antes do chat)
+- [x] Montar em `supabase/seed/` (JSON) ~50 anúncios realistas: ~20 produtos, ~12 serviços, ~10 roommate, ~8 república, espalhados pelos campi
+- [x] ~12 usuários fictícios com nome, bio, campus, tags de convivência variadas (para o match ter contraste)
+- [x] Fotos: de preferência **reais** (coisas do time, da casa, de repúblicas de amigos) ou de bancos gratuitos (Unsplash/Pexels)
+- [x] Mini-teste do Supabase Realtime (entender `postgres_changes` antes do chat)
 
 ## Sprint 1 · 29/09–04/10 · Seed + Chat
 
-- [ ] `scripts/seed.ts` (usa a `service_role`, **idempotente**: limpa e recria). Rodar no `finds-dev` **até 30/09** e avisar o time
-- [ ] Server action `startConversation(listingId)`: cria ou reabre (não pode conversar com o próprio anúncio; exige perfil completo)
+- [x] `scripts/seed.ts` (usa a `service_role`, **idempotente**: limpa e recria). Rodar no `finds-dev` **até 30/09** e avisar o time
+- [x] Server action `startConversation(listingId)`: cria ou reabre (não pode conversar com o próprio anúncio; exige perfil completo)
 - [ ] `<StartChatButton>` ("Tenho interesse") → **avisar o Kaike quando estiver pronto**
-- [ ] `/mensagens`: lista de conversas (foto do anúncio, outro usuário, última mensagem, horário) + conversa aberta, no layout do Caike
+- [x] `/mensagens`: lista de conversas (foto do anúncio, outro usuário, última mensagem, horário) + conversa aberta, no layout do Caike
 - [ ] Enviar mensagem + **recebimento em tempo real** (Realtime)
 - [ ] Auto-scroll, horário das mensagens, estado vazio ("nenhuma conversa ainda")
 
