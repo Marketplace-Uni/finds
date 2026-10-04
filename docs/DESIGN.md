@@ -34,6 +34,8 @@ Só o Caike **precisa** configurar. Os outros devs podem configurar se quiserem 
 
 **Ritmo semanal:** o Caike entrega os componentes da sprint **até quarta-feira**. Os outros devs começam pela lógica e integram a interface na segunda metade da semana. Se o componente atrasar, o dev monta provisoriamente com `ui/` e o Caike refina depois.
 
+> 📦 **Vai montar uma tela?** O catálogo do que já existe pronto — com import, props e exemplos — está em [COMPONENTES.md](COMPONENTES.md). Este documento aqui cobre o design: tokens, adaptação do Figma e decisões com a designer.
+
 ## Tokens de design
 
 Extraídos do Figma via MCP na Sprint 0 e aplicados em [`app/globals.css`](../app/globals.css).
