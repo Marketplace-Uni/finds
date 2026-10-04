@@ -3,13 +3,9 @@
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/src/lib/supabase/server";
+import { rotaSegura } from "@/src/lib/auth";
 import { entrarSchema, type EntrarInput } from "@/src/lib/validations/auth";
 import type { AuthActionResult } from "@/src/app/(auth)/cadastro/actions";
-
-/** Só redireciona para rotas internas — evita open redirect via `?next=`. */
-function rotaSegura(next: string | undefined): string {
-  return next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
-}
 
 /** Autentica por e-mail/senha e redireciona para `next` (ou `/`). */
 export async function entrar(input: EntrarInput, next?: string): Promise<AuthActionResult> {
