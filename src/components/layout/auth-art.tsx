@@ -1,4 +1,5 @@
 import { LogoFinds } from "@/src/components/layout/logo-finds";
+import { Zeca } from "@/src/components/ui/zeca";
 
 /**
  * Painel da marca nas telas de entrar e criar conta. No Figma essas telas têm
@@ -29,6 +30,13 @@ export function AuthArt() {
           feito por estudantes, para estudantes
         </p>
       </div>
+
+      {/* O Zeca é a ilustração que faltava aqui: pose 1, feliz, para dar
+          boas-vindas a quem está entrando. */}
+      <Zeca
+        pose={1}
+        className="pointer-events-none absolute right-8 -bottom-6 h-72 w-auto text-primary/80"
+      />
 
       {/* Formas da identidade ao fundo, nas cores da marca. */}
       <span
