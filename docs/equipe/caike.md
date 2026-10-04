@@ -17,18 +17,86 @@ Você também é **dono do visual de todas as telas**: pode ajustar JSX e estilo
 
 ---
 
+## ❓ Perguntas para a reunião semanal
+
+Levantadas em 02/10, depois de fechar os componentes das Sprints 0 e 1. **Enquanto não houver resposta, o DESIGN.md não muda** — a divisão de trabalho continua valendo como está escrita acima.
+
+### 1. Quem monta as telas? (com o Kaike)
+
+Hoje o texto acima diz que você entrega **componentes** e o dev da feature **monta a página**. Foi por isso que a home em produção mostra "Em construção": o `ListingCard`, o grid e a sidebar existem, mas ninguém os juntou ainda.
+
+> ⚠️ No App Router, **rota não é back-end**: o `page.tsx` busca os dados *e* devolve o JSX. Não dá para dividir por arquivo; dá para dividir por responsabilidade.
+
+**Pergunta:** fechamos que o Caike entrega a **tela inteira** como componente (`<FeedScreen listings={...} />`) e o `page.tsx` do dev só busca os dados e repassa, sem nenhuma `className`?
+
+- [ ] Sim, tela composta é entrega do Caike
+- [X] Não, o dev continua montando a página com os componentes soltos
+- [ ] Outro: ______
+
+**Resposta (02/10, com o Kaike):** fica como está. As telas listadas no arquivo do Kaike são dele; o Caike entrega os **componentes visuais** e cada dev monta a própria página com eles. Vale o plano inicial — cada um faz o que foi atribuído no começo. **Nada muda no DESIGN.md.**
+
+### 2. A landing e o feed brigam pela rota `/` (com o Kaike)
+
+Ele não criou o `(marketing)/` e anotou no arquivo dele que *"colidiria com `(main)/page.tsx` na rota `/`; falta o Caike definir como as duas convivem"*. Está esperando você.
+
+**Pergunta:** qual das três?
+
+- [ ] `/` decide pelo login: deslogado vê a landing, logado vê o feed
+- [ ] Landing em rota própria (`/sobre`), `/` sempre feed
+- [ ] Sem landing no P0
+
+**Vale lembrar na hora:** na Mostra, quem abrir a URL provavelmente estará deslogado — a primeira opção é a que mostra a identidade antes do login.
+
+**Resposta:**
+
+### 3. O que a navbar recebe da sessão? (com o Kaike e o Alexandre)
+
+O `(main)/layout.tsx` hoje passa `user={null}` com um `TODO`, e é por isso que produção mostra "Entrar / Criar conta" mesmo logado.
+
+**Pergunta:** quem preenche, e com quais campos? A navbar precisa de `name`, `username`, `avatarUrl`, `campus` e `unreadCount` — o último vem do Alexandre.
+
+**Resposta:**
+
+### 4. O match ⭐ não tem tela no Figma (com o Kaike, depois com a Lia)
+
+Nenhuma das 86 telas cobre o match nem o perfil de convivência — e é o destaque da demo.
+
+**Pergunta:** componho a partir do padrão que já existe (card + chips + badge) e valido com a Lia depois, ou esperamos ela desenhar?
+
+**Risco a citar:** faltam menos de 3 semanas para 21/10; esperar desenho novo é o maior risco do cronograma.
+
+**Resposta:**
+
+### 5. Categorias e tags de convivência (avisar o time)
+
+A tabela `traits` está vazia e a lista continua pendente com a Lia. Trava o Josué (dados de referência) e o Kaike (convivência e match).
+
+**Pergunta:** o time espera a Lia ou adota uma lista provisória para destravar, com ela validando depois?
+
+**Resposta:**
+
+### 6. Ritmo da Sprint 2
+
+O texto acima diz que você entrega os componentes **até quarta**. A Sprint 1 fechou bem antes disso.
+
+**Pergunta:** mantemos a quarta como marco ou passa a ser sob demanda, conforme cada um pedir?
+
+**Resposta:**
+
+---
+
 ## Sprint 0 · 27–28/09 · Fundação visual
 
 > O projeto Next.js, o shadcn/ui e as rotas placeholder são do Kaike (Sprint 0 dele).
 
-- [ ] Proteger a `main` no GitHub (merge só via PR)
+- ~~Proteger a `main` no GitHub (merge só via PR)~~ — **descartado** (decisão do Caike em 04/10; o time já vinha usando PR na prática)
 - [X] Figma: ativar o Education e conectar o MCP
 - [X] Acesso ao arquivo do Figma (leitura funcionando)
 - [X] **Inventário das 86 telas** → tabela "mobile → desktop" em DESIGN.md
 - [X] Extrair os **tokens** (cores, tipografia, raios) via MCP para o tema + fontes da identidade
 - [X] **Instalar o Node.js** na máquina (v24.21.0 + npm 11.19.0)
 - [X] Layouts `(auth)` (sem navbar) e `(main)` (navbar desktop)
-- [ ] Conversa com a designer: confirmar categorias e tags de convivência, escolher o bege do fundo no comparador e decidir os pontos abertos em DESIGN.md (logo em SVG ✅ recebido em 29/09)
+- [X] Conversa com a designer: bege do fundo escolhido (opção B), logo em SVG recebido (29/09) e os pontos visuais decididos nas 10 anotações de 01/10. **Categorias e tags de convivência:** a Lia também não tem a lista fechada; os componentes recebem as opções por props, então isso não bloqueia o visual — a lista definitiva é dado de referência do banco.
 
 ## Sprint 1 · 29/09–04/10 · Telas do núcleo
 
