@@ -34,8 +34,8 @@
 - [x] `/entrar`, logout, `/verificar-email` ("confira sua caixa de entrada") — `signInWithPassword` via Server Action com `?next=` (guardado contra open redirect); logout em `/sair` (route handler, usado pelo `<UserMenu>` do Caike)
 - [x] `/completar-perfil?next=...`: escolha do campus, depois redireciona para `next` — busca campus reais do banco, salva `campus_id` + `university_id`
 - [x] `requireCompleteProfile()` + `useCompleteProfileGate()` + modal — **avisar o Josué e o Alexandre: já está pronto** (`src/lib/auth.ts` e `src/components/auth/complete-profile-gate.tsx`); usa `src/components/ui/dialog.tsx`, um modal simples que fiz pq o Caike ainda não desenhou um no Figma — ele refina depois
-- [ ] Feed: query paginada ("carregar mais") + filtros com **estado na URL** (`?tipo=produto&campus=...`): tipo, campus/cidade, categoria, faixa de preço — helper de parse dos filtros da URL pronto e testado (`src/lib/listings-filters.ts`), usando o mesmo vocabulário do `<FiltersSidebar>`
-- [ ] Busca por texto → `/busca?q=` (título + descrição) — usa o mesmo helper acima
+- [x] Feed: query paginada ("carregar mais") + filtros com **estado na URL** (`?tipo=produto&campus=...`): tipo, campus, faixa de preço — `src/lib/listings.ts`; `categoria`/`condicao` ficam só na UI por ora (vivem em `listings.details`, formato ainda não entregue pelo Josué)
+- [x] Busca por texto → `/busca?q=` (título + descrição, `ilike`) — mesma query de `src/lib/listings.ts`
 - [ ] `/anuncios/[id]`: buscar o anúncio + fotos + anunciante e exibir os `details` do tipo (usa os schemas do Josué) — ainda não iniciado: falta o schema de `details` por tipo de anúncio (Sprint 1 do Josué, ainda não entregue em nenhuma branch)
 
 ## Sprint 2 · 05/10–11/10 · Perfil e Match ⭐
