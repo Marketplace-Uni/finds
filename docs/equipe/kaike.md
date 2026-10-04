@@ -24,19 +24,19 @@
 - [x] Instalar e configurar o shadcn/ui (o Caike aplica o tema depois) — já veio pronto no PR do Caike (`components.json`, `src/components/ui/`)
 - [x] **Criar `page.tsx` placeholder para TODAS as rotas** de ARQUITETURA.md, para cada dev só preencher a sua sem conflito — exceto `(marketing)/`, que colidiria com `(main)/page.tsx` na rota `/`; falta o Caike definir como as duas convivem antes de criar o placeholder dela
 - [x] Preencher "Comandos" no `CLAUDE.md` e "Rodando o projeto" no `README.md`
-- [ ] Estudar o Supabase Auth com Next (`@supabase/ssr`): cadastro, login, confirmação de e-mail, sessão — depende de `src/lib/supabase/` (Josué), que ainda não existe no repositório apesar do checklist dele marcar como pronto
-- [ ] Listar com o Caike os filtros e as informações que aparecem no feed e no detalhe (a partir do Figma) — precisa de conversa direta com ele
+- [x] Estudar o Supabase Auth com Next (`@supabase/ssr`): cadastro, login, confirmação de e-mail, sessão — `src/lib/supabase/` do Josué chegou via merge de `origin/main`; `src/middleware.ts` (raiz) criado chamando `updateSession()`
+- [x] Listar com o Caike os filtros e as informações que aparecem no feed e no detalhe (a partir do Figma) — conversa feita; contrato dos filtros em `docs/DESIGN.md` (sidebar) e das informações do card/detalhe também em `docs/DESIGN.md`, já implementados em `<FiltersSidebar>`, `<ListingCard>` e `<ListingDetail>`
 - [x] Rascunhar `src/lib/match.ts` com testes simples (é TypeScript puro, não depende de nada)
 
 ## Sprint 1 · 29/09–04/10 · Cadastro, feed e detalhe
 
-- [ ] `/cadastro`: nome, username, e-mail, senha; valida o domínio @ufu.br (zod no cliente + checagem no servidor)
-- [ ] `/entrar`, logout, `/verificar-email` ("confira sua caixa de entrada")
-- [ ] `/completar-perfil?next=...`: escolha do campus, depois redireciona para `next`
-- [ ] `requireCompleteProfile()` + `useCompleteProfileGate()` + modal. **Avisar no grupo quando estiver pronto**
-- [ ] Feed: query paginada ("carregar mais") + filtros com **estado na URL** (`?tipo=produto&campus=...`): tipo, campus/cidade, categoria, faixa de preço
-- [ ] Busca por texto → `/busca?q=` (título + descrição)
-- [ ] `/anuncios/[id]`: buscar o anúncio + fotos + anunciante e exibir os `details` do tipo (usa os schemas do Josué)
+- [x] `/cadastro`: nome, username, e-mail, senha; valida o domínio @ufu.br (zod no cliente + checagem no servidor) — `signUp` real via Server Action (`src/app/(auth)/cadastro/actions.ts`), manda `username`/`full_name` pro trigger `handle_new_user()`
+- [x] `/entrar`, logout, `/verificar-email` ("confira sua caixa de entrada") — `signInWithPassword` via Server Action com `?next=` (guardado contra open redirect); logout em `/sair` (route handler, usado pelo `<UserMenu>` do Caike)
+- [x] `/completar-perfil?next=...`: escolha do campus, depois redireciona para `next` — busca campus reais do banco, salva `campus_id` + `university_id`
+- [x] `requireCompleteProfile()` + `useCompleteProfileGate()` + modal — **avisar o Josué e o Alexandre: já está pronto** (`src/lib/auth.ts` e `src/components/auth/complete-profile-gate.tsx`); usa `src/components/ui/dialog.tsx`, um modal simples que fiz pq o Caike ainda não desenhou um no Figma — ele refina depois
+- [x] Feed: query paginada ("carregar mais") + filtros com **estado na URL** (`?tipo=produto&campus=...`): tipo, campus, faixa de preço — `src/lib/listings.ts`; `categoria`/`condicao` ficam só na UI por ora (vivem em `listings.details`, formato ainda não entregue pelo Josué)
+- [x] Busca por texto → `/busca?q=` (título + descrição, `ilike`) — mesma query de `src/lib/listings.ts`
+- [ ] `/anuncios/[id]`: buscar o anúncio + fotos + anunciante e exibir os `details` do tipo (usa os schemas do Josué) — ainda não iniciado: falta o schema de `details` por tipo de anúncio (Sprint 1 do Josué, ainda não entregue em nenhuma branch)
 
 ## Sprint 2 · 05/10–11/10 · Perfil e Match ⭐
 
