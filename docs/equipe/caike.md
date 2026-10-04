@@ -96,7 +96,7 @@ O texto acima diz que você entrega os componentes **até quarta**. A Sprint 1 f
 - [X] Extrair os **tokens** (cores, tipografia, raios) via MCP para o tema + fontes da identidade
 - [X] **Instalar o Node.js** na máquina (v24.21.0 + npm 11.19.0)
 - [X] Layouts `(auth)` (sem navbar) e `(main)` (navbar desktop)
-- [ ] Conversa com a designer: confirmar categorias e tags de convivência, escolher o bege do fundo no comparador e decidir os pontos abertos em DESIGN.md (logo em SVG ✅ recebido em 29/09)
+- [X] Conversa com a designer: bege do fundo escolhido (opção B), logo em SVG recebido (29/09) e os pontos visuais decididos nas 10 anotações de 01/10. **Categorias e tags de convivência:** a Lia também não tem a lista fechada; os componentes recebem as opções por props, então isso não bloqueia o visual — a lista definitiva é dado de referência do banco.
 
 ## Sprint 1 · 29/09–04/10 · Telas do núcleo
 
