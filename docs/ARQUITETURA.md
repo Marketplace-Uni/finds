@@ -209,6 +209,7 @@ O layout `(main)` atualiza `profiles.last_seen_at` no máximo a cada 5 minutos. 
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=        # chave pública (anon/publishable)
 SUPABASE_SERVICE_ROLE_KEY=            # SÓ para scripts/seed.ts — nunca no cliente, nunca no git
+SUPABASE_SEED_TARGET=                 # só para rodar o seed: precisa ser "finds-dev" (confirmação manual, o seed apaga e recria dados)
 ```
 
-`.env.local` fica fora do git. Os valores são compartilhados no grupo privado.
+`.env.local` fica fora do git. Os valores são compartilhados no grupo privado. O `scripts/seed.ts` só lê `.env.local` (via `process.loadEnvFile`), não `.env` — rode com `npm run seed`.
