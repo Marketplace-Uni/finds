@@ -53,6 +53,8 @@ export function ConversationList({
         <EmptyState
           title="Nenhuma conversa ainda"
           description="Quando você falar com alguém sobre um anúncio, a conversa aparece aqui."
+          // Aqui não houve busca nenhuma, então o Zeca da lupa não cabe.
+          pose={1}
         />
       ) : (
         <ul className="flex flex-col gap-1">

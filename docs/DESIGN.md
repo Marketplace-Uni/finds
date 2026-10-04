@@ -83,6 +83,34 @@ Duas diferenças entre o componente e o arquivo, ambas propositais:
 
 Proporção ~**2.97:1**: defina a altura (`h-7` na navbar) e deixe a largura automática.
 
+### Zeca, o mascote
+
+Vetor recebido em 04/10. O arquivo original da Lia está em [`public/zeca-finds.svg`](../../public/zeca-finds.svg); no código, use o componente `Zeca`.
+
+O arquivo traz **7 poses empilhadas** num canvas de 1920×1080, e **6 delas ficam em coordenada Y negativa** — fora da área visível. Usar o SVG direto mostraria só uma pose. O [`src/components/ui/zeca.tsx`](../../src/components/ui/zeca.tsx) é **gerado** a partir do original (não editar à mão) e recorta o viewBox de cada pose no próprio desenho.
+
+```tsx
+<Zeca pose={3} className="h-28 w-auto text-primary" />
+```
+
+- O traço é monocromático, então usa **`currentColor`**: o Zeca assume a cor do texto.
+- As **proporções variam** — a pose 4 é a única horizontal (1.17:1); as outras são verticais, entre 0.38 e 0.57. Defina a altura e deixe a largura automática.
+- Todas as 7 estão lado a lado em `/preview-visual` para escolher.
+
+#### As 7 poses e o que cada uma passa
+
+| Pose | Emoção | Onde usar |
+|---|---|---|
+| 1 | feliz, postura neutra | login, listas vazias sem busca ("nenhuma conversa ainda") |
+| 2 | surpreso | confirmações, "deu certo!" |
+| 3 | procurando com a lupa | **estado vazio** de busca e feed sem resultado |
+| 4 | tranquilo, olhando uma borboleta | **a única horizontal** — banner "Faça um anúncio", faixas largas |
+| 5 | triste, olhando para baixo | anúncio encerrado, conta excluída, nada mais disponível |
+| 6 | confuso | **estado de erro** — algo falhou e não sabemos o quê |
+| 7 | lendo um livro, aprendendo | wizard e onboarding, onde ele guia ("o Zeca vai te ajudar nessa") |
+
+**Em uso hoje:** pose 3 no estado vazio, 6 no erro, 1 no login e nas conversas vazias.
+
 ### Ícones
 
 A Lia usou um kit cujos ícones têm os **mesmos nomes do `lucide-react`** (`Search`, `Bell`, `MapPin`, `Heart`, `Home`, `MessageCircle`, `User`), que é o padrão do shadcn/ui. Use o `lucide-react` direto, sem exportar SVG do Figma.

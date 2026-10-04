@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/src/components/ui/button";
+import { Zeca } from "@/src/components/ui/zeca";
 import { cn } from "@/src/lib/utils";
 
 /** Barra "quanto falta" do Figma. */
@@ -76,6 +77,11 @@ export function WizardShell({
               <ArrowLeft className="size-5" aria-hidden />
             </Link>
           ) : null}
+          {/* Zeca lendo: no Figma é ele quem guia quem está preenchendo. */}
+          <Zeca
+            pose={7}
+            className="pointer-events-none absolute top-0 right-0 hidden h-20 w-auto text-primary/70 sm:block"
+          />
           <h1 className="text-center text-xl font-semibold text-foreground">{title}</h1>
           {subtitle ? (
             <p className="text-center text-sm text-muted-foreground">{subtitle}</p>

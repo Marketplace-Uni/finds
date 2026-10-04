@@ -4,6 +4,7 @@ import { Navbar } from "@/src/components/layout/navbar";
 import { LogoFinds } from "@/src/components/layout/logo-finds";
 import { AuthArt } from "@/src/components/layout/auth-art";
 import { ListingCard } from "@/src/components/listings/listing-card";
+import { AnunciarBanner } from "@/src/components/listings/anunciar-banner";
 import { ListingDetail } from "@/src/components/listings/listing-detail";
 import {
   ListingGrid,
@@ -15,6 +16,7 @@ import { WizardShell } from "@/src/components/ui/wizard";
 import { TextField, TextAreaField } from "@/src/components/ui/field";
 import { PhotoPicker } from "@/src/components/ui/photo-picker";
 import { OverlayIconButton } from "@/src/components/ui/overlay-icon-button";
+import { Zeca, ZECA_POSES, type ZecaPose } from "@/src/components/ui/zeca";
 import { ConversationList } from "@/src/components/chat/conversation-list";
 import { ChatPanel } from "@/src/components/chat/chat-panel";
 import { FiltersSidebar } from "@/src/components/discovery/filters-sidebar";
@@ -108,6 +110,15 @@ export default function PreviewVisualPage() {
       </section>
 
       <div className="mx-auto flex w-full max-w-conteudo flex-col gap-10 px-6">
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Faixa &quot;Faça um anúncio!&quot;</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Do frame <code>Menu App</code> do Figma. Usa a pose 4 do Zeca — a única
+            horizontal, que cabe numa faixa larga sem esticar nada.
+          </p>
+          <AnunciarBanner />
+        </section>
+
         <section>
           <h2 className="mb-1 text-xl font-bold">Card de anúncio e grid</h2>
           <p className="mb-4 text-sm text-muted-foreground">
@@ -390,6 +401,34 @@ export default function PreviewVisualPage() {
             />
             <ErrorState />
           </div>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Zeca — as 7 poses</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            O arquivo da Lia traz 7 poses empilhadas, e 6 delas estavam fora da área
+            visível do SVG. Aqui cada uma aparece recortada no próprio desenho, com a
+            emoção que ela passa. Em uso hoje:{" "}
+            <strong className="text-foreground">
+              3 no estado vazio, 6 no erro e 1 no login
+            </strong>
+            .
+          </p>
+          <ul className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-7">
+            {ZECA_POSES.map((pose, i) => (
+              <li
+                key={i}
+                className="flex flex-col items-center gap-2 rounded-lg bg-card p-4"
+              >
+                <div className="flex h-36 items-end justify-center">
+                  {/* Altura explícita: com `max-h` o SVG não ganha altura e colapsa. */}
+                  <Zeca pose={(i + 1) as ZecaPose} className="h-36 w-auto text-primary" />
+                </div>
+                <span className="text-xs font-semibold">{`pose ${i + 1}`}</span>
+                <span className="text-xs text-muted-foreground">{pose.emocao}</span>
+              </li>
+            ))}
+          </ul>
         </section>
 
         <section>
