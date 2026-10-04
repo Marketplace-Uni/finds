@@ -25,7 +25,7 @@
 - [x] **Criar `page.tsx` placeholder para TODAS as rotas** de ARQUITETURA.md, para cada dev só preencher a sua sem conflito — exceto `(marketing)/`, que colidiria com `(main)/page.tsx` na rota `/`; falta o Caike definir como as duas convivem antes de criar o placeholder dela
 - [x] Preencher "Comandos" no `CLAUDE.md` e "Rodando o projeto" no `README.md`
 - [ ] Estudar o Supabase Auth com Next (`@supabase/ssr`): cadastro, login, confirmação de e-mail, sessão — depende de `src/lib/supabase/` (Josué), que ainda não existe no repositório apesar do checklist dele marcar como pronto
-- [ ] Listar com o Caike os filtros e as informações que aparecem no feed e no detalhe (a partir do Figma) — precisa de conversa direta com ele
+- [x] Listar com o Caike os filtros e as informações que aparecem no feed e no detalhe (a partir do Figma) — conversa feita; contrato dos filtros em `docs/DESIGN.md` (sidebar) e das informações do card/detalhe também em `docs/DESIGN.md`, já implementados em `<FiltersSidebar>`, `<ListingCard>` e `<ListingDetail>`
 - [x] Rascunhar `src/lib/match.ts` com testes simples (é TypeScript puro, não depende de nada)
 
 ## Sprint 1 · 29/09–04/10 · Cadastro, feed e detalhe
