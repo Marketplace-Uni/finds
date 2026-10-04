@@ -25,10 +25,10 @@
 
 ## Sprint 1 · 29/09–04/10 · Seed + Chat
 
-- [ ] `scripts/seed.ts` (usa a `service_role`, **idempotente**: limpa e recria). Rodar no `finds-dev` **até 30/09** e avisar o time
-- [ ] Server action `startConversation(listingId)`: cria ou reabre (não pode conversar com o próprio anúncio; exige perfil completo)
+- [x] `scripts/seed.ts` (usa a `service_role`, **idempotente**: limpa e recria). Rodar no `finds-dev` **até 30/09** e avisar o time
+- [x] Server action `startConversation(listingId)`: cria ou reabre (não pode conversar com o próprio anúncio; exige perfil completo)
 - [ ] `<StartChatButton>` ("Tenho interesse") → **avisar o Kaike quando estiver pronto**
-- [ ] `/mensagens`: lista de conversas (foto do anúncio, outro usuário, última mensagem, horário) + conversa aberta, no layout do Caike
+- [x] `/mensagens`: lista de conversas (foto do anúncio, outro usuário, última mensagem, horário) + conversa aberta, no layout do Caike
 - [ ] Enviar mensagem + **recebimento em tempo real** (Realtime)
 - [ ] Auto-scroll, horário das mensagens, estado vazio ("nenhuma conversa ainda")
 
