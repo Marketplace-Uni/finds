@@ -8,22 +8,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/src/components/ui/button";
 import { TextField } from "@/src/components/ui/field";
 import { cadastroSchema, type CadastroInput } from "@/src/lib/validations/auth";
+import { cadastrar } from "./actions";
 
 export default function CadastroPage() {
-  const [avisoPendente, setAvisoPendente] = useState<string | null>(null);
+  const [erroServidor, setErroServidor] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<CadastroInput>({ resolver: zodResolver(cadastroSchema) });
 
-  // TODO(kaike): trocar por Server Action (signUp, mandando username/full_name
-  // em options.data pro trigger handle_new_user) assim que src/lib/supabase
-  // existir — ver PENDENCIAS-KAIKE.md.
-  async function onSubmit() {
-    setAvisoPendente(
-      "Cadastro ainda não está disponível: aguardando os clientes Supabase (lib/supabase).",
-    );
+  async function onSubmit(data: CadastroInput) {
+    setErroServidor(null);
+    const resultado = await cadastrar(data);
+    if (resultado.error) setErroServidor(resultado.error);
   }
 
   return (
@@ -70,9 +68,9 @@ export default function CadastroPage() {
         {...register("confirmarSenha")}
       />
 
-      {avisoPendente ? (
-        <p className="text-xs text-muted-foreground" role="status">
-          {avisoPendente}
+      {erroServidor ? (
+        <p className="text-xs font-medium text-destructive" role="alert">
+          {erroServidor}
         </p>
       ) : null}
 

@@ -1,28 +1,39 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/src/components/ui/button";
 import { TextField } from "@/src/components/ui/field";
 import { entrarSchema, type EntrarInput } from "@/src/lib/validations/auth";
+import { entrar } from "./actions";
 
 export default function EntrarPage() {
-  const [avisoPendente, setAvisoPendente] = useState<string | null>(null);
+  return (
+    <Suspense>
+      <EntrarForm />
+    </Suspense>
+  );
+}
+
+/** Em componente à parte: `useSearchParams` (o `?next=`) exige Suspense. */
+function EntrarForm() {
+  const [erroServidor, setErroServidor] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next") ?? undefined;
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<EntrarInput>({ resolver: zodResolver(entrarSchema) });
 
-  // TODO(kaike): trocar por Server Action (signInWithPassword) assim que
-  // src/lib/supabase/server.ts existir — ver PENDENCIAS-KAIKE.md.
-  async function onSubmit() {
-    setAvisoPendente(
-      "Login ainda não está disponível: aguardando os clientes Supabase (lib/supabase).",
-    );
+  async function onSubmit(data: EntrarInput) {
+    setErroServidor(null);
+    const resultado = await entrar(data, next);
+    if (resultado.error) setErroServidor(resultado.error);
   }
 
   return (
@@ -47,9 +58,9 @@ export default function EntrarPage() {
         {...register("senha")}
       />
 
-      {avisoPendente ? (
-        <p className="text-xs text-muted-foreground" role="status">
-          {avisoPendente}
+      {erroServidor ? (
+        <p className="text-xs font-medium text-destructive" role="alert">
+          {erroServidor}
         </p>
       ) : null}
 
