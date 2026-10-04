@@ -89,7 +89,7 @@ O texto acima diz que você entrega os componentes **até quarta**. A Sprint 1 f
 
 > O projeto Next.js, o shadcn/ui e as rotas placeholder são do Kaike (Sprint 0 dele).
 
-- [ ] Proteger a `main` no GitHub (merge só via PR)
+- ~~Proteger a `main` no GitHub (merge só via PR)~~ — **descartado** (decisão do Caike em 04/10; o time já vinha usando PR na prática)
 - [X] Figma: ativar o Education e conectar o MCP
 - [X] Acesso ao arquivo do Figma (leitura funcionando)
 - [X] **Inventário das 86 telas** → tabela "mobile → desktop" em DESIGN.md
