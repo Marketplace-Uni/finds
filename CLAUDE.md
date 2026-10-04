@@ -20,7 +20,7 @@ Next.js (App Router) + TypeScript, Tailwind + shadcn/ui, react-hook-form + zod, 
 - `npm run build` — build de produção
 - `npm test` — testes (Vitest)
 - `npx supabase gen types typescript --linked > src/types/database.ts` — gera os tipos do banco (ver "Base de Dados e Tipagens" abaixo)
-- Rodar o seed: **a definir** — depende de `scripts/seed.ts` (Alexandre, ainda não entregue)
+- `npm run seed` — popula o `finds-dev` via `scripts/seed.ts` (Alexandre). **Idempotente: limpa e recria** os dados — confirme com o time antes de rodar. Exige `.env.local` com `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` e `SUPABASE_SEED_TARGET=finds-dev` (ver `docs/ARQUITETURA.md`)
 
 ## Convenções
 
