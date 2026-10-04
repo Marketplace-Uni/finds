@@ -30,12 +30,10 @@ Hoje o texto acima diz que você entrega **componentes** e o dev da feature **mo
 **Pergunta:** fechamos que o Caike entrega a **tela inteira** como componente (`<FeedScreen listings={...} />`) e o `page.tsx` do dev só busca os dados e repassa, sem nenhuma `className`?
 
 - [ ] Sim, tela composta é entrega do Caike
-- [ ] Não, o dev continua montando a página com os componentes soltos
+- [X] Não, o dev continua montando a página com os componentes soltos
 - [ ] Outro: ______
 
-**Consequência se for "sim":** quem desenha a tela define o **contrato de props**. O dev entrega os dados no formato que a tela pede, não o contrário.
-
-**Resposta:**
+**Resposta (02/10, com o Kaike):** fica como está. As telas listadas no arquivo do Kaike são dele; o Caike entrega os **componentes visuais** e cada dev monta a própria página com eles. Vale o plano inicial — cada um faz o que foi atribuído no começo. **Nada muda no DESIGN.md.**
 
 ### 2. A landing e o feed brigam pela rota `/` (com o Kaike)
 
