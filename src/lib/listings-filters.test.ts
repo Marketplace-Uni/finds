@@ -3,7 +3,9 @@ import { describe, expect, it } from "vitest";
 import {
   DEFAULT_ORDER,
   LISTING_TYPE_BY_FILTER_VALUE,
+  buildListingsHref,
   parseListingFilters,
+  parsePage,
 } from "./listings-filters";
 
 describe("parseListingFilters", () => {
@@ -60,5 +62,37 @@ describe("LISTING_TYPE_BY_FILTER_VALUE", () => {
       roommate: "roommate",
       republica: "republic",
     });
+  });
+});
+
+describe("parsePage", () => {
+  it("retorna 1 quando não há `pagina` na URL", () => {
+    expect(parsePage({})).toBe(1);
+  });
+
+  it("lê a página atual", () => {
+    expect(parsePage({ pagina: "3" })).toBe(3);
+  });
+
+  it("nunca retorna menos que 1 (valor inválido ou negativo)", () => {
+    expect(parsePage({ pagina: "0" })).toBe(1);
+    expect(parsePage({ pagina: "-5" })).toBe(1);
+    expect(parsePage({ pagina: "abc" })).toBe(1);
+  });
+});
+
+describe("buildListingsHref", () => {
+  it("sem filtros e página 1, retorna só o path", () => {
+    expect(buildListingsHref("/", {}, 1)).toBe("/");
+  });
+
+  it("preserva os filtros existentes e adiciona `pagina`", () => {
+    const href = buildListingsHref("/", { tipo: ["produto", "servico"], campus: "santa-monica" }, 2);
+    expect(href).toBe("/?tipo=produto&tipo=servico&campus=santa-monica&pagina=2");
+  });
+
+  it("troca a `pagina` antiga pela nova, sem duplicar", () => {
+    const href = buildListingsHref("/busca", { q: "bicicleta", pagina: "2" }, 3);
+    expect(href).toBe("/busca?q=bicicleta&pagina=3");
   });
 });

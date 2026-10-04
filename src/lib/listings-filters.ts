@@ -61,3 +61,35 @@ export function parseListingFilters(searchParams: ListingSearchParams): ListingF
     ordem: toSingle(searchParams.ordem) ?? DEFAULT_ORDER,
   };
 }
+
+/** Página atual do "carregar mais" (`?pagina=`), nunca menor que 1. */
+export function parsePage(searchParams: ListingSearchParams): number {
+  const parsed = toNumber(searchParams.pagina);
+  return parsed && parsed > 1 ? Math.floor(parsed) : 1;
+}
+
+/**
+ * Monta o link de "carregar mais": preserva todos os filtros da URL atual e
+ * só troca (ou adiciona) `pagina`. Sem JavaScript — é só um `<a href>`.
+ */
+export function buildListingsHref(
+  path: string,
+  searchParams: ListingSearchParams,
+  page: number,
+): string {
+  const params = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(searchParams)) {
+    if (key === "pagina") continue;
+    if (Array.isArray(value)) {
+      value.forEach((item) => params.append(key, item));
+    } else if (value) {
+      params.set(key, value);
+    }
+  }
+
+  if (page > 1) params.set("pagina", String(page));
+
+  const query = params.toString();
+  return query ? `${path}?${query}` : path;
+}
