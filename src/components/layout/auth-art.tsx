@@ -5,27 +5,30 @@ import { LogoFinds } from "@/src/components/layout/logo-finds";
  * o logo, "Bem-vindo ao Finds!" e uma ilustração; no desktop isso vira a
  * metade esquerda da tela dividida (docs/DESIGN.md).
  *
+ * Ajustes pedidos pela Lia em 01/10: logo em creme (o laranja não contrastava
+ * no marrom), blocos agrupados em vez de espalhados, e a assinatura logo
+ * abaixo do texto.
+ *
  * A ilustração do Figma é imagem rasterizada e não foi exportada, então o
- * painel usa logo e tipografia. Quando a Lia mandar a arte, ela entra aqui.
+ * painel usa logo e tipografia. Quando ela mandar a arte, ela entra aqui.
  */
 export function AuthArt() {
   return (
-    <div className="relative hidden flex-col justify-between overflow-hidden bg-nav p-12 lg:flex">
-      <LogoFinds className="h-10 w-auto text-primary" />
+    <div className="relative hidden flex-col overflow-hidden bg-nav p-12 lg:flex">
+      <LogoFinds className="h-10 w-auto text-nav-foreground" />
 
-      <div className="relative z-10 flex flex-col gap-4">
+      <div className="relative z-10 flex flex-1 flex-col justify-center gap-3">
         <p className="text-3xl leading-tight font-bold text-nav-foreground">
           Bem-vindo ao Finds!
         </p>
-        <p className="max-w-sm text-sm text-nav-foreground/80">
-          O marketplace de quem é da UFU: compre, venda, ofereça serviços e ache
-          com quem dividir moradia — sempre com outro estudante do outro lado.
+        <p className="max-w-sm text-sm leading-relaxed text-nav-foreground/80">
+          O marketplace de quem é da UFU: compre, venda, ofereça serviços e ache com
+          quem dividir moradia —&nbsp;sempre com outro estudante do outro lado.
+        </p>
+        <p className="mt-1 font-mono text-xs text-secondary">
+          feito por estudantes, para estudantes
         </p>
       </div>
-
-      <p className="relative z-10 font-mono text-xs text-secondary">
-        feito por estudantes, para estudantes
-      </p>
 
       {/* Formas da identidade ao fundo, nas cores da marca. */}
       <span

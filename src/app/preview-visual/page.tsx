@@ -14,6 +14,7 @@ import { Button } from "@/src/components/ui/button";
 import { WizardShell } from "@/src/components/ui/wizard";
 import { TextField, TextAreaField } from "@/src/components/ui/field";
 import { PhotoPicker } from "@/src/components/ui/photo-picker";
+import { OverlayIconButton } from "@/src/components/ui/overlay-icon-button";
 import { ConversationList } from "@/src/components/chat/conversation-list";
 import { ChatPanel } from "@/src/components/chat/chat-panel";
 import { FiltersSidebar } from "@/src/components/discovery/filters-sidebar";
@@ -120,13 +121,9 @@ export default function PreviewVisualPage() {
                 key={exemplo.href}
                 {...exemplo}
                 favoriteSlot={
-                  <button
-                    type="button"
-                    aria-label="Favoritar"
-                    className="grid size-8 place-items-center rounded-pill bg-background/80 text-foreground"
-                  >
-                    <Heart className="size-4" aria-hidden />
-                  </button>
+                  <OverlayIconButton aria-label="Favoritar">
+                    <Heart aria-hidden />
+                  </OverlayIconButton>
                 }
               />
             ))}
@@ -161,7 +158,11 @@ export default function PreviewVisualPage() {
                   placeholder="••••••••"
                 />
                 <Button className="rounded-pill py-6 font-bold">Entrar</Button>
-                <Button variant="ghost" className="rounded-pill text-muted-foreground">
+                {/* Menor e colado no "Entrar", como a Lia pediu. */}
+                <Button
+                  variant="ghost"
+                  className="-mt-2 h-auto py-1 text-xs text-muted-foreground hover:bg-transparent"
+                >
                   Esqueci minha senha
                 </Button>
               </div>
@@ -312,13 +313,9 @@ export default function PreviewVisualPage() {
               lastSeen: "última vez visto em 14:29",
             }}
             favoriteSlot={
-              <button
-                type="button"
-                aria-label="Favoritar"
-                className="grid size-9 shrink-0 place-items-center rounded-pill bg-card text-foreground"
-              >
-                <Heart className="size-5" aria-hidden />
-              </button>
+              <OverlayIconButton aria-label="Favoritar" className="shrink-0 bg-card">
+                <Heart aria-hidden />
+              </OverlayIconButton>
             }
             chatSlot={
               <Button className="w-full rounded-lg py-6 text-base font-bold">
@@ -326,7 +323,10 @@ export default function PreviewVisualPage() {
               </Button>
             }
             reportSlot={
-              <Button variant="ghost" className="rounded-pill text-muted-foreground">
+              <Button
+                variant="ghost"
+                className="h-auto rounded-pill py-1 text-sm font-semibold text-primary hover:bg-transparent hover:text-primary"
+              >
                 Denunciar anúncio
               </Button>
             }

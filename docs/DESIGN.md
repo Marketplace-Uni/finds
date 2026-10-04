@@ -205,6 +205,28 @@ Contrato dos parâmetros — quem é dono da rota lê os `searchParams` e filtra
 
 **Adaptação:** o Figma usa um **slider** de faixa de preço (R$ 0–900). No desktop são dois campos "de / até", mais precisos e sem depender de JavaScript. A ordenação, que no mobile é uma tela própria, entra na mesma sidebar.
 
+### Retorno da Lia — 01/10
+
+Primeira revisão dela sobre o `/preview-visual`. Nenhuma estrutura foi questionada; tudo era acabamento.
+
+| O que ela apontou | O que mudou |
+|---|---|
+| Logo laranja não contrasta no marrom | Logo em **creme** na navbar e no painel de auth |
+| Ícones da navbar pequenos e desalinhados | Ícones maiores (`size-5`) em botões de 40px, alinhados ao avatar |
+| Travessão pendurado no fim da linha | Espaço **não-quebrável** entre `—` e a palavra seguinte, para descerem juntos |
+| Painel de auth mal diagramado | Blocos agrupados e assinatura logo abaixo do texto |
+| "Esqueci minha senha" grande e distante | Menor e colado no botão "Entrar" |
+| Botão de denúncia sem contraste | **Caixa bege** (`card`) em volta, com o texto em laranja |
+| Lista "Categoria / Campus" no detalhe | Virou **tags** no formato `categoria: Eletrônicos` |
+| Tags todas da mesma cor | **Alternam** entre limão, salmão, marrom e contorno laranja |
+| Favoritar sumia sobre fotos claras | `OverlayIconButton`: círculo claro sólido atrás do ícone |
+
+**Direção dela, ainda em aberto:** *"pode variar mais nas cores da paleta, todas têm peso semelhante na marca; pode ter criação de gradientes com elas também."*
+
+Risco a conversar antes de aplicar em cheio: hoje o **laranja significa ação** (CTA, chip selecionado). Se ele passar a aparecer decorativamente, a pessoa perde a pista do que é clicável. A proposta é variar livremente em tags, chips e fundos decorativos, **mantendo o laranja exclusivo para ação**, e usar gradientes só em áreas grandes (painel de auth, banner "Faça um anúncio").
+
+**Adiado para a Sprint 2:** o **Zeca nos estados vazio e de erro**. O SVG do mascote **ainda não existe** — a Lia precisa criar. Até lá, `EmptyState` e `ErrorState` seguem com ícones genéricos, que funcionam; a troca é pontual quando o arquivo chegar.
+
 ### Pontos para decidir com a Lia
 
 1. **Botão "Seguir" o vendedor** — seguir usuários não está no [ESCOPO.md](ESCOPO.md), nem no P0 nem no P1. Sugestão: **não implementar** e tirar do layout.

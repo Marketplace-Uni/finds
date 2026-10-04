@@ -8,6 +8,7 @@ import {
   type ListingImage,
 } from "@/src/components/listings/listing-gallery";
 import { formatPrice } from "@/src/lib/format";
+import { cn } from "@/src/lib/utils";
 
 export type ListingSeller = {
   name: string;
@@ -50,14 +51,25 @@ function initials(name: string) {
     .join("");
 }
 
-function Chip({ children, tone }: { children: ReactNode; tone: "categoria" | "atributo" }) {
+/**
+ * As tags alternam entre as cores da paleta, como os chips de categoria do
+ * feed no Figma — a Lia pediu que não ficassem todas iguais, porque as cores
+ * têm peso parecido na marca.
+ */
+const TONS_DE_CHIP = [
+  "bg-secondary text-secondary-foreground",
+  "bg-accent text-accent-foreground",
+  "bg-nav text-nav-foreground",
+  "border-2 border-primary text-primary",
+] as const;
+
+function Chip({ children, index = 0 }: { children: ReactNode; index?: number }) {
   return (
     <span
-      className={
-        tone === "categoria"
-          ? "rounded-pill bg-secondary px-3 py-1 text-xs font-semibold text-secondary-foreground"
-          : "rounded-pill bg-accent px-3 py-1 text-xs font-semibold text-accent-foreground"
-      }
+      className={cn(
+        "rounded-pill px-3 py-1 text-xs font-semibold",
+        TONS_DE_CHIP[index % TONS_DE_CHIP.length],
+      )}
     >
       {children}
     </span>
@@ -114,8 +126,8 @@ export function ListingDetail({
             <section>
               <h2 className="mb-2 text-sm font-medium text-foreground">Categorias</h2>
               <div className="flex flex-wrap gap-2">
-                {categories.map((categoria) => (
-                  <Chip key={categoria} tone="categoria">
+                {categories.map((categoria, i) => (
+                  <Chip key={categoria} index={i}>
                     {`#${categoria}`}
                   </Chip>
                 ))}
@@ -129,8 +141,10 @@ export function ListingDetail({
                 Características
               </h2>
               <div className="flex flex-wrap gap-2">
-                {attributes.map((atributo) => (
-                  <Chip key={atributo} tone="atributo">
+                {/* Começa num tom diferente das categorias, para os dois blocos
+                    não ficarem iguais. */}
+                {attributes.map((atributo, i) => (
+                  <Chip key={atributo} index={i + 1}>
                     {atributo}
                   </Chip>
                 ))}
@@ -138,14 +152,16 @@ export function ListingDetail({
             </section>
           ) : null}
 
+          {/* A Lia preferiu tags no lugar da lista rótulo/valor. */}
           {specs.length > 0 ? (
-            <dl className="flex flex-col gap-1.5 rounded-lg bg-card p-4 text-sm">
+            <dl className="flex flex-wrap gap-2">
               {specs.map((spec) => (
-                <div key={spec.label} className="flex justify-between gap-4">
-                  <dt className="text-muted-foreground">{spec.label}</dt>
-                  <dd className="text-right font-medium text-foreground">
-                    {spec.value}
-                  </dd>
+                <div
+                  key={spec.label}
+                  className="flex items-baseline gap-1.5 rounded-md bg-card px-3 py-1.5 text-xs"
+                >
+                  <dt className="text-primary">{`${spec.label.toLowerCase()}:`}</dt>
+                  <dd className="font-medium text-foreground">{spec.value}</dd>
                 </div>
               ))}
             </dl>
@@ -178,7 +194,12 @@ export function ListingDetail({
             <p className="text-sm whitespace-pre-line text-foreground">{description}</p>
           </section>
 
-          {reportSlot ? <div className="flex justify-start">{reportSlot}</div> : null}
+          {/* Caixa bege em volta: sem ela o botão de denúncia sumia no fundo. */}
+          {reportSlot ? (
+            <div className="rounded-lg bg-card p-2 text-center text-primary">
+              {reportSlot}
+            </div>
+          ) : null}
         </div>
       </div>
 
