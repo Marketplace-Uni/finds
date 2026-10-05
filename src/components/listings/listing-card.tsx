@@ -4,6 +4,10 @@ import { ImageOff } from "lucide-react";
 
 import { cn } from "@/src/lib/utils";
 import { formatPrice } from "@/src/lib/format";
+import {
+  ListingStatusBadge,
+  type ListingStatus,
+} from "@/src/components/listings/listing-status-badge";
 
 export type ListingCardProps = {
   /** Rota do detalhe, normalmente `/anuncios/[id]`. */
@@ -18,6 +22,13 @@ export type ListingCardProps = {
   imageUrl?: string | null;
   /** Chip do tipo do anúncio: "Serviço", "República"… */
   typeLabel?: string | null;
+  /** Selo de estado, usado em "Meus anúncios": rascunho, pausado, vendido. */
+  status?: ListingStatus | null;
+  /**
+   * Ações do dono do anúncio (editar, pausar, excluir). Fica acima do link que
+   * cobre o card, então continua clicável.
+   */
+  actionsSlot?: ReactNode;
   /**
    * Onde o `<FavoriteButton>` do Alexandre entra. Fica sobreposto no canto
    * superior direito da imagem, como no Figma.
@@ -41,6 +52,8 @@ export function ListingCard({
   location,
   imageUrl,
   typeLabel,
+  status,
+  actionsSlot,
   favoriteSlot,
   className,
 }: ListingCardProps) {
@@ -65,7 +78,13 @@ export function ListingCard({
           </div>
         )}
 
-        {typeLabel ? (
+        {status ? (
+          <div className="absolute top-2 left-2">
+            <ListingStatusBadge status={status} />
+          </div>
+        ) : null}
+
+        {typeLabel && !status ? (
           <span className="absolute top-2 left-2 rounded-pill bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground">
             {typeLabel}
           </span>
@@ -97,6 +116,11 @@ export function ListingCard({
         ) : null}
 
         {location ? <p className="text-xs text-primary">{location}</p> : null}
+
+        {/* `relative z-10` tira as ações de baixo do link que cobre o card. */}
+        {actionsSlot ? (
+          <div className="relative z-10 mt-2 flex flex-wrap gap-2">{actionsSlot}</div>
+        ) : null}
       </div>
     </article>
   );
