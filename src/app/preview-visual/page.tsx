@@ -5,6 +5,12 @@ import { LogoFinds } from "@/src/components/layout/logo-finds";
 import { AuthArt } from "@/src/components/layout/auth-art";
 import { ListingCard } from "@/src/components/listings/listing-card";
 import { AnunciarBanner } from "@/src/components/listings/anunciar-banner";
+import { ListingTabs } from "@/src/components/listings/listing-tabs";
+import { MatchCard } from "@/src/components/match/match-card";
+import { ConvivenciaPicker } from "@/src/components/match/convivencia-picker";
+import { ProfileHeader } from "@/src/components/profile/profile-header";
+import { NegotiationCard } from "@/src/components/transactions/negotiation-card";
+import { Modal, ReasonOptions, RatingInput } from "@/src/components/ui/modal";
 import { ListingDetail } from "@/src/components/listings/listing-detail";
 import {
   ListingGrid,
@@ -110,6 +116,243 @@ export default function PreviewVisualPage() {
       </section>
 
       <div className="mx-auto flex w-full max-w-conteudo flex-col gap-10 px-6">
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Match de roommates ⭐</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Sprint 2. O selo de compatibilidade e as tags em comum — que são o
+            &quot;porquê&quot; do número. Não existe tela para isso no Figma; composto
+            a partir do card e dos chips.
+          </p>
+          <ListingGrid className="lg:grid-cols-3 xl:grid-cols-4">
+            <MatchCard
+              href="/anuncios/10"
+              title="Vaga em república no Santa Mônica"
+              price={550}
+              priceNote="por mês"
+              location="Santa Mônica"
+              score={0.87}
+              commonTraits={["dorme cedo", "organizado", "não fuma"]}
+            />
+            <MatchCard
+              href="/anuncios/11"
+              title="Divido apartamento de 2 quartos"
+              price={700}
+              priceNote="por mês"
+              location="Umuarama"
+              score={0.62}
+              commonTraits={["gosta de silêncio", "tem pet"]}
+            />
+            <MatchCard
+              href="/anuncios/12"
+              title="Quarto individual perto do campus"
+              price={480}
+              priceNote="por mês"
+              location="Glória"
+              score={0.35}
+              commonTraits={["noturno"]}
+            />
+            <MatchCard
+              href="/anuncios/13"
+              title="Procuro alguém para dividir casa"
+              location="Uberlândia, MG"
+              score={null}
+            />
+          </ListingGrid>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Perfil de convivência</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Sprint 2. O que alimenta o match: a pessoa marca como é e o que procura.
+          </p>
+          <div className="rounded-lg bg-card/50 p-6">
+            <ConvivenciaPicker
+              traits={[
+                { key: "dorme-cedo", label: "dorme cedo", group: "rotina" },
+                { key: "noturno", label: "noturno", group: "rotina" },
+                { key: "organizado", label: "organizado", group: "organização" },
+                { key: "bagunceiro", label: "tranquilo com bagunça", group: "organização" },
+                { key: "silencio", label: "gosta de silêncio", group: "convivência" },
+                { key: "visitas", label: "recebe visitas", group: "convivência" },
+                { key: "pet", label: "tem pet", group: "hábitos" },
+                { key: "nao-fuma", label: "não fuma", group: "hábitos" },
+              ]}
+              self={["dorme-cedo", "organizado"]}
+              wanted={["silencio", "nao-fuma"]}
+            />
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Cabeçalho do perfil</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Sprint 2. Com e sem avaliações.
+          </p>
+          <div className="flex flex-col gap-4">
+            <ProfileHeader
+              name="Fulano de Tal"
+              username="fulano"
+              bio="Estudante de Engenharia Civil. Vendo o que não uso mais e às vezes dou aula de cálculo."
+              campus="Santa Mônica"
+              lastSeen="ativo há 2h"
+              rating={4.8}
+              reviewCount={12}
+              actionSlot={
+                <Button variant="ghost" className="rounded-pill">
+                  Editar perfil
+                </Button>
+              }
+            />
+            <ProfileHeader
+              name="Beltrana Souza"
+              username="beltrana"
+              campus="Umuarama"
+              lastSeen="ativo há 3 dias"
+            />
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Meus anúncios: abas e estados</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Sprint 2. As abas são links, então o estado fica na URL.
+          </p>
+          <ListingTabs
+            tabs={[
+              { value: "ativos", label: "Ativos", count: 4 },
+              { value: "rascunhos", label: "Rascunhos", count: 2 },
+              { value: "encerrados", label: "Encerrados", count: 7 },
+            ]}
+            current="ativos"
+            className="mb-5"
+          />
+          <ListingGrid className="lg:grid-cols-3 xl:grid-cols-4">
+            {(
+              [
+                { status: "active", title: "Mesa digitalizadora" },
+                { status: "draft", title: "Cadeira gamer (sem foto ainda)" },
+                { status: "paused", title: "Monitor 24 polegadas" },
+                { status: "sold", title: "Bicicleta aro 29" },
+              ] as const
+            ).map((item, i) => (
+              <ListingCard
+                key={item.title}
+                href={`/anuncios/${i}`}
+                title={item.title}
+                price={150 + i * 90}
+                location="Santa Mônica"
+                status={item.status}
+                actionsSlot={
+                  <>
+                    <Button variant="ghost" className="h-8 rounded-pill px-3 text-xs">
+                      Editar
+                    </Button>
+                    <Button variant="ghost" className="h-8 rounded-pill px-3 text-xs">
+                      {item.status === "paused" ? "Reativar" : "Pausar"}
+                    </Button>
+                  </>
+                }
+              />
+            ))}
+          </ListingGrid>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">Negociação e modais</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Sprint 2. O card entra no topo do chat; os modais abrem de verdade — pode
+            clicar.
+          </p>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <NegotiationCard
+              status="pending"
+              price={150}
+              actionsSlot={
+                <>
+                  <Button className="rounded-pill">Aceitar</Button>
+                  <Button variant="ghost" className="rounded-pill">
+                    Recusar
+                  </Button>
+                </>
+              }
+            />
+            <NegotiationCard
+              status="confirmed"
+              price={150}
+              actionsSlot={
+                <Button className="rounded-pill">Marcar como concluído</Button>
+              }
+            />
+            <NegotiationCard status="completed" price={150} waitingOther />
+            <NegotiationCard
+              status="cancelled"
+              cancelReason="Desisti da compra"
+            />
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Modal
+              trigger={<Button className="rounded-pill">Avaliar pessoa</Button>}
+              title="Como foi negociar com o Fulano?"
+              description="Sua avaliação aparece no perfil dele."
+              confirmLabel="Enviar avaliação"
+            >
+              <RatingInput />
+              <TextAreaField
+                label="Comentário"
+                htmlFor="comentario-demo"
+                name="comentario"
+                rows={3}
+                placeholder="Conte como foi o combinado e a entrega."
+              />
+            </Modal>
+
+            <Modal
+              trigger={
+                <Button variant="ghost" className="rounded-pill">
+                  Denunciar anúncio
+                </Button>
+              }
+              title="Denunciar anúncio"
+              description="Conte o que houve. A denúncia é anônima."
+              confirmLabel="Enviar denúncia"
+              destructive
+            >
+              <ReasonOptions
+                options={[
+                  { value: "golpe", label: "Parece golpe" },
+                  { value: "proibido", label: "Item proibido" },
+                  { value: "ofensivo", label: "Conteúdo ofensivo" },
+                  { value: "outro", label: "Outro" },
+                ]}
+              />
+            </Modal>
+
+            <Modal
+              trigger={
+                <Button variant="ghost" className="rounded-pill">
+                  Cancelar negociação
+                </Button>
+              }
+              title="Cancelar negociação"
+              description="A outra pessoa vai ver o motivo."
+              confirmLabel="Cancelar negociação"
+              cancelLabel="Voltar"
+              destructive
+            >
+              <ReasonOptions
+                name="motivo-cancelamento"
+                options={[
+                  { value: "desisti", label: "Desisti" },
+                  { value: "sem-resposta", label: "Sem resposta" },
+                  { value: "achei-outro", label: "Achei outro" },
+                  { value: "outro", label: "Outro" },
+                ]}
+              />
+            </Modal>
+          </div>
+        </section>
+
         <section>
           <h2 className="mb-1 text-xl font-bold">Faixa &quot;Faça um anúncio!&quot;</h2>
           <p className="mb-4 text-sm text-muted-foreground">

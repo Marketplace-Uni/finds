@@ -62,6 +62,59 @@ Os layouts `(main)` e `(auth)` já aplicam navbar e tela dividida — páginas d
 
 Para botões de ícone **sobre imagem** (como favoritar), use `OverlayIconButton` de `@/src/components/ui/overlay-icon-button`: ele tem o círculo claro que impede o ícone de sumir em fotos claras.
 
+### Meus anúncios
+
+| Componente | Import | Props principais |
+|---|---|---|
+| `ListingTabs` | `@/src/components/listings/listing-tabs` | `tabs` (`value`, `label`, `count`), `current`, `basePath`, `param` |
+| `ListingStatusBadge` | `@/src/components/listings/listing-status-badge` | `status`: `active`, `draft`, `paused`, `sold`, `closed` |
+
+As abas são **links**, não botões com estado: a aba atual vai para a URL (`?aba=rascunhos`), funciona sem JavaScript e dá para compartilhar o endereço.
+
+No `ListingCard`, duas props cuidam da visão do dono: `status` (põe o selo sobre a imagem) e `actionsSlot` (botões de editar, pausar, excluir — ficam acima do link que cobre o card, então continuam clicáveis).
+
+## Match de roommates ⭐
+
+| Componente | Import | Props principais |
+|---|---|---|
+| `MatchCard` | `@/src/components/match/match-card` | as do card + `score` (0 a 1) e `commonTraits` |
+| `ConvivenciaPicker` | `@/src/components/match/convivencia-picker` | `traits` (`key`, `label`, `group`), `self`, `wanted`, `action` |
+
+O `score` entra **como o `matchScore()` devolve**, de 0 a 1 — o card converte para porcentagem. Com `score={null}` o selo some, para quem ainda não montou o perfil de convivência.
+
+As `commonTraits` são os **rótulos** das tags em comum, não as chaves. Elas é que explicam o número: sem elas, "87% compatível" é só um número solto.
+
+O `ConvivenciaPicker` agrupa as tags pelo campo `group` e envia dois campos: `sou` e `procuro`.
+
+## Perfil
+
+`ProfileHeader`, de `@/src/components/profile/profile-header`.
+
+Props: `name`, `username`, `avatarUrl`, `bio`, `campus`, `lastSeen`, `rating`, `reviewCount`, `actionSlot`. Sem `rating` ele mostra "Sem avaliações ainda"; o `actionSlot` serve para "Editar perfil" ou para os botões do Alexandre.
+
+## Negociação e modais
+
+| Componente | Import | Para que serve |
+|---|---|---|
+| `NegotiationCard` | `@/src/components/transactions/negotiation-card` | Status da negociação no topo do chat. Props: `status`, `price`, `cancelReason`, `waitingOther`, `actionsSlot` |
+| `Modal` | `@/src/components/ui/modal` | Casca dos modais. Já envolve o conteúdo num `<form>`: passe `action` e os campos em `children` |
+| `ReasonOptions` | idem | Motivos em chips, para denúncia e cancelamento |
+| `RatingInput` | idem | Nota de 1 a 5 estrelas, com radios de verdade |
+
+```tsx
+<Modal
+  trigger={<Button>Avaliar</Button>}
+  title="Como foi negociar com o Fulano?"
+  confirmLabel="Enviar avaliação"
+  action={enviarAvaliacao}
+>
+  <RatingInput />
+  <TextAreaField label="Comentário" htmlFor="comentario" name="comentario" />
+</Modal>
+```
+
+O `NegotiationCard` entra no `headerSlot` do `ChatPanel`. Os quatro estados (`pending`, `confirmed`, `completed`, `cancelled`) já trazem o texto do que fazer em cada etapa — as ações entram por slot.
+
 ## Busca e descoberta
 
 `FiltersSidebar`, de `@/src/components/discovery/filters-sidebar`.
