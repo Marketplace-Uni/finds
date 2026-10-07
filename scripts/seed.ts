@@ -7,7 +7,6 @@ type SeedUser = {
 	id: string;
 	full_name: string;
 	username: string;
-	email: string;
 	campus_id: string;
 };
 
@@ -27,6 +26,11 @@ type SeedTrait = { key: string; label: string; trait_group: string };
 
 const seedMarker = "finds-dev";
 const universityId = "00000000-0000-4000-8000-000000000001";
+
+function seedEmail(user: Pick<SeedUser, "username">): string {
+	return `${user.username}@ufu.br`;
+}
+
 const campuses = [
 	{
 		id: "11111111-1111-4000-8000-000000000001",
@@ -181,14 +185,14 @@ function readJson<T>(fileName: string): T {
 function validateSeed(users: SeedUser[], listings: SeedListing[]) {
 	const userIds = new Set(users.map((user) => user.id));
 	const campusIds = new Set(campuses.map((campus) => campus.id));
-	const emails = new Set(users.map((user) => user.email.toLowerCase()));
+	const emails = new Set(users.map((user) => seedEmail(user).toLowerCase()));
 	const titles = new Set(listings.map((listing) => listing.title));
 
 	if (users.length === 0 || listings.length === 0) {
 		throw new Error("Os arquivos de seed não podem estar vazios.");
 	}
 	if (emails.size !== users.length || titles.size !== listings.length) {
-		throw new Error("A seed contém e-mails ou títulos duplicados.");
+		throw new Error("A seed contém nomes de usuário ou títulos duplicados.");
 	}
 	if (users.some((user) => !campusIds.has(user.campus_id))) {
 		throw new Error("Há usuário associado a um campus sem cadastro na seed.");
@@ -246,7 +250,7 @@ async function main() {
 		auth: { autoRefreshToken: false, persistSession: false },
 	});
 	const admin = supabase.auth.admin;
-	const fixtureEmails = new Set(users.map((user) => user.email.toLowerCase()));
+	const fixtureEmails = new Set(users.map((user) => seedEmail(user).toLowerCase()));
 	const existingUsers = [];
 
 	for (let page = 1; ; page += 1) {
@@ -323,7 +327,7 @@ async function main() {
 	const userIds = new Map<string, string>();
 	for (const user of users) {
 		const { data, error } = await admin.createUser({
-			email: user.email,
+			email: seedEmail(user),
 			password: randomBytes(32).toString("hex"),
 			email_confirm: true,
 			user_metadata: {
