@@ -3,96 +3,96 @@
     "id": "22222222-2222-4000-8000-000000000001",
     "full_name": "Lucas Santos Silva",
     "username": "lucas.silva",
-    "email": "lucas.silva@ufu.br",
-    "phone": "34999990001",
+    "bio": "Estudante da UFU, gosto de manter uma rotina organizada e estudar em casa.",
+    "tags": ["É organizado", "Não fuma", "Estuda em casa"],
     "campus_id": "11111111-1111-4000-8000-000000000001"
   },
   {
     "id": "22222222-2222-4000-8000-000000000002",
     "full_name": "Mariana Oliveira Sousa",
     "username": "mariana.oliveira",
-    "email": "mariana.oliveira@ufu.br",
-    "phone": "34999990002",
+    "bio": "Estudante da UFU e fã de noites tranquilas para cozinhar e colocar os estudos em dia.",
+    "tags": ["Tem rotina noturna", "É sociável", "Cozinha em casa"],
     "campus_id": "11111111-1111-4000-8000-000000000001"
   },
   {
     "id": "22222222-2222-4000-8000-000000000003",
     "full_name": "Felipe Alves Costa",
     "username": "felipe.costa",
-    "email": "felipe.costa@ufu.br",
-    "phone": "34999990003",
+    "bio": "Estudante da UFU, prefiro começar o dia cedo e cuidar bem do espaço compartilhado.",
+    "tags": ["Dorme cedo", "Gosta de silêncio", "É organizado"],
     "campus_id": "11111111-1111-4000-8000-000000000002"
   },
   {
     "id": "22222222-2222-4000-8000-000000000004",
     "full_name": "Beatriz Lima Rodrigues",
     "username": "beatriz.lima",
-    "email": "beatriz.lima@ufu.br",
-    "phone": "34999990004",
+    "bio": "Estudante da UFU, costumo acordar cedo e gosto de cumprir os horários.",
+    "tags": ["Estuda em casa", "Acorda cedo", "É pontual"],
     "campus_id": "11111111-1111-4000-8000-000000000001"
   },
   {
     "id": "22222222-2222-4000-8000-000000000005",
     "full_name": "Thiago Gomes Pereira",
     "username": "thiago.pereira",
-    "email": "thiago.pereira@ufu.br",
-    "phone": "34999990005",
+    "bio": "Estudante da UFU, tenho um pet e me adapto bem a diferentes rotinas.",
+    "tags": ["Tem pet", "Gosta de pets", "Tem rotina flexível"],
     "campus_id": "11111111-1111-4000-8000-000000000002"
   },
   {
     "id": "22222222-2222-4000-8000-000000000006",
     "full_name": "Camila Fernandes Rocha",
     "username": "camila.rocha",
-    "email": "camila.rocha@ufu.br",
-    "phone": "34999990006",
+    "bio": "Estudante da UFU, gosto de praticar esportes e manter hábitos saudáveis.",
+    "tags": ["Pratica esportes", "Dorme cedo", "Não fuma"],
     "campus_id": "11111111-1111-4000-8000-000000000001"
   },
   {
     "id": "22222222-2222-4000-8000-000000000007",
     "full_name": "Rafael Barbosa Melo",
     "username": "rafael.melo",
-    "email": "rafael.melo@ufu.br",
-    "phone": "34999990007",
+    "bio": "Estudante da UFU, tenho uma rotina mais noturna e estudo bastante em casa.",
+    "tags": ["Tem rotina noturna", "Estuda em casa", "Tem hábitos sustentáveis"],
     "campus_id": "11111111-1111-4000-8000-000000000001"
   },
   {
     "id": "22222222-2222-4000-8000-000000000008",
     "full_name": "Juliana Martins Ribeiro",
     "username": "juliana.ribeiro",
-    "email": "juliana.ribeiro@ufu.br",
-    "phone": "34999990008",
+    "bio": "Estudante da UFU, gosto de receber amigos e conviver com animais.",
+    "tags": ["Tem pet", "É sociável", "Gosta de receber visitas"],
     "campus_id": "11111111-1111-4000-8000-000000000002"
   },
   {
     "id": "22222222-2222-4000-8000-000000000009",
     "full_name": "Pedro Henrique Almeida",
     "username": "pedro.almeida",
-    "email": "pedro.almeida@ufu.br",
-    "phone": "34999990009",
+    "bio": "Estudante da UFU, gosto de cozinhar e dividir as tarefas da casa.",
+    "tags": ["Cozinha em casa", "Divide as tarefas", "É pontual"],
     "campus_id": "11111111-1111-4000-8000-000000000003"
   },
   {
     "id": "22222222-2222-4000-8000-000000000010",
     "full_name": "Amanda Teixeira Castro",
     "username": "amanda.castro",
-    "email": "amanda.castro@ufu.br",
-    "phone": "34999990010",
+    "bio": "Estudante da UFU, acordo cedo e prefiro ambientes organizados e silenciosos.",
+    "tags": ["Acorda cedo", "É organizado", "Gosta de silêncio"],
     "campus_id": "11111111-1111-4000-8000-000000000001"
   },
   {
     "id": "22222222-2222-4000-8000-000000000011",
     "full_name": "Gustavo Rocha Mendes",
     "username": "gustavo.mendes",
-    "email": "gustavo.mendes@ufu.br",
-    "phone": "34999990011",
+    "bio": "Estudante da UFU, levo uma rotina flexível e gosto de praticar esportes.",
+    "tags": ["Tem rotina flexível", "É sociável", "Pratica esportes"],
     "campus_id": "11111111-1111-4000-8000-000000000003"
   },
   {
     "id": "22222222-2222-4000-8000-000000000012",
     "full_name": "Letícia Carvalho Dias",
     "username": "leticia.dias",
-    "email": "leticia.dias@ufu.br",
-    "phone": "34999990012",
+    "bio": "Estudante da UFU, valorizo uma rotina tranquila, sustentável e organizada.",
+    "tags": ["Dorme cedo", "Tem hábitos sustentáveis", "Mantém os espaços organizados"],
     "campus_id": "11111111-1111-4000-8000-000000000002"
   }
 ]
