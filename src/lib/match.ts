@@ -1,6 +1,10 @@
 /**
- * Rascunho de Sprint 0 do algoritmo de match de roommates (docs/ARQUITETURA.md).
- * Sera refinado na Sprint 2 com os IDs reais de `traits`/`user_traits`.
+ * Algoritmo de match de roommates (docs/ARQUITETURA.md). Lógica pura, sem
+ * acesso a banco — quem busca os dados é `src/lib/traits.ts`.
+ *
+ * `self`/`wanted` guardam `trait.key` (ex.: "dorme-cedo"), não o `id` do
+ * banco: é o identificador estável que o `<ConvivenciaPicker>` já usa nos
+ * checkboxes, então não precisa de tradução pra exibir ou comparar.
  */
 export interface UserTraits {
   self: Set<string>;
@@ -32,4 +36,16 @@ export function matchScore(a: UserTraits, b: UserTraits): number | null {
 
   if (scores.length === 0) return null;
   return scores.reduce((sum, score) => sum + score, 0) / scores.length;
+}
+
+/**
+ * As tags que "explicam" o score: todo trait que algum lado procura e o
+ * outro tem em "eu sou" (nos dois sentidos). É o que o `<MatchCard>` mostra
+ * em "Vocês dois:" — sem elas, a porcentagem é só um número solto.
+ */
+export function matchingTraitKeys(a: UserTraits, b: UserTraits): string[] {
+  const result = new Set<string>();
+  for (const trait of a.wanted) if (b.self.has(trait)) result.add(trait);
+  for (const trait of b.wanted) if (a.self.has(trait)) result.add(trait);
+  return [...result];
 }
