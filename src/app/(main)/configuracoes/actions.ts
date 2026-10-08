@@ -25,10 +25,15 @@ export async function editarPerfil(
   const user = await requireUser("/configuracoes");
   const supabase = await createClient();
 
+  // `?? ""` em vez de repassar o que `FormData.get()` devolve direto: um
+  // <select> sem opção não-desabilitada selecionada (ex.: lista de campus
+  // vazia) não manda nenhum valor pro form, e vira `null` aqui — o que faria
+  // o zod reclamar com uma mensagem de erro de tipo em inglês, em vez da
+  // mensagem em pt-BR do `.uuid()`.
   const parsed = editarPerfilSchema.safeParse({
-    fullName: formData.get("fullName"),
-    bio: formData.get("bio"),
-    campusId: formData.get("campusId"),
+    fullName: formData.get("fullName") ?? "",
+    bio: formData.get("bio") ?? "",
+    campusId: formData.get("campusId") ?? "",
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
