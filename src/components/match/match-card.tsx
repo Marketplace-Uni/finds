@@ -72,7 +72,7 @@ export function MatchCard({
         ) : null}
 
         {favoriteSlot ? (
-          <div className="absolute top-2 right-2">{favoriteSlot}</div>
+          <div className="absolute top-2 right-1.5">{favoriteSlot}</div>
         ) : null}
       </div>
 

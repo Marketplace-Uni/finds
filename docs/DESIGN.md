@@ -257,6 +257,33 @@ Risco a conversar antes de aplicar em cheio: hoje o **laranja significa ação**
 
 **Adiado para a Sprint 2:** o **Zeca nos estados vazio e de erro**. O SVG do mascote **ainda não existe** — a Lia precisa criar. Até lá, `EmptyState` e `ErrorState` seguem com ícones genéricos, que funcionam; a troca é pontual quando o arquivo chegar.
 
+### Retorno da Lia — 07/10
+
+Segunda revisão, já com o material da Sprint 2. Tudo aplicado:
+
+| O que ela apontou | O que mudou |
+|---|---|
+| Logo da navbar | De creme para **verde-limão** |
+| Coração de favoritos | Traço mais grosso, igual ao balão de conversas |
+| Favoritar nos cards | Mais colado na borda direita |
+| Card "Negócio concluído" | Do marrom para **`#eff0c3`** |
+| Botão "Recusar" na negociação | **`#cfdd4a`** (verde-limão) |
+| Faixa "Faça um anúncio!" | Texto maior |
+| Painel de login | **Sem o Zeca**, logo em laranja, título em verde e o parágrafo com as quebras que ela diagramou |
+| Horário no chat | Largura fixa e alinhado à direita, para "12:00", "seg" e "ontem" formarem coluna |
+| Wizard | **Sem o Zeca** e com mais respiro entre os campos |
+| Estado vazio e erro | Menos espaço entre o título e a frase de apoio |
+| Hover dos chips | **Laranja mais claro**, para o clique chegar no laranja cheio |
+
+**Decisões fechadas por ela:**
+
+- **Paleta:** manter como está. O laranja **continua exclusivo de ação** — nada de variar cores decorativas nem usar gradientes por enquanto.
+- **Balões do chat:** mantêm a mesma cor nos dois lados, como no Figma.
+- **Botão "Seguir" vendedor:** **fica no layout**. Como seguir usuários não está no [ESCOPO.md](ESCOPO.md), o `ListingDetail` expõe um `followSlot` e a implementação vem de fora.
+- **Poses do Zeca:** o encaixe de cada uma está correto.
+
+**Pendente com ela:** uma **ilustração própria para o match**, no estilo do Finds e nas cores da marca — hoje o card usa só o selo e as tags.
+
 ### Pontos para decidir com a Lia
 
 1. **Botão "Seguir" o vendedor** — seguir usuários não está no [ESCOPO.md](ESCOPO.md), nem no P0 nem no P1. Sugestão: **não implementar** e tirar do layout.

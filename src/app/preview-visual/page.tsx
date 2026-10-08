@@ -270,7 +270,7 @@ export default function PreviewVisualPage() {
               actionsSlot={
                 <>
                   <Button className="rounded-pill">Aceitar</Button>
-                  <Button variant="ghost" className="rounded-pill">
+                  <Button className="rounded-pill bg-secondary text-secondary-foreground hover:bg-secondary/90">
                     Recusar
                   </Button>
                 </>
@@ -574,6 +574,14 @@ export default function PreviewVisualPage() {
             chatSlot={
               <Button className="w-full rounded-lg py-6 text-base font-bold">
                 CHAT COM O VENDEDOR
+              </Button>
+            }
+            followSlot={
+              <Button
+                variant="ghost"
+                className="h-8 rounded-pill border-2 border-secondary px-4 text-xs"
+              >
+                Seguir
               </Button>
             }
             reportSlot={

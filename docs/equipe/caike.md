@@ -112,7 +112,7 @@ Componentes, em ordem de prioridade:
 ## Sprint 2 · 05/10–11/10 · Telas completas
 
 - [X] **Zeca nos estados vazio e de erro** — SVG recebido em 04/10; as 7 poses recortadas e aplicadas (estado vazio, erro, login, wizard e faixa "Faça um anúncio")
-- [ ] Definir com a Lia até onde variar as cores da paleta e usar gradientes, sem perder o laranja como cor de ação (ver DESIGN.md)
+- [X] Definir com a Lia até onde variar as cores da paleta e usar gradientes, sem perder o laranja como cor de ação (ver DESIGN.md) — ela fechou em 07/10: **manter a paleta como está**, laranja segue exclusivo de ação, sem gradientes
 - [X] Seletor de tags de convivência (chips "eu sou" / "procuro") + card com o badge **"87% compatível"** e as tags em comum → Kaike, **até 07/10**
 - [X] Cabeçalho do perfil (avatar, campus, "ativo há", nota média) → Kaike, **até 07/10**
 - [X] Abas de "Meus anúncios" + estados do card (rascunho, pausado, vendido) → Josué, **até 07/10**
