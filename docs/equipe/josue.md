@@ -30,13 +30,13 @@
 
 ## Sprint 1 · 29/09–04/10 · Produto e Serviço de ponta a ponta
 
-- [ ] `src/lib/validations/listings.ts`: schema base + `details` por tipo
-- [ ] Server actions: criar, editar, excluir anúncio + upload de fotos (até 6, primeira = capa)
-- [ ] `/anunciar`: escolher o tipo (4 cards)
-- [ ] Formulário de **Produto** montado no wizard do Caike → redireciona para o detalhe
-- [ ] Formulário de **Serviço** (modalidade presencial/online/flexível, unidade de preço)
-- [ ] `/anuncios/[id]/editar` + excluir (só o dono)
-- [ ] Usar o gate de perfil completo (Kaike) ao entrar em `/anunciar`
+- [X] `src/lib/validations/listings.ts`: schema base + `details` por tipo
+- [X] Server actions: criar, editar, excluir anúncio + upload de fotos (até 6, primeira = capa)
+- [X] `/anunciar`: escolher o tipo (4 cards)
+- [X] Formulário de **Produto** montado no wizard do Caike → redireciona para o detalhe
+- [X] Formulário de **Serviço** (modalidade presencial/online/flexível, unidade de preço)
+- [X] `/anuncios/[id]/editar` + excluir (só o dono)
+- [X] Usar o gate de perfil completo (Kaike) ao entrar em `/anunciar`
 
 ## Sprint 2 · 05/10–11/10 · Os 4 tipos + gestão
 

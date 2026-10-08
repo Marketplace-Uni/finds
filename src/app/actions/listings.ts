@@ -33,7 +33,8 @@ export async function uploadImages(formData: FormData) {
   return uploadedUrls
 }
 
-export async function createListing(data: any, imageUrls: string[]) {
+// Atualize a função createListing para aceitar 'status' dinâmico
+export async function createListing(data: any, imageUrls: string[], status: 'ativo' | 'rascunho' = 'ativo') {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
@@ -43,13 +44,13 @@ export async function createListing(data: any, imageUrls: string[]) {
     .from('listings')
     .insert({
       user_id: user.id,
-      title: data.title,
-      description: data.description,
-      price: data.price,
+      title: data.title || "Rascunho sem título", // Rascunhos podem vir incompletos
+      description: data.description || "",
+      price: data.price || 0,
       type: data.type,
       campus_id: data.campus_id,
-      details: data.details,
-      status: 'ativo',
+      details: data.details || {},
+      status: status, // Aqui entra 'rascunho' ou 'ativo'
       images: imageUrls 
     })
     .select()
@@ -58,7 +59,27 @@ export async function createListing(data: any, imageUrls: string[]) {
   if (error) throw new Error(error.message)
 
   revalidatePath('/')
-  redirect(`/anuncios/${listing.id}`)
+  revalidatePath('/meus-anuncios')
+  redirect(status === 'rascunho' ? '/meus-anuncios' : `/anuncios/${listing.id}`)
+}
+
+// Nova Action para gerenciar Pausar, Encerrar e Ativar
+export async function updateListingStatus(id: string, newStatus: 'ativo' | 'pausado' | 'encerrado') {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) throw new Error("Não autorizado")
+
+  // O RLS já blinda, mas garantimos que a query busque pelo dono
+  const { error } = await supabase
+    .from('listings')
+    .update({ status: newStatus })
+    .eq('id', id)
+    .eq('user_id', user.id)
+
+  if (error) throw new Error("Erro ao atualizar status")
+
+  revalidatePath('/meus-anuncios')
 }
 
 export async function deleteListing(id: string) {

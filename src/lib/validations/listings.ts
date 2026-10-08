@@ -29,5 +29,33 @@ export const createServiceSchema = baseListingSchema.extend({
   details: serviceDetailsSchema,
 })
 
+// SPRINT 2: SCHEMAS
+
+export const roommateDetailsSchema = z.object({
+  intention: z.enum(["oferece_vaga", "procura_vaga"]),
+  housing_type: z.enum(["apartamento", "casa", "kitnet"]),
+  neighborhood: z.string().min(2, "Bairro é obrigatório"),
+  move_in_date: z.string().nonempty("Data de entrada é obrigatória"),
+})
+
+export const republicDetailsSchema = z.object({
+  vacancies: z.coerce.number().min(1, "Deve ter pelo menos 1 vaga"),
+  gender: z.enum(["masculino", "feminino", "misto"]),
+  neighborhood: z.string().min(2, "Bairro é obrigatório"),
+  amenities: z.array(z.string()).min(1, "Adicione pelo menos uma comodidade (ex: internet, faxina)"),
+})
+
+export const createRoommateSchema = baseListingSchema.extend({
+  type: z.literal("roommate"),
+  details: roommateDetailsSchema,
+})
+
+export const createRepublicSchema = baseListingSchema.extend({
+  type: z.literal("republica"),
+  details: republicDetailsSchema,
+})
+
+export type CreateRoommateInput = z.infer<typeof createRoommateSchema>
+export type CreateRepublicInput = z.infer<typeof createRepublicSchema>
 export type CreateProductInput = z.infer<typeof createProductSchema>
 export type CreateServiceInput = z.infer<typeof createServiceSchema>
