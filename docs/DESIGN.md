@@ -1,4 +1,4 @@
-# Design: do Figma mobile para a web desktop
+| Chips de tipo e estado nos cards | Afastados da borda: `top-3 left-3`, com o favoritar simétrico em `right-3` |# Design: do Figma mobile para a web desktop
 
 Todo o design do Finds (nome, logo, identidade, ~80 telas) já existe no Figma, **feito para mobile**. O trabalho é **adaptar**, não redesenhar do zero.
 
