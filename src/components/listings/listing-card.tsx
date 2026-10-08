@@ -79,19 +79,19 @@ export function ListingCard({
         )}
 
         {status ? (
-          <div className="absolute top-2 left-2">
+          <div className="absolute top-3 left-3">
             <ListingStatusBadge status={status} />
           </div>
         ) : null}
 
         {typeLabel && !status ? (
-          <span className="absolute top-2 left-2 rounded-pill bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground">
+          <span className="absolute top-3 left-3 rounded-pill bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground">
             {typeLabel}
           </span>
         ) : null}
 
         {favoriteSlot ? (
-          <div className="absolute top-2 right-1.5">{favoriteSlot}</div>
+          <div className="absolute top-3 right-3">{favoriteSlot}</div>
         ) : null}
       </div>
 

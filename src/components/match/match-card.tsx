@@ -66,13 +66,13 @@ export function MatchCard({
         )}
 
         {pct !== null ? (
-          <span className="absolute top-2 left-2 rounded-pill bg-primary px-3 py-1 text-xs font-bold text-primary-foreground shadow-sm">
+          <span className="absolute top-3 left-3 rounded-pill bg-primary px-3 py-1 text-xs font-bold text-primary-foreground shadow-sm">
             {`${pct}% compatível`}
           </span>
         ) : null}
 
         {favoriteSlot ? (
-          <div className="absolute top-2 right-1.5">{favoriteSlot}</div>
+          <div className="absolute top-3 right-3">{favoriteSlot}</div>
         ) : null}
       </div>
 
