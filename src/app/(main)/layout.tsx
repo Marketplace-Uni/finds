@@ -1,6 +1,6 @@
 import { Navbar } from "@/src/components/layout/navbar";
 import { CompleteProfileProvider } from "@/src/components/auth/complete-profile-gate";
-import { getCurrentProfile } from "@/src/lib/auth";
+import { getCurrentProfile, touchLastSeen } from "@/src/lib/auth";
 import { createClient } from "@/src/lib/supabase/server";
 
 /**
@@ -14,6 +14,7 @@ import { createClient } from "@/src/lib/supabase/server";
  */
 export default async function MainLayout({ children }: LayoutProps<"/">) {
   const profile = await getCurrentProfile();
+  if (profile) await touchLastSeen(profile);
 
   let campusLabel: string | null = null;
   if (profile?.campus_id) {

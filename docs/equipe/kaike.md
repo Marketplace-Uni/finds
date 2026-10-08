@@ -40,13 +40,13 @@
 
 ## Sprint 2 · 05/10–11/10 · Perfil e Match ⭐
 
-- [ ] `/configuracoes`: editar nome, bio, campus, foto (upload no bucket `avatars`)
-- [ ] `/perfil/[username]`: dados, "ativo há X", anúncios ativos, slot para avaliações (Alexandre)
-- [ ] Último acesso: atualizar `last_seen_at` no layout `(main)` (no máx. a cada 5 min) + `formatLastSeen()`
-- [ ] `/configuracoes/convivencia`: salvar as tags "eu sou" e "procuro"
-- [ ] `src/lib/match.ts` final: algoritmo de ARQUITETURA.md, validado com 3–4 casos conhecidos
-- [ ] `/roommates`: anúncios de roommate + república ordenados pelo score, usando o card de match do Caike
-- [ ] Estado vazio: "Monte seu perfil de convivência para ver sua compatibilidade"
+- [x] `/configuracoes`: editar nome, bio, campus, foto (upload no bucket `avatars`) — form nativo (`useActionState`) por causa do input de arquivo; path fixo `{user.id}/avatar.ext` com `upsert`
+- [x] `/perfil/[username]`: dados, "ativo há X", anúncios ativos, slot para avaliações (Alexandre) — usa o `<ProfileHeader>` real do Caike
+- [x] Último acesso: atualizar `last_seen_at` no layout `(main)` (no máx. a cada 5 min) + `formatLastSeen()` — `touchLastSeen()` em `src/lib/auth.ts`, chamado em `(main)/layout.tsx`; `formatLastSeen()` em `src/lib/format.ts`
+- [x] `/configuracoes/convivencia`: salvar as tags "eu sou" e "procuro" — usa o `<ConvivenciaPicker>` real do Caike; Server Action em `src/app/(main)/configuracoes/convivencia/actions.ts`
+- [x] `src/lib/match.ts` final: algoritmo de ARQUITETURA.md, validado com 3–4 casos conhecidos — `matchingTraitKeys()` adicionada; 3 casos com dados reais de `scripts/seed.ts` em `match.test.ts`; acesso a dados em `src/lib/traits.ts`
+- [x] `/roommates`: anúncios de roommate + república ordenados pelo score, usando o card de match do Caike — `fetchRoommateListings()` em `src/lib/listings.ts`
+- [x] Estado vazio: "Monte seu perfil de convivência para ver sua compatibilidade" — em `/roommates`, quando o usuário não tem tags "procuro"
 
 ## Sprint 3 · 12/10–18/10 · Polimento
 

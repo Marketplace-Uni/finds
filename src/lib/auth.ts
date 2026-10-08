@@ -52,6 +52,28 @@ export async function requireUser(nextPath?: string) {
   return user;
 }
 
+const LAST_SEEN_THROTTLE_MS = 5 * 60 * 1000;
+
+/**
+ * Atualiza `profiles.last_seen_at` no máximo a cada 5 minutos por usuário.
+ * Chamar no layout `(main)` a cada navegação; falhas são engolidas (não é
+ * crítico a ponto de derrubar o render de uma página).
+ */
+export async function touchLastSeen(profile: Profile): Promise<void> {
+  const lastSeenAt = profile.last_seen_at ? new Date(profile.last_seen_at).getTime() : 0;
+  if (Date.now() - lastSeenAt < LAST_SEEN_THROTTLE_MS) return;
+
+  try {
+    const supabase = await createClient();
+    await supabase
+      .from("profiles")
+      .update({ last_seen_at: new Date().toISOString() })
+      .eq("id", profile.id);
+  } catch {
+    // Não bloqueia o render por causa disso.
+  }
+}
+
 /**
  * Exige um perfil completo (hoje: `campus_id` preenchido). Sem sessão,
  * redireciona para `/entrar`; com sessão mas perfil incompleto, redireciona
