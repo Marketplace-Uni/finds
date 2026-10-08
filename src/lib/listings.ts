@@ -29,6 +29,23 @@ function typeLabel(dbType: string): string | null {
   return filterValue ? (TYPE_LABEL_BY_FILTER_VALUE[filterValue] ?? null) : null;
 }
 
+type ImageRow = { path: string; position: number | null };
+
+function coverImageUrl(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  images: ImageRow[] | null | undefined,
+): string | null {
+  const capa = [...(images ?? [])].sort((a, b) => (a.position ?? 0) - (b.position ?? 0))[0];
+  return capa ? supabase.storage.from("listing-images").getPublicUrl(capa.path).data.publicUrl : null;
+}
+
+// Sem o Database tipado em lib/supabase/server.ts, o embed 1:1 (ex.: listing
+// -> 1 campus) volta tipado como array mesmo sendo um registro só.
+function campusName(campuses: { name: string } | { name: string }[] | null | undefined) {
+  const campus = Array.isArray(campuses) ? campuses[0] : campuses;
+  return campus?.name ?? null;
+}
+
 /** Campus reais do banco, no formato que o `<FiltersSidebar>` espera. */
 export async function fetchCampusOptions(): Promise<FilterOption[]> {
   const supabase = await createClient();
@@ -83,27 +100,14 @@ export async function fetchListings(filters: ListingFilters, page: number) {
   const { data, error, count } = await query;
   if (error) throw error;
 
-  const listings: ListingSummary[] = (data ?? []).map((row) => {
-    const imagens = [...(row.listing_images ?? [])].sort(
-      (a, b) => (a.position ?? 0) - (b.position ?? 0),
-    );
-    const capa = imagens[0];
-    const imageUrl = capa
-      ? supabase.storage.from("listing-images").getPublicUrl(capa.path).data.publicUrl
-      : null;
-    // Sem o Database tipado em lib/supabase/server.ts, o embed de campuses()
-    // volta tipado como array mesmo sendo 1:1 (listing -> 1 campus).
-    const campus = Array.isArray(row.campuses) ? row.campuses[0] : row.campuses;
-
-    return {
-      id: row.id,
-      title: row.title,
-      price: row.price,
-      location: campus?.name ?? null,
-      typeLabel: typeLabel(row.type),
-      imageUrl,
-    };
-  });
+  const listings: ListingSummary[] = (data ?? []).map((row) => ({
+    id: row.id,
+    title: row.title,
+    price: row.price,
+    location: campusName(row.campuses),
+    typeLabel: typeLabel(row.type),
+    imageUrl: coverImageUrl(supabase, row.listing_images),
+  }));
 
   const total = count ?? listings.length;
   return { listings, total, hasMore: total > page * LISTINGS_PAGE_SIZE };
@@ -134,23 +138,34 @@ export async function fetchRoommateListings(): Promise<RoommateListingSummary[]>
     .order("created_at", { ascending: false });
   if (error) throw error;
 
-  return (data ?? []).map((row) => {
-    const imagens = [...(row.listing_images ?? [])].sort(
-      (a, b) => (a.position ?? 0) - (b.position ?? 0),
-    );
-    const capa = imagens[0];
-    const imageUrl = capa
-      ? supabase.storage.from("listing-images").getPublicUrl(capa.path).data.publicUrl
-      : null;
-    const campus = Array.isArray(row.campuses) ? row.campuses[0] : row.campuses;
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    title: row.title,
+    price: row.price,
+    location: campusName(row.campuses),
+    imageUrl: coverImageUrl(supabase, row.listing_images),
+    ownerId: row.owner_id,
+  }));
+}
 
-    return {
-      id: row.id,
-      title: row.title,
-      price: row.price,
-      location: campus?.name ?? null,
-      imageUrl,
-      ownerId: row.owner_id,
-    };
-  });
+/** Anúncios ativos de um usuário, para o grid em `/perfil/[username]`. */
+export async function fetchUserListings(ownerId: string): Promise<ListingSummary[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("listings")
+    .select("id, title, price, type, campuses(name), listing_images(path, position)")
+    .eq("status", "active")
+    .eq("owner_id", ownerId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    title: row.title,
+    price: row.price,
+    location: campusName(row.campuses),
+    typeLabel: typeLabel(row.type),
+    imageUrl: coverImageUrl(supabase, row.listing_images),
+  }));
 }
