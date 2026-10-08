@@ -1,4 +1,4 @@
-| Chips de tipo e estado nos cards | Afastados da borda: `top-3 left-3`, com o favoritar simétrico em `right-3` |# Design: do Figma mobile para a web desktop
+# Design: do Figma mobile para a web desktop
 
 Todo o design do Finds (nome, logo, identidade, ~80 telas) já existe no Figma, **feito para mobile**. O trabalho é **adaptar**, não redesenhar do zero.
 
@@ -265,7 +265,7 @@ Segunda revisão, já com o material da Sprint 2. Tudo aplicado:
 |---|---|
 | Logo da navbar | De creme para **verde-limão** |
 | Coração de favoritos | Traço mais grosso, igual ao balão de conversas |
-| Favoritar nos cards | Mais colado na borda direita |
+| Chips de tipo e estado nos cards | Afastados da quina: `top-3 left-3`, com o favoritar simétrico em `right-3` |
 | Card "Negócio concluído" | Do marrom para **`#eff0c3`** |
 | Botão "Recusar" na negociação | **`#cfdd4a`** (verde-limão) |
 | Faixa "Faça um anúncio!" | Texto maior |
