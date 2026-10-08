@@ -45,8 +45,8 @@
 - [x] Último acesso: atualizar `last_seen_at` no layout `(main)` (no máx. a cada 5 min) + `formatLastSeen()` — `touchLastSeen()` em `src/lib/auth.ts`, chamado em `(main)/layout.tsx`; `formatLastSeen()` em `src/lib/format.ts`
 - [x] `/configuracoes/convivencia`: salvar as tags "eu sou" e "procuro" — usa o `<ConvivenciaPicker>` real do Caike; Server Action em `src/app/(main)/configuracoes/convivencia/actions.ts`
 - [x] `src/lib/match.ts` final: algoritmo de ARQUITETURA.md, validado com 3–4 casos conhecidos — `matchingTraitKeys()` adicionada; 3 casos com dados reais de `scripts/seed.ts` em `match.test.ts`; acesso a dados em `src/lib/traits.ts`
-- [ ] `/roommates`: anúncios de roommate + república ordenados pelo score, usando o card de match do Caike
-- [ ] Estado vazio: "Monte seu perfil de convivência para ver sua compatibilidade"
+- [x] `/roommates`: anúncios de roommate + república ordenados pelo score, usando o card de match do Caike — `fetchRoommateListings()` em `src/lib/listings.ts`
+- [x] Estado vazio: "Monte seu perfil de convivência para ver sua compatibilidade" — em `/roommates`, quando o usuário não tem tags "procuro"
 
 ## Sprint 3 · 12/10–18/10 · Polimento
 
