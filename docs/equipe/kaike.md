@@ -40,7 +40,7 @@
 
 ## Sprint 2 · 05/10–11/10 · Perfil e Match ⭐
 
-- [ ] `/configuracoes`: editar nome, bio, campus, foto (upload no bucket `avatars`)
+- [x] `/configuracoes`: editar nome, bio, campus, foto (upload no bucket `avatars`) — form nativo (`useActionState`) por causa do input de arquivo; path fixo `{user.id}/avatar.ext` com `upsert`
 - [ ] `/perfil/[username]`: dados, "ativo há X", anúncios ativos, slot para avaliações (Alexandre)
 - [x] Último acesso: atualizar `last_seen_at` no layout `(main)` (no máx. a cada 5 min) + `formatLastSeen()` — `touchLastSeen()` em `src/lib/auth.ts`, chamado em `(main)/layout.tsx`; `formatLastSeen()` em `src/lib/format.ts`
 - [ ] `/configuracoes/convivencia`: salvar as tags "eu sou" e "procuro"
