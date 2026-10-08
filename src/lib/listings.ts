@@ -108,3 +108,49 @@ export async function fetchListings(filters: ListingFilters, page: number) {
   const total = count ?? listings.length;
   return { listings, total, hasMore: total > page * LISTINGS_PAGE_SIZE };
 }
+
+export type RoommateListingSummary = {
+  id: string;
+  title: string;
+  price: number | null;
+  location: string | null;
+  imageUrl: string | null;
+  ownerId: string;
+};
+
+/**
+ * Anúncios ativos de roommate/república, para `/roommates`. Sem paginação
+ * nem filtro de preço/categoria: o volume da demo é pequeno e a ordenação
+ * final é pelo score de match, calculado em memória (ARQUITETURA.md).
+ */
+export async function fetchRoommateListings(): Promise<RoommateListingSummary[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("listings")
+    .select("id, title, price, owner_id, campuses(name), listing_images(path, position)")
+    .eq("status", "active")
+    .in("type", ["roommate", "republic"])
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+
+  return (data ?? []).map((row) => {
+    const imagens = [...(row.listing_images ?? [])].sort(
+      (a, b) => (a.position ?? 0) - (b.position ?? 0),
+    );
+    const capa = imagens[0];
+    const imageUrl = capa
+      ? supabase.storage.from("listing-images").getPublicUrl(capa.path).data.publicUrl
+      : null;
+    const campus = Array.isArray(row.campuses) ? row.campuses[0] : row.campuses;
+
+    return {
+      id: row.id,
+      title: row.title,
+      price: row.price,
+      location: campus?.name ?? null,
+      imageUrl,
+      ownerId: row.owner_id,
+    };
+  });
+}
