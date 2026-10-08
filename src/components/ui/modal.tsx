@@ -122,7 +122,7 @@ export function ReasonOptions({
               htmlFor={id}
               className={cn(
                 "inline-flex cursor-pointer items-center rounded-pill px-3 py-1.5 text-sm font-semibold",
-                "bg-muted text-foreground transition-colors hover:bg-accent/40",
+                "bg-muted text-foreground transition-colors hover:bg-primary/60 hover:text-primary-foreground",
                 "peer-checked:bg-primary peer-checked:text-primary-foreground",
                 "peer-focus-visible:ring-2 peer-focus-visible:ring-ring",
               )}

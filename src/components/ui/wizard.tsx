@@ -3,7 +3,6 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/src/components/ui/button";
-import { Zeca } from "@/src/components/ui/zeca";
 import { cn } from "@/src/lib/utils";
 
 /** Barra "quanto falta" do Figma. */
@@ -66,7 +65,7 @@ export function WizardShell({
 }: WizardShellProps) {
   return (
     <div className={cn("mx-auto w-full max-w-[720px]", className)}>
-      <form action={action} className="flex flex-col gap-7">
+      <form action={action} className="flex flex-col gap-10">
         <header className="relative flex flex-col items-center gap-1 pt-2">
           {backHref ? (
             <Link
@@ -77,18 +76,13 @@ export function WizardShell({
               <ArrowLeft className="size-5" aria-hidden />
             </Link>
           ) : null}
-          {/* Zeca lendo: no Figma é ele quem guia quem está preenchendo. */}
-          <Zeca
-            pose={7}
-            className="pointer-events-none absolute top-0 right-0 hidden h-20 w-auto text-primary/70 sm:block"
-          />
           <h1 className="text-center text-xl font-semibold text-foreground">{title}</h1>
           {subtitle ? (
             <p className="text-center text-sm text-muted-foreground">{subtitle}</p>
           ) : null}
         </header>
 
-        <div className="flex flex-col gap-5">{children}</div>
+        <div className="flex flex-col gap-7">{children}</div>
 
         <WizardProgress step={step} totalSteps={totalSteps} />
 

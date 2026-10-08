@@ -86,7 +86,7 @@ export function ConversationList({
                       {conversa.name}
                     </span>
                     {conversa.time ? (
-                      <span className="shrink-0 text-[10px] text-muted-foreground">
+                      <span className="w-12 shrink-0 text-right text-[10px] text-muted-foreground">
                         {conversa.time}
                       </span>
                     ) : null}

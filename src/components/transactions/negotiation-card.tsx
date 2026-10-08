@@ -27,7 +27,7 @@ const ESTADOS: Record<
     label: "Negócio concluído",
     descricao: "Os dois confirmaram. Que tal avaliar a pessoa?",
     Icone: CircleCheck,
-    classe: "bg-nav text-nav-foreground",
+    classe: "bg-muted text-foreground",
   },
   cancelled: {
     label: "Negociação cancelada",

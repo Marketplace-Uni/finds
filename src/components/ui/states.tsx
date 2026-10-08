@@ -27,11 +27,11 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center gap-3 rounded-lg bg-card px-6 py-14 text-center",
+        "flex flex-col items-center gap-1.5 rounded-lg bg-card px-6 py-14 text-center",
         className,
       )}
     >
-      <Zeca pose={pose} className="h-28 w-auto text-primary" />
+      <Zeca pose={pose} className="mb-1.5 h-28 w-auto text-primary" />
       <p className="font-semibold text-foreground">{title}</p>
       {description ? (
         <p className="max-w-prose text-sm text-muted-foreground">{description}</p>
@@ -52,12 +52,12 @@ export function ErrorState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center gap-3 rounded-lg border-2 border-destructive/30 px-6 py-14 text-center",
+        "flex flex-col items-center gap-1.5 rounded-lg border-2 border-destructive/30 px-6 py-14 text-center",
         className,
       )}
       role="alert"
     >
-      <Zeca pose={pose} className="h-28 w-auto text-destructive" />
+      <Zeca pose={pose} className="mb-1.5 h-28 w-auto text-destructive" />
       <p className="font-semibold text-foreground">{title}</p>
       {description ? (
         <p className="max-w-prose text-sm text-muted-foreground">{description}</p>
