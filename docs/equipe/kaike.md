@@ -42,7 +42,7 @@
 
 - [ ] `/configuracoes`: editar nome, bio, campus, foto (upload no bucket `avatars`)
 - [ ] `/perfil/[username]`: dados, "ativo há X", anúncios ativos, slot para avaliações (Alexandre)
-- [ ] Último acesso: atualizar `last_seen_at` no layout `(main)` (no máx. a cada 5 min) + `formatLastSeen()`
+- [x] Último acesso: atualizar `last_seen_at` no layout `(main)` (no máx. a cada 5 min) + `formatLastSeen()` — `touchLastSeen()` em `src/lib/auth.ts`, chamado em `(main)/layout.tsx`; `formatLastSeen()` em `src/lib/format.ts`
 - [ ] `/configuracoes/convivencia`: salvar as tags "eu sou" e "procuro"
 - [ ] `src/lib/match.ts` final: algoritmo de ARQUITETURA.md, validado com 3–4 casos conhecidos
 - [ ] `/roommates`: anúncios de roommate + república ordenados pelo score, usando o card de match do Caike
