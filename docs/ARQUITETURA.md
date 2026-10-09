@@ -164,6 +164,8 @@ Perfil completo = `campus_id IS NOT NULL`.
 | `reports` | ninguém (só admin via dashboard) | qualquer logado |
 | `traits` | todos | ninguém (seed) |
 | `user_traits` | usuários logados | só o próprio |
+| campuses     | Publico (autenticados) | Nenhuma (via app)              |
+| universities | Publico (autenticados) | Nenhuma (via app)              |
 
 ## Fluxos principais
 

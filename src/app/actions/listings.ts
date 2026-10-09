@@ -34,48 +34,63 @@ export async function uploadImages(formData: FormData) {
 }
 
 // Atualize a função createListing para aceitar 'status' dinâmico
-export async function createListing(data: any, imageUrls: string[], status: 'ativo' | 'rascunho' = 'ativo') {
+// ATENÇÃO: Corrigimos o status para inglês (active, draft)
+export async function createListing(data: any, imageUrls: string[], status: 'active' | 'draft' = 'active') {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) throw new Error("Não autorizado")
 
+  // 1. Inserir o anúncio principal (Corrigido para owner_id e retirado o campo images)
   const { data: listing, error } = await supabase
     .from('listings')
     .insert({
-      user_id: user.id,
-      title: data.title || "Rascunho sem título", // Rascunhos podem vir incompletos
+      owner_id: user.id, // CORREÇÃO 1: era user_id, virou owner_id
+      title: data.title || "Rascunho sem título",
       description: data.description || "",
       price: data.price || 0,
       type: data.type,
       campus_id: data.campus_id,
       details: data.details || {},
-      status: status, // Aqui entra 'rascunho' ou 'ativo'
-      images: imageUrls 
+      status: status, // 'active' ou 'draft' (CORREÇÃO 2)
     })
     .select()
     .single()
 
   if (error) throw new Error(error.message)
 
+  // 2. Inserir as imagens na tabela separada (Corrigido com o schema real da imagem)
+  if (imageUrls && imageUrls.length > 0) {
+    const imagesData = imageUrls.map((url, index) => ({
+      listing_id: listing.id,
+      path: url,        // A coluna no seu banco se chama 'path'
+      position: index   // A coluna 'position' vai ditar a ordem (0 será a capa, 1 a segunda, etc)
+    }))
+
+    const { error: imageError } = await supabase
+      .from('listing_images')
+      .insert(imagesData)
+
+    if (imageError) throw new Error("Anúncio criado, mas erro ao salvar imagens: " + imageError.message)
+  }
+
   revalidatePath('/')
   revalidatePath('/meus-anuncios')
-  redirect(status === 'rascunho' ? '/meus-anuncios' : `/anuncios/${listing.id}`)
+  redirect(status === 'draft' ? '/meus-anuncios' : `/anuncios/${listing.id}`)
 }
 
 // Nova Action para gerenciar Pausar, Encerrar e Ativar
-export async function updateListingStatus(id: string, newStatus: 'ativo' | 'pausado' | 'encerrado') {
+export async function updateListingStatus(id: string, newStatus: 'active' | 'paused' | 'closed') {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) throw new Error("Não autorizado")
 
-  // O RLS já blinda, mas garantimos que a query busque pelo dono
   const { error } = await supabase
     .from('listings')
     .update({ status: newStatus })
     .eq('id', id)
-    .eq('user_id', user.id)
+    .eq('owner_id', user.id) // CORREÇÃO: owner_id
 
   if (error) throw new Error("Erro ao atualizar status")
 
