@@ -8,54 +8,57 @@ export const baseListingSchema = z.object({
 })
 
 export const productDetailsSchema = z.object({
-  condition: z.enum(["novo", "usado", "seminovo"]),
+  category: z.enum(["livros", "eletrônicos", "móveis", "eletrodomésticos", "roupas", "material de estudo", "outros"]).optional(),
+  condition: z.enum(["novo", "seminovo", "usado"]),
   brand: z.string().optional(),
 })
 
 export const serviceDetailsSchema = z.object({
+  category: z.enum(["aulas", "design", "programação", "fotografia", "reparos", "beleza", "outros"]).optional(),
   modality: z.enum(["presencial", "online", "flexivel"]),
-  price_unit: z.enum(["hora", "projeto", "diaria", "mensalidade"]),
+  price_unit: z.enum(["hora", "projeto", "diaria", "mensalidade", "a combinar"]),
+})
+
+export const roommateDetailsSchema = z.object({
+  mode: z.enum(["oferece_vaga", "procura_vaga"]),
+  housing_type: z.enum(["apartamento", "casa"]),
+  neighborhood: z.string().min(2, "Bairro é obrigatório"),
+  move_in_date: z.string().min(1, "Data de entrada é obrigatória"),
+  gender_preference: z.enum(["qualquer", "feminino", "masculino"]),
+})
+
+export const republicDetailsSchema = z.object({
+  vacancies: z.coerce.number().min(1, "Deve ter pelo menos 1 vaga"),
+  gender: z.enum(["feminina", "masculina", "mista"]),
+  neighborhood: z.string().min(2, "Bairro é obrigatório"),
+  amenities: z.array(z.string()).min(1, "Adicione pelo menos uma comodidade"),
 })
 
 // Schema completo para a Action de Produto
 export const createProductSchema = baseListingSchema.extend({
-  type: z.literal("produto"),
+  type: z.literal("product"), // ❌ CORRIGIDO PARA INGLÊS
   details: productDetailsSchema,
 })
 
 // Schema completo para a Action de Serviço
 export const createServiceSchema = baseListingSchema.extend({
-  type: z.literal("servico"),
+  type: z.literal("service"), // ❌ CORRIGIDO PARA INGLÊS
   details: serviceDetailsSchema,
 })
 
-// SPRINT 2: SCHEMAS
-
-export const roommateDetailsSchema = z.object({
-  intention: z.enum(["oferece_vaga", "procura_vaga"]),
-  housing_type: z.enum(["apartamento", "casa", "kitnet"]),
-  neighborhood: z.string().min(2, "Bairro é obrigatório"),
-  move_in_date: z.string().nonempty("Data de entrada é obrigatória"),
-})
-
-export const republicDetailsSchema = z.object({
-  vacancies: z.coerce.number().min(1, "Deve ter pelo menos 1 vaga"),
-  gender: z.enum(["masculino", "feminino", "misto"]),
-  neighborhood: z.string().min(2, "Bairro é obrigatório"),
-  amenities: z.array(z.string()).min(1, "Adicione pelo menos uma comodidade (ex: internet, faxina)"),
-})
-
+// Schema completo para a Action de Roommate
 export const createRoommateSchema = baseListingSchema.extend({
-  type: z.literal("roommate"),
+  type: z.literal("roommate"), // ✅ ADICIONADO
   details: roommateDetailsSchema,
 })
 
+// Schema completo para a Action de República
 export const createRepublicSchema = baseListingSchema.extend({
-  type: z.literal("republica"),
+  type: z.literal("republic"), // ✅ ADICIONADO
   details: republicDetailsSchema,
 })
 
-export type CreateRoommateInput = z.infer<typeof createRoommateSchema>
-export type CreateRepublicInput = z.infer<typeof createRepublicSchema>
 export type CreateProductInput = z.infer<typeof createProductSchema>
 export type CreateServiceInput = z.infer<typeof createServiceSchema>
+export type CreateRoommateInput = z.infer<typeof createRoommateSchema>
+export type CreateRepublicInput = z.infer<typeof createRepublicSchema>
