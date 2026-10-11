@@ -33,7 +33,17 @@ export async function uploadImages(formData: FormData) {
   return uploadedUrls
 }
 
-export async function createListing(data: any, imageUrls: string[]) {
+export async function createListing(
+  data: {
+    title: string;
+    description: string;
+    price: number;
+    type: string;
+    campus_id: string;
+    details: Record<string, unknown>;
+  },
+  imageUrls: string[],
+) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
