@@ -3,6 +3,7 @@ import { Heart } from "lucide-react";
 import { Navbar } from "@/src/components/layout/navbar";
 import { LogoFinds } from "@/src/components/layout/logo-finds";
 import { AuthArt } from "@/src/components/layout/auth-art";
+import { LandingPage } from "@/src/components/marketing/landing-page";
 import { ListingCard } from "@/src/components/listings/listing-card";
 import { AnunciarBanner } from "@/src/components/listings/anunciar-banner";
 import { ListingTabs } from "@/src/components/listings/listing-tabs";
@@ -114,6 +115,17 @@ export default function PreviewVisualPage() {
           unreadCount={3}
         />
       </section>
+
+        <section className="mb-10">
+          <h2 className="mx-auto mb-1 w-full max-w-conteudo px-6 text-xl font-bold">
+            Landing para visitantes
+          </h2>
+          <p className="mx-auto mb-4 w-full max-w-conteudo px-6 text-sm text-muted-foreground">
+            Sprint 3. Aparece na raiz para quem não está logado; com sessão, a raiz
+            mostra o feed.
+          </p>
+          <LandingPage />
+        </section>
 
       <div className="mx-auto flex w-full max-w-conteudo flex-col gap-10 px-6">
         <section>

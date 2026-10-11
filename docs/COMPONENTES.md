@@ -115,6 +115,23 @@ Props: `name`, `username`, `avatarUrl`, `bio`, `campus`, `lastSeen`, `rating`, `
 
 O `NegotiationCard` entra no `headerSlot` do `ChatPanel`. Os quatro estados (`pending`, `confirmed`, `completed`, `cancelled`) já trazem o texto do que fazer em cada etapa — as ações entram por slot.
 
+## Landing
+
+`LandingPage`, de `@/src/components/marketing/landing-page`. Sem props.
+
+**Decisão de 11/10:** a raiz (`/`) mostra a **landing para quem não está logado** e o **feed para quem está**. Duas páginas não podem ocupar o mesmo endereço, então quem é dono da rota lê a sessão e escolhe:
+
+```tsx
+// src/app/(main)/page.tsx
+export default async function HomePage({ searchParams }: PageProps<"/">) {
+  const profile = await getCurrentProfile();
+  if (!profile) return <LandingPage />;
+  // …feed normal daqui para baixo
+}
+```
+
+Era isso que faltava para criar o grupo `(marketing)/` — com essa decisão ele deixa de ser necessário, porque a landing é um componente e não uma rota.
+
 ## Busca e descoberta
 
 `FiltersSidebar`, de `@/src/components/discovery/filters-sidebar`.

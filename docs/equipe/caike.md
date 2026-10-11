@@ -124,7 +124,7 @@ Componentes, em ordem de prioridade:
 ## Sprint 3 · 12/10–18/10 · Vitrine e polimento
 
 - [ ] **Ilustração do match** — a Lia entrega até terça, 13/10; encaixar no `MatchCard` quando chegar
-- [ ] Landing page para deslogados — **depende de decidir como a landing e o feed convivem na rota `/`** (o Kaike espera isso desde a Sprint 0)
+- [X] Landing page para deslogados — `<LandingPage>` pronta em `src/components/marketing/`. **Decisão (11/10): a raiz mostra a landing para visitante e o feed para quem está logado.** Falta o Kaike ler a sessão em `(main)/page.tsx` e escolher qual renderizar
 - [X] Responsivo básico: navbar no celular, grid em 1 coluna, sidebar vira botão "Filtros"
 - [ ] 🎨 **QA geral com a designer (~15/10):** percorrer o app inteiro, listar os ajustes e priorizar
 - [ ] Aplicar os ajustes do QA (distribuir entre o time o que for grande)
