@@ -40,10 +40,10 @@
 
 ## Sprint 2 · 05/10–11/10 · Os 4 tipos + gestão
 
-- [ ] Formulário de **Roommate** (oferece/procura vaga, tipo de moradia, bairro, data de entrada)
-- [ ] Formulário de **República** (vagas, gênero, bairro, comodidades)
-- [ ] **Rascunho:** botão "Salvar rascunho" em qualquer passo; retomar depois
-- [ ] `/meus-anuncios`: abas Ativos / Rascunhos / Encerrados; ações pausar, encerrar, excluir, editar
+- [X] Formulário de **Roommate** (oferece/procura vaga, tipo de moradia, bairro, data de entrada)
+- [X] Formulário de **República** (vagas, gênero, bairro, comodidades)
+- [X] **Rascunho:** botão "Salvar rascunho" em qualquer passo; retomar depois
+- [X] `/meus-anuncios`: abas Ativos / Rascunhos / Encerrados; ações pausar, encerrar, excluir, editar
 
 ## Sprint 3 · 12/10–18/10 · Produção
 
