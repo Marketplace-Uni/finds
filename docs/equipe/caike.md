@@ -124,9 +124,8 @@ Componentes, em ordem de prioridade:
 ## Sprint 3 · 12/10–18/10 · Vitrine e polimento
 
 - [ ] **Ilustração do match** — a Lia entrega até terça, 13/10; encaixar no `MatchCard` quando chegar
-
-- [ ] Landing page para deslogados
-- [ ] Responsivo básico: navbar no celular, grid em 1 coluna, sidebar vira botão "Filtros"
+- [ ] Landing page para deslogados — **depende de decidir como a landing e o feed convivem na rota `/`** (o Kaike espera isso desde a Sprint 0)
+- [X] Responsivo básico: navbar no celular, grid em 1 coluna, sidebar vira botão "Filtros"
 - [ ] 🎨 **QA geral com a designer (~15/10):** percorrer o app inteiro, listar os ajustes e priorizar
 - [ ] Aplicar os ajustes do QA (distribuir entre o time o que for grande)
 - [ ] Pedir à designer o material do estande (banner, QR code, 2–3 slides) e revisar com ela

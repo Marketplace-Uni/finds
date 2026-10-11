@@ -24,17 +24,22 @@ type NavbarProps = {
 export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarProps) {
   return (
     <header className="bg-nav text-nav-foreground">
-      <div className="mx-auto flex h-16 max-w-conteudo items-center gap-4 px-6">
+      {/* No celular a busca cai para a segunda linha: logo e ações não cabem
+          junto com ela. A partir de md tudo volta para uma linha só. */}
+      <div className="mx-auto flex max-w-conteudo flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:px-6 md:h-16 md:flex-nowrap md:py-0">
         {/* Logo em verde-limão, a pedido da Lia (07/10). */}
         <Link
           href="/"
           className="shrink-0 text-secondary"
           aria-label="Finds, página inicial"
         >
-          <LogoFinds className="h-7 w-auto" />
+          <LogoFinds className="h-6 w-auto sm:h-7" />
         </Link>
 
-        <form action="/busca" className="relative min-w-0 flex-1">
+        <form
+          action="/busca"
+          className="relative order-last min-w-0 w-full flex-1 md:order-none md:w-auto"
+        >
           <label htmlFor="busca-navbar" className="sr-only">
             Buscar anúncios
           </label>
@@ -59,14 +64,14 @@ export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarPr
         ) : null}
 
         {user ? (
-          <nav className="flex items-center gap-1" aria-label="Atalhos da conta">
+          <nav className="ml-auto flex items-center gap-1 md:ml-0" aria-label="Atalhos da conta">
             <Button
               asChild
               className="rounded-pill bg-primary text-primary-foreground hover:bg-primary/90"
             >
               <Link href="/anunciar">
                 <Plus aria-hidden />
-                Anunciar
+                <span className="hidden sm:inline">Anunciar</span>
               </Link>
             </Button>
 
@@ -101,7 +106,7 @@ export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarPr
             <UserMenu user={user} />
           </nav>
         ) : (
-          <nav className="flex items-center gap-2" aria-label="Entrar ou criar conta">
+          <nav className="ml-auto flex items-center gap-2 md:ml-0" aria-label="Entrar ou criar conta">
             <Button
               asChild
               variant="ghost"
