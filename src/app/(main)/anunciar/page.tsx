@@ -17,16 +17,16 @@ export default function AnunciarPage() {
           <p className="text-gray-600">Ofereça aulas, manutenções, fretes e trabalhos.</p>
         </Link>
 
-        {/* Sprint 2 - Desabilitados por enquanto */}
-        <div className="p-6 border rounded-lg opacity-50 cursor-not-allowed bg-gray-50">
+        {/* Sprint 2 - Agora habilitados! */}
+        <Link href="/anunciar/roommate" className="p-6 border rounded-lg hover:shadow-lg transition-shadow bg-white">
           <h2 className="text-xl font-semibold mb-2">Roommate</h2>
-          <p className="text-gray-600">Em breve (Sprint 2)</p>
-        </div>
+          <p className="text-gray-600">Ofereça ou procure vagas para dividir moradia.</p>
+        </Link>
         
-        <div className="p-6 border rounded-lg opacity-50 cursor-not-allowed bg-gray-50">
+        <Link href="/anunciar/republica" className="p-6 border rounded-lg hover:shadow-lg transition-shadow bg-white">
           <h2 className="text-xl font-semibold mb-2">República</h2>
-          <p className="text-gray-600">Em breve (Sprint 2)</p>
-        </div>
+          <p className="text-gray-600">Anuncie vagas masculinas, femininas ou mistas.</p>
+        </Link>
       </div>
     </div>
   )
