@@ -23,10 +23,10 @@ export function AnunciarBanner({ className }: { className?: string }) {
       )}
     >
       <div className="flex flex-col gap-0.5">
-        <span className="text-lg font-semibold text-primary-foreground">
+        <span className="text-2xl font-bold text-primary-foreground">
           Faça um anúncio!
         </span>
-        <span className="font-mono text-xs text-primary-foreground/80">
+        <span className="font-mono text-sm text-primary-foreground/80">
           o Zeca vai te ajudar nessa...
         </span>
       </div>

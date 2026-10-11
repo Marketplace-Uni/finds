@@ -27,21 +27,22 @@
 
 - [x] `scripts/seed.ts` (usa a `service_role`, **idempotente**: limpa e recria). Rodar no `finds-dev` **até 30/09** e avisar o time
 - [x] Server action `startConversation(listingId)`: cria ou reabre (não pode conversar com o próprio anúncio; exige perfil completo)
-- [ ] `<StartChatButton>` ("Tenho interesse") → **avisar o Kaike quando estiver pronto**
+- [x] `<StartChatButton>` ("Tenho interesse") → **avisar o Kaike quando estiver pronto**
 - [x] `/mensagens`: lista de conversas (foto do anúncio, outro usuário, última mensagem, horário) + conversa aberta, no layout do Caike
-- [ ] Enviar mensagem + **recebimento em tempo real** (Realtime)
-- [ ] Auto-scroll, horário das mensagens, estado vazio ("nenhuma conversa ainda")
+- [x] Enviar mensagem + **recebimento em tempo real** (Realtime)
+- [x] Auto-scroll, horário das mensagens, estado vazio ("nenhuma conversa ainda")
 
 ## Sprint 2 · 05/10–11/10 · Negociação e engajamento
 
-- [ ] "Propor negociação" no chat → `pending`; a outra parte aceita (`confirmed`) ou recusa (`cancelled` + motivo)
-- [ ] "Marcar como concluído" para cada parte; quando as duas marcarem → `completed`
-- [ ] Cancelar com motivo obrigatório em `pending` ou `confirmed`
-- [ ] Produto concluído → anúncio vira `closed` ("vendido")
-- [ ] `/negociacoes`: lista com filtro por status
-- [ ] **Favoritos:** `<FavoriteButton>` (com o gate de perfil) + página `/favoritos`
-- [ ] **Denúncias:** `<ReportButton>` + modal com motivos, gravando em `reports`
-- [ ] `<UnreadBadge>` com o contador de não lidas (P1)
+- [x] "Propor negociação" no chat → `pending`
+- [x] A outra parte aceita (`confirmed`) ou recusa (`cancelled` + motivo)
+- [x] "Marcar como concluído" para cada parte; quando as duas marcarem → `completed`
+- [x] Cancelar com motivo obrigatório em `pending` ou `confirmed`
+- [x] Produto concluído → anúncio vira `closed` ("vendido")
+- [x] `/negociacoes`: lista com filtro por status
+- [x] **Favoritos:** `<FavoriteButton>` (com o gate de perfil) + página `/favoritos`
+- [x] **Denúncias:** `<ReportButton>` + modal com motivos, gravando em `reports`
+- [x] `<UnreadBadge>` com consulta do contador de não lidas (P1; falta conectar na navbar)
 
 ## Sprint 3 · 12/10–18/10 · Avaliações + seed final
 

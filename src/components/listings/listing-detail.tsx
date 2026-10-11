@@ -38,6 +38,12 @@ export type ListingDetailProps = {
   favoriteSlot?: ReactNode;
   /** `<ReportButton>` do Alexandre. */
   reportSlot?: ReactNode;
+  /**
+   * Botão "Seguir" do card do anunciante. Está no Figma e a Lia confirmou em
+   * 07/10 que fica no layout — mas seguir usuários não está no ESCOPO.md, então
+   * a implementação vem de fora por slot.
+   */
+  followSlot?: ReactNode;
   /** Grid de anúncios do mesmo anunciante. */
   relatedSlot?: ReactNode;
 };
@@ -97,6 +103,7 @@ export function ListingDetail({
   chatSlot,
   favoriteSlot,
   reportSlot,
+  followSlot,
   relatedSlot,
 }: ListingDetailProps) {
   return (
@@ -185,6 +192,7 @@ export function ListingDetail({
                 <p className="text-sm text-muted-foreground">{seller.lastSeen}</p>
               ) : null}
             </div>
+            {followSlot ? <div className="ml-auto shrink-0">{followSlot}</div> : null}
           </section>
 
           {chatSlot}

@@ -25,10 +25,10 @@ export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarPr
   return (
     <header className="bg-nav text-nav-foreground">
       <div className="mx-auto flex h-16 max-w-conteudo items-center gap-4 px-6">
-        {/* Logo em creme: a Lia apontou que o laranja não contrasta no marrom. */}
+        {/* Logo em verde-limão, a pedido da Lia (07/10). */}
         <Link
           href="/"
-          className="shrink-0 text-nav-foreground"
+          className="shrink-0 text-secondary"
           aria-label="Finds, página inicial"
         >
           <LogoFinds className="h-7 w-auto" />
@@ -78,7 +78,7 @@ export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarPr
               className="size-10 text-nav-foreground hover:bg-white/10 [&_svg]:size-5"
             >
               <Link href="/favoritos" aria-label="Favoritos">
-                <Heart aria-hidden />
+                <Heart aria-hidden strokeWidth={2.5} />
               </Link>
             </Button>
 

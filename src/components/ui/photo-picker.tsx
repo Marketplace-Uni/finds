@@ -102,7 +102,7 @@ export function PhotoPicker({
             <button
               type="button"
               onClick={() => inputRef.current?.click()}
-              className="grid aspect-square w-full place-items-center gap-1 rounded-md bg-muted text-muted-foreground hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+              className="grid aspect-square w-full place-items-center gap-1 rounded-md bg-muted text-muted-foreground hover:bg-primary/60 hover:text-primary-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
             >
               <ImagePlus className="size-6" aria-hidden />
               <span className="text-xs font-medium">Adicionar</span>
