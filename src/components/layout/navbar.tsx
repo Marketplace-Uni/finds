@@ -38,7 +38,9 @@ export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarPr
 
         <form
           action="/busca"
-          className="relative order-last min-w-0 w-full flex-1 md:order-none md:w-auto"
+          // `basis-full` (e não `w-full`) é o que força a quebra de linha: com
+          // `flex-1` a base vai a zero e o campo encolhe em vez de descer.
+          className="relative order-last min-w-0 basis-full md:order-none md:flex-1 md:basis-auto"
         >
           <label htmlFor="busca-navbar" className="sr-only">
             Buscar anúncios

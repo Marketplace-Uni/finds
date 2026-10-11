@@ -105,3 +105,20 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
 }
+
+/* Rede de segurança contra rolagem lateral no celular: um único elemento mais
+   largo que a tela faz o app inteiro deslizar para os lados. `clip` corta sem
+   criar um contêiner de rolagem, então não quebra os `position: sticky`
+   (navbar, sidebar de filtros, coluna do detalhe do anúncio).
+   Isto não substitui corrigir a causa — só evita que ela estrague a página. */
+html {
+  overflow-x: clip;
+}
+
+/* Imagem sem largura definida é a causa mais comum de estouro. Os SVGs ficam
+   de fora: eles têm altura fixa e largura automática, e limitar a largura os
+   deixaria espremidos. */
+img,
+video {
+  max-width: 100%;
+}
