@@ -1,18 +1,22 @@
 import { createClient } from "../../../../../lib/supabase/server"
 import { redirect } from "next/navigation"
 
-export default async function EditarAnuncioPage({ params }: { params: { id: string } }) {
+// 1. A tipagem de params agora é uma Promise
+export default async function EditarAnuncioPage({ params }: { params: Promise<{ id: string }> }) {
+  // 2. Extraímos o id usando await
+  const { id } = await params
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/login')
+    redirect('/entrar')
   }
 
   const { data: listing, error } = await supabase
     .from('listings')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id) // 3. Usamos o id diretamente aqui
     .single()
 
   if (error || !listing) {
@@ -20,7 +24,7 @@ export default async function EditarAnuncioPage({ params }: { params: { id: stri
   }
 
   // Validação principal: só o dono pode editar
-  if (listing.user_id !== user.id) {
+  if (listing.owner_id !== user.id) {
     redirect('/')
   }
 
