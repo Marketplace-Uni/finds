@@ -43,6 +43,7 @@ export async function createListing(
     details: Record<string, unknown>;
   },
   imageUrls: string[],
+  status: 'active' | 'draft' = 'active' // <-- Adicione esta linha!
 ) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
