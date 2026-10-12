@@ -282,7 +282,9 @@ Segunda revisão, já com o material da Sprint 2. Tudo aplicado:
 - **Botão "Seguir" vendedor:** **fica no layout**. Como seguir usuários não está no [ESCOPO.md](ESCOPO.md), o `ListingDetail` expõe um `followSlot` e a implementação vem de fora.
 - **Poses do Zeca:** o encaixe de cada uma está correto.
 
-**Pendente com ela:** uma **ilustração própria para o match**, no estilo do Finds e nas cores da marca — hoje o card usa só o selo e as tags.
+**Aprovado em 11/10:** depois dos 11 ajustes, a Lia **aprovou o layout atual**. Ele vira o padrão do produto — telas novas seguem daqui.
+
+**Pendente com ela:** uma **ilustração própria para o match**, no estilo do Finds e nas cores da marca. Ela entrega **até terça, 13/10**. Até lá o card fica com o selo e as tags, que já funcionam — a ilustração entra sem mexer na estrutura.
 
 ### Pontos para decidir com a Lia
 

@@ -30,20 +30,20 @@
 
 ## Sprint 1 · 29/09–04/10 · Produto e Serviço de ponta a ponta
 
-- [ ] `src/lib/validations/listings.ts`: schema base + `details` por tipo
-- [ ] Server actions: criar, editar, excluir anúncio + upload de fotos (até 6, primeira = capa)
-- [ ] `/anunciar`: escolher o tipo (4 cards)
-- [ ] Formulário de **Produto** montado no wizard do Caike → redireciona para o detalhe
-- [ ] Formulário de **Serviço** (modalidade presencial/online/flexível, unidade de preço)
-- [ ] `/anuncios/[id]/editar` + excluir (só o dono)
-- [ ] Usar o gate de perfil completo (Kaike) ao entrar em `/anunciar`
+- [X] `src/lib/validations/listings.ts`: schema base + `details` por tipo
+- [X] Server actions: criar, editar, excluir anúncio + upload de fotos (até 6, primeira = capa)
+- [X] `/anunciar`: escolher o tipo (4 cards)
+- [X] Formulário de **Produto** montado no wizard do Caike → redireciona para o detalhe
+- [X] Formulário de **Serviço** (modalidade presencial/online/flexível, unidade de preço)
+- [X] `/anuncios/[id]/editar` + excluir (só o dono)
+- [X] Usar o gate de perfil completo (Kaike) ao entrar em `/anunciar`
 
 ## Sprint 2 · 05/10–11/10 · Os 4 tipos + gestão
 
-- [ ] Formulário de **Roommate** (oferece/procura vaga, tipo de moradia, bairro, data de entrada)
-- [ ] Formulário de **República** (vagas, gênero, bairro, comodidades)
-- [ ] **Rascunho:** botão "Salvar rascunho" em qualquer passo; retomar depois
-- [ ] `/meus-anuncios`: abas Ativos / Rascunhos / Encerrados; ações pausar, encerrar, excluir, editar
+- [X] Formulário de **Roommate** (oferece/procura vaga, tipo de moradia, bairro, data de entrada)
+- [X] Formulário de **República** (vagas, gênero, bairro, comodidades)
+- [X] **Rascunho:** botão "Salvar rascunho" em qualquer passo; retomar depois
+- [X] `/meus-anuncios`: abas Ativos / Rascunhos / Encerrados; ações pausar, encerrar, excluir, editar
 
 ## Sprint 3 · 12/10–18/10 · Produção
 

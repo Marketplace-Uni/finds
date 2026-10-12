@@ -118,10 +118,12 @@ Componentes, em ordem de prioridade:
 - [X] Abas de "Meus anúncios" + estados do card (rascunho, pausado, vendido) → Josué, **até 07/10**
 - [X] Card de status da negociação no chat + modais (cancelar, denunciar, avaliar) + botão de favorito → Alexandre, **até 07/10**
 - [X] Padrão de estados vazios, de carregamento (skeleton) e de erro, reutilizável por todos — entregue junto com o card na Sprint 1
-- [ ] 🎨 **Checkpoint com a designer (~08/10):** chat, match, formulários
+- [X] 🎨 **Checkpoint com a designer (~08/10):** chat, match, formulários — ela revisou, pediu 11 ajustes (todos aplicados) e **aprovou o layout em 11/10**
 - [ ] Revisar o visual dos PRs da sprint
 
 ## Sprint 3 · 12/10–18/10 · Vitrine e polimento
+
+- [ ] **Ilustração do match** — a Lia entrega até terça, 13/10; encaixar no `MatchCard` quando chegar
 
 - [ ] Landing page para deslogados
 - [ ] Responsivo básico: navbar no celular, grid em 1 coluna, sidebar vira botão "Filtros"
