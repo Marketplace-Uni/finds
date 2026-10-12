@@ -177,6 +177,12 @@ Perfil completo = `campus_id IS NOT NULL`.
 3. A pessoa já navega no feed e nos anúncios.
 4. Ao tentar **anunciar, conversar, favoritar ou negociar**, o helper `requireCompleteProfile()` (servidor) ou o modal "Complete seu perfil" (cliente) leva para `/completar-perfil?next=...`, onde ela escolhe o campus.
 
+### Recuperação de senha
+1. `/recuperar-senha`: a pessoa informa o e-mail; `supabase.auth.resetPasswordForEmail()` manda o link (sem confirmar se o e-mail existe, evita enumeração de contas).
+2. O link volta pra `/redefinir-senha` com um token na URL. O cliente Supabase do navegador lê esse token sozinho e dispara uma sessão de recuperação (`onAuthStateChange("PASSWORD_RECOVERY")`).
+3. A pessoa define a senha nova; `supabase.auth.updateUser({ password })` roda direto no cliente (a sessão de recuperação já autentica a chamada).
+4. ⚠️ **Requer config no painel do Supabase:** o `redirectTo` usado (`{origin}/redefinir-senha`) precisa estar nas "Redirect URLs" de `finds-dev`/`finds-demo` — ver issue #28.
+
 ### Chat
 - O botão "Tenho interesse" no detalhe do anúncio cria ou reabre a conversa (`UNIQUE(listing_id, buyer_id)`).
 - `/mensagens` tem 2 painéis: conversas à esquerda, mensagens à direita.

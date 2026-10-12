@@ -53,7 +53,9 @@
 
 ## Sprint 3 · 12/10–18/10 · Polimento
 
-- [ ] Recuperar senha (P1)
+- [x] Recuperar senha (P1) — `/recuperar-senha` (pede o e-mail, chama `supabase.auth.resetPasswordForEmail`) e `/redefinir-senha` (lê a sessão de recuperação que o link do e-mail cria no browser via `onAuthStateChange("PASSWORD_RECOVERY")`, chama `supabase.auth.updateUser({ password })`). Schemas em `src/lib/validations/auth.ts`. **Pendência operacional, não é código:** o `redirectTo` (`{origin}/redefinir-senha`) precisa estar na lista de "Redirect URLs" do projeto Supabase (`finds-dev`/`finds-demo`) — sem isso o Supabase rejeita o link. Avisei o time ([issue #28](https://github.com/Marketplace-Uni/finds/issues/28))
+- [x] Login/cadastro: toggle de mostrar/ocultar senha (`<PasswordField>` novo em `src/components/ui/password-field.tsx` — versão simples, o Caike refina depois, mesmo padrão do `ui/dialog.tsx`), link "Esqueceu a senha?" em `/entrar`, e um "Bem-vindo(a) ao Finds!" + logo em `/cadastro` pro celular (onde o `<AuthArt>` do Caike, que já tem isso, fica escondido). Telas de carregamento em `/entrar`, `/cadastro`, `/recuperar-senha` e `/redefinir-senha`
+- [x] Conserta o logout: trocado o Route Handler GET de `/sair` (que exigia dar F5 pra aplicar — `<Link>` navegava client-side e o Router Cache mantinha o navbar "logado") por uma Server Action (`src/app/sair/actions.ts`) com `revalidatePath` + `redirect("/entrar")`, igual o padrão já usado em `entrar()`/`cadastrar()`. **Mexi no `<UserMenu>` do Caike** (`src/components/layout/user-menu.tsx`) pra trocar o `<Link>` por um item com estado "Saindo..." (spinner) enquanto desloga — troquei só o gatilho/estado, mantive o visual (ícone, texto, classes) igual; avisar o Caike pra revisar
 - [ ] Conferir que o match fica bonito com os dados do seed final (combinar com o Alexandre)
 - [ ] Ajustes do QA de design que caírem para você
 - [ ] Ensaiar a parte do match no roteiro da demo
