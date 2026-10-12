@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/src/components/ui/button";
 import { TextField } from "@/src/components/ui/field";
+import { PasswordField } from "@/src/components/ui/password-field";
 import { entrarSchema, type EntrarInput } from "@/src/lib/validations/auth";
 import { entrar } from "./actions";
 
@@ -49,14 +50,20 @@ function EntrarForm() {
         error={errors.email?.message}
         {...register("email")}
       />
-      <TextField
+      <PasswordField
         label="Senha"
         htmlFor="senha"
-        type="password"
         autoComplete="current-password"
         error={errors.senha?.message}
         {...register("senha")}
       />
+
+      <Link
+        href="/recuperar-senha"
+        className="-mt-3 self-end text-xs font-semibold text-primary hover:underline"
+      >
+        Esqueceu a senha?
+      </Link>
 
       {erroServidor ? (
         <p className="text-xs font-medium text-destructive" role="alert">

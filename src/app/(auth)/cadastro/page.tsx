@@ -7,6 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/src/components/ui/button";
 import { TextField } from "@/src/components/ui/field";
+import { PasswordField } from "@/src/components/ui/password-field";
+import { LogoFinds } from "@/src/components/layout/logo-finds";
 import { cadastroSchema, type CadastroInput } from "@/src/lib/validations/auth";
 import { cadastrar } from "./actions";
 
@@ -26,6 +28,16 @@ export default function CadastroPage() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5" noValidate>
+      {/*
+        O painel <AuthArt> do Caike já tem logo + "Bem-vindo ao Finds!", mas
+        só aparece em lg: (tela dividida). No celular sobrava só a logo
+        pequena solta no topo do layout, sem nenhum texto de boas-vindas.
+      */}
+      <div className="flex items-center gap-2 lg:hidden">
+        <LogoFinds className="h-6 w-auto text-primary" />
+        <p className="text-sm font-semibold text-foreground">Bem-vindo(a) ao Finds!</p>
+      </div>
+
       <h1 className="text-xl font-semibold text-foreground">Criar conta</h1>
 
       <TextField
@@ -51,18 +63,16 @@ export default function CadastroPage() {
         error={errors.email?.message}
         {...register("email")}
       />
-      <TextField
+      <PasswordField
         label="Senha"
         htmlFor="senha"
-        type="password"
         autoComplete="new-password"
         error={errors.senha?.message}
         {...register("senha")}
       />
-      <TextField
+      <PasswordField
         label="Confirmar senha"
         htmlFor="confirmarSenha"
-        type="password"
         autoComplete="new-password"
         error={errors.confirmarSenha?.message}
         {...register("confirmarSenha")}
