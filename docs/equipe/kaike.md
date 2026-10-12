@@ -36,7 +36,10 @@
 - [x] `requireCompleteProfile()` + `useCompleteProfileGate()` + modal — **avisar o Josué e o Alexandre: já está pronto** (`src/lib/auth.ts` e `src/components/auth/complete-profile-gate.tsx`); usa `src/components/ui/dialog.tsx`, um modal simples que fiz pq o Caike ainda não desenhou um no Figma — ele refina depois
 - [x] Feed: query paginada ("carregar mais") + filtros com **estado na URL** (`?tipo=produto&campus=...`): tipo, campus, faixa de preço — `src/lib/listings.ts`; `categoria`/`condicao` ficam só na UI por ora (vivem em `listings.details`, formato ainda não entregue pelo Josué)
 - [x] Busca por texto → `/busca?q=` (título + descrição, `ilike`) — mesma query de `src/lib/listings.ts`
-- [ ] `/anuncios/[id]`: buscar o anúncio + fotos + anunciante e exibir os `details` do tipo (usa os schemas do Josué) — ainda não iniciado: falta o schema de `details` por tipo de anúncio (Sprint 1 do Josué, ainda não entregue em nenhuma branch)
+- [x] `/anuncios/[id]`: buscar o anúncio + fotos + anunciante e exibir os `details` do tipo (usa os schemas do Josué) — desbloqueado quando `src/lib/validations/listings.ts` chegou na `main`; `fetchListingDetail()` em `src/lib/listings.ts`, mapeamento dos `details` por tipo em `src/lib/listing-details.ts` (com teste), página monta o `<ListingDetail>` do Caike com `favoriteSlot`/`reportSlot` já plugados nos componentes prontos do Alexandre. **Pendente, fora da minha área:**
+  - `chatSlot` sem botão: a action `startConversation()` existe em `src/lib/chat/actions.ts`, mas falta o Alexandre criar o `<StartChatButton>` — hoje o slot fica `undefined` com um `// TODO(Alexandre)` no código
+  - Não deu pra testar na tela com dado real: o `finds-dev` está sem nenhum anúncio (`npm run seed` é destrutivo, não rodei sem combinar com o time) — testado só o caminho de "não encontrado"
+  - Reparei que `meus-anuncios/page.tsx` (Josué) usa `status` em português (`ativo/pausado/...`), inconsistente com o enum real do banco (`active/draft/paused/closed`) — vale avisar ele
 
 ## Sprint 2 · 05/10–11/10 · Perfil e Match ⭐
 
