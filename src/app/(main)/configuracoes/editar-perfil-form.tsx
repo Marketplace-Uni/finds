@@ -7,6 +7,7 @@ import { Button } from "@/src/components/ui/button";
 import { Field, TextAreaField, TextField, controlClass } from "@/src/components/ui/field";
 import type { FilterOption } from "@/src/components/discovery/filters-sidebar";
 import type { Profile } from "@/src/lib/auth";
+import { coursesForCampus } from "@/src/lib/courses";
 import { editarPerfil, type EditarPerfilState } from "./actions";
 
 const initialState: EditarPerfilState = {};
@@ -29,6 +30,10 @@ export function EditarPerfilForm({
 }) {
   const [state, formAction, isPending] = useActionState(editarPerfil, initialState);
   const [preview, setPreview] = useState<string | null>(profile.avatar_url);
+  const [campusId, setCampusId] = useState(profile.campus_id ?? "");
+
+  const campusName = campuses.find((campus) => campus.value === campusId)?.label;
+  const courseOptions = coursesForCampus(campusName);
 
   return (
     <form action={formAction} className="flex flex-col gap-5">
@@ -75,7 +80,8 @@ export function EditarPerfilForm({
           id="campusId"
           name="campusId"
           className={controlClass}
-          defaultValue={profile.campus_id ?? ""}
+          value={campusId}
+          onChange={(event) => setCampusId(event.target.value)}
         >
           <option value="" disabled>
             Selecione...
@@ -83,6 +89,39 @@ export function EditarPerfilForm({
           {campuses.map((campus) => (
             <option key={campus.value} value={campus.value}>
               {campus.label}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      <Field
+        label="Curso"
+        htmlFor="course"
+        hint={
+          !campusId
+            ? "Selecione o campus para ver os cursos disponíveis."
+            : courseOptions.length === 0
+              ? "Ainda não temos a lista de cursos desse campus."
+              : "Em breve: por enquanto o curso só é validado, ainda não é salvo (falta um ajuste no banco)."
+        }
+      >
+        {/*
+          Campo novo: lista fixa de cursos por campus (src/lib/courses.ts,
+          pesquisada no catálogo da Prograd). A seleção é validada no servidor,
+          mas ainda NÃO é persistida: falta a coluna `profiles.course`
+          (migration pendente do Josué, ver issue vinculada).
+        */}
+        <select
+          id="course"
+          name="course"
+          className={controlClass}
+          disabled={!campusId || courseOptions.length === 0}
+          defaultValue=""
+        >
+          <option value="">Selecione...</option>
+          {courseOptions.map((course) => (
+            <option key={course} value={course}>
+              {course}
             </option>
           ))}
         </select>
