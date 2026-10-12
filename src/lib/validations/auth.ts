@@ -7,14 +7,14 @@ import { z } from "zod";
  */
 const EMAIL_DOMAIN_REGEX = /@ufu\.br$/i;
 
-const emailUfuSchema = z
+export const emailUfuSchema = z
   .string()
   .trim()
   .min(1, "Informe o e-mail")
   .email("E-mail inválido")
   .regex(EMAIL_DOMAIN_REGEX, "Use seu e-mail @ufu.br");
 
-const senhaSchema = z
+export const senhaSchema = z
   .string()
   .min(8, "A senha precisa ter pelo menos 8 caracteres");
 
@@ -45,3 +45,21 @@ export const entrarSchema = z.object({
 });
 
 export type EntrarInput = z.infer<typeof entrarSchema>;
+
+export const recuperarSenhaSchema = z.object({
+  email: emailUfuSchema,
+});
+
+export type RecuperarSenhaInput = z.infer<typeof recuperarSenhaSchema>;
+
+export const redefinirSenhaSchema = z
+  .object({
+    senha: senhaSchema,
+    confirmarSenha: z.string(),
+  })
+  .refine((data) => data.senha === data.confirmarSenha, {
+    message: "As senhas não coincidem",
+    path: ["confirmarSenha"],
+  });
+
+export type RedefinirSenhaInput = z.infer<typeof redefinirSenhaSchema>;
