@@ -113,6 +113,8 @@ A cidade vem do campus, então não guardamos cidade solta.
 `id` (= auth user id), `username` (único), `full_name`, `avatar_url`, `bio`, `university_id`, `campus_id` (nulo até completar o perfil), `last_seen_at`, `created_at`
 Perfil completo = `campus_id IS NOT NULL`.
 
+> ⚠️ **Proposto, ainda não existe no banco:** `course` (text, nulo). UI e validação já prontas em `/configuracoes` (Kaike), lista de cursos por campus em `src/lib/courses.ts`; falta a migration (dono: Josué) — ver issue.
+
 **`listings`**
 `id`, `owner_id`, `type` (`product` | `service` | `roommate` | `republic`), `status` (`draft` | `active` | `paused` | `closed`), `title`, `description`, `price` (numeric, nulo = "a combinar"), `campus_id`, `details` (jsonb, específico por tipo), `created_at`, `updated_at`
 

@@ -57,6 +57,9 @@
 - [ ] Conferir que o match fica bonito com os dados do seed final (combinar com o Alexandre)
 - [ ] Ajustes do QA de design que caírem para você
 - [ ] Ensaiar a parte do match no roteiro da demo
+- [x] Telas de carregamento (`loading.tsx` com a logo do Finds, `<LoadingState>` novo em `src/components/ui/states.tsx` — versão simples, o Caike refina depois) em `/busca`, `/anuncios/[id]`, `/perfil/[username]`, `/roommates`, `/configuracoes` e `/completar-perfil`. **Não fiz** em `(main)/page.tsx` (feed) porque um `loading.tsx` ali embaixo cascata pras rotas irmãs que não são minhas (`anunciar`, `meus-anuncios`, `mensagens`, `favoritos`, `negociacoes`) — combinar com o time antes de adicionar
+- [x] Animação de entrada (fade + slide sutil) em `/perfil/[username]` e `/anuncios/[id]` — `@keyframes` inline em cada página (não mexi em `globals.css`, é tema do Caike), escopo contido só nessas duas por enquanto
+- [x] Campo "Curso" no perfil: `src/lib/courses.ts` com os cursos por campus de Uberlândia (pesquisei no catálogo oficial da Prograd/UFU, 4ª edição), seletor dependente do campus em `/configuracoes`, validado na Server Action. **Pendência real, documentada em issue:** falta a coluna `profiles.course` (migration do Josué) — por enquanto o curso é validado mas **não é salvo**, com aviso disso na própria tela
 
 ## Reta final · 19–20/10
 - [ ] Bug bash + só correções
