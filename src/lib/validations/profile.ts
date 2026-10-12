@@ -20,6 +20,12 @@ export const editarPerfilSchema = z.object({
     .optional()
     .or(z.literal("")),
   campusId: z.string().uuid("Selecione um campus válido"),
+  /**
+   * Validado contra `coursesForCampus()` (src/lib/courses.ts) na Server
+   * Action, não aqui: a lista de cursos válidos depende do campus escolhido,
+   * então um enum zod fixo não dá conta.
+   */
+  course: z.string().trim().max(120, "Nome de curso muito longo").optional().or(z.literal("")),
 });
 
 export type EditarPerfilInput = z.infer<typeof editarPerfilSchema>;

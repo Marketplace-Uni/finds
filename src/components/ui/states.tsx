@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { cn } from "@/src/lib/utils";
 import { Zeca, type ZecaPose } from "@/src/components/ui/zeca";
+import { LogoFinds } from "@/src/components/layout/logo-finds";
 
 type StateProps = {
   title: string;
@@ -37,6 +38,33 @@ export function EmptyState({
         <p className="max-w-prose text-sm text-muted-foreground">{description}</p>
       ) : null}
       {action}
+    </div>
+  );
+}
+
+/**
+ * Tela de carregamento, para `loading.tsx` (o Suspense fallback de cada
+ * rota). Versão simples feita pelo Kaike porque o Caike ainda não desenhou
+ * uma no Figma — ele refina depois, como já aconteceu com `ui/dialog.tsx`.
+ */
+export function LoadingState({
+  description = "Carregando...",
+  className,
+}: {
+  description?: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center gap-3 px-6 py-20 text-center",
+        className,
+      )}
+      role="status"
+      aria-live="polite"
+    >
+      <LogoFinds className="h-10 w-auto animate-pulse text-primary" />
+      <p className="text-sm text-muted-foreground">{description}</p>
     </div>
   );
 }

@@ -40,7 +40,14 @@ export default async function PerfilPublicoPage({
   const ehOProprioPerfil = viewer?.id === profile.id;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 animate-[finds-fade-in_0.35s_ease-out]">
+      {/*
+        Keyframe inline em vez de global.css: anima só a entrada desta
+        página, sem mexer no tema (área do Caike). Ver mesmo padrão em
+        /anuncios/[id].
+      */}
+      <style>{`@keyframes finds-fade-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}`}</style>
+
       <ProfileHeader
         name={profile.full_name ?? profile.username ?? "Sem nome"}
         username={profile.username ?? ""}

@@ -64,7 +64,13 @@ export default async function AnuncioDetalhePage({
   );
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 animate-[finds-fade-in_0.35s_ease-out]">
+      {/*
+        Keyframe inline em vez de global.css: anima só a entrada desta
+        página, sem mexer no tema (área do Caike). Mesmo padrão em /perfil.
+      */}
+      <style>{`@keyframes finds-fade-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}`}</style>
+
       {isOwner && listing.status !== "active" ? (
         <div className="flex items-center gap-2 rounded-lg bg-card px-4 py-3 text-sm text-foreground">
           <ListingStatusBadge status={listing.status} />
