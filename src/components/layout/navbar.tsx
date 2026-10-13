@@ -4,6 +4,7 @@ import { Heart, MapPin, MessageCircle, Plus, Search } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { LogoFinds } from "@/src/components/layout/logo-finds";
 import { UserMenu, type NavbarUser } from "@/src/components/layout/user-menu";
+import { UnreadBadge } from "@/src/components/chat/unread-badge";
 
 type NavbarProps = {
   /** Quem está logado. `null` mostra a navbar de visitante. */
@@ -97,11 +98,11 @@ export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarPr
             >
               <Link href="/mensagens" aria-label="Mensagens">
                 <MessageCircle aria-hidden />
-                {unreadCount > 0 ? (
-                  <span className="absolute top-0.5 right-0.5 grid min-w-4 place-items-center rounded-pill bg-primary px-1 text-[10px] leading-4 font-bold text-primary-foreground">
-                    {unreadCount > 9 ? "9+" : unreadCount}
-                  </span>
-                ) : null}
+                {/* O badge é do Alexandre: usar o componente dele em vez de
+                    repetir o visual aqui mantém os dois iguais. */}
+                <span className="absolute top-0.5 right-0.5">
+                  <UnreadBadge count={unreadCount} />
+                </span>
               </Link>
             </Button>
 
