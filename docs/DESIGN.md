@@ -284,7 +284,13 @@ Segunda revisão, já com o material da Sprint 2. Tudo aplicado:
 
 **Aprovado em 11/10:** depois dos 11 ajustes, a Lia **aprovou o layout atual**. Ele vira o padrão do produto — telas novas seguem daqui.
 
-**Pendente com ela:** uma **ilustração própria para o match**, no estilo do Finds e nas cores da marca. Ela entrega **até terça, 13/10**. Até lá o card fica com o selo e as tags, que já funcionam — a ilustração entra sem mexer na estrutura.
+### Estrela do match — recebida em 13/10
+
+A ilustração que a Lia prometeu para o match. O arquivo original está em [`public/estrela-finds.svg`](../../public/estrela-finds.svg); no código, use o componente `EstrelaFinds`.
+
+Mesma pegadinha do logo e do Zeca: o export do Illustrator traz **um retângulo em coordenada negativa**, fora da área visível — sobra do arquivo. O componente usa só a estrela, com o `viewBox` recortado no desenho (`664.69 196.12 572.41 662.51`) e `currentColor`. Proporção ~**0.86:1**.
+
+**Onde entra:** ela carrega a compatibilidade — grande no `MatchDeck`, com o percentual escrito dentro, e pequena ao lado do número no selo do `MatchCard`. O número sozinho não dizia que aquilo era o match do Finds.
 
 ### Pontos para decidir com a Lia
 

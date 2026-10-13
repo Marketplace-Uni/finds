@@ -5,6 +5,7 @@ import { ImageOff, MapPin, MoveDown } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 import { formatPrice } from "@/src/lib/format";
 import { Zeca } from "@/src/components/ui/zeca";
+import { EstrelaFinds } from "@/src/components/ui/estrela-finds";
 
 export type MatchCandidate = {
   id: string;
@@ -82,10 +83,17 @@ export function MatchDeck({
                   </div>
                 )}
 
+                {/* A estrela da Lia carrega a compatibilidade: o número sozinho
+                    não dizia que aquilo é o match do Finds. */}
                 {pct !== null ? (
-                  <div className="absolute top-4 left-4 flex flex-col items-center rounded-lg bg-primary px-4 py-2 text-primary-foreground shadow-sm">
-                    <span className="text-3xl leading-none font-bold">{`${pct}%`}</span>
-                    <span className="text-xs font-semibold">compatível</span>
+                  <div className="absolute top-3 left-3">
+                    <div className="relative">
+                      <EstrelaFinds className="h-28 w-auto text-primary drop-shadow-sm" />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center pt-2 text-primary-foreground">
+                        <span className="text-2xl leading-none font-bold">{`${pct}%`}</span>
+                        <span className="text-[10px] font-semibold">compatível</span>
+                      </div>
+                    </div>
                   </div>
                 ) : null}
               </div>
