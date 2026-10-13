@@ -82,6 +82,7 @@ export async function editarPerfil(
       full_name: parsed.data.fullName,
       bio: parsed.data.bio || null,
       campus_id: parsed.data.campusId,
+      course: parsed.data.course || null, // ✅ Linha adicionada!
       ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
     })
     .eq("id", user.id);

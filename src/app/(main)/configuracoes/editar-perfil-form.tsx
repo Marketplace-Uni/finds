@@ -102,21 +102,15 @@ export function EditarPerfilForm({
             ? "Selecione o campus para ver os cursos disponíveis."
             : courseOptions.length === 0
               ? "Ainda não temos a lista de cursos desse campus."
-              : "Em breve: por enquanto o curso só é validado, ainda não é salvo (falta um ajuste no banco)."
+              : undefined // ✅ Aviso de "em breve" foi removido
         }
       >
-        {/*
-          Campo novo: lista fixa de cursos por campus (src/lib/courses.ts,
-          pesquisada no catálogo da Prograd). A seleção é validada no servidor,
-          mas ainda NÃO é persistida: falta a coluna `profiles.course`
-          (migration pendente do Josué, ver issue vinculada).
-        */}
         <select
           id="course"
           name="course"
           className={controlClass}
           disabled={!campusId || courseOptions.length === 0}
-          defaultValue=""
+          defaultValue={profile.course ?? ""} // ✅ Valor do perfil inserido
         >
           <option value="">Selecione...</option>
           {courseOptions.map((course) => (
