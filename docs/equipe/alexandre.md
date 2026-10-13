@@ -27,9 +27,9 @@
 
 - [x] `scripts/seed.ts` (usa a `service_role`, **idempotente**: limpa e recria). Rodar no `finds-dev` **até 30/09** e avisar o time
 - [x] Server action `startConversation(listingId)`: cria ou reabre (não pode conversar com o próprio anúncio; exige perfil completo)
-- [x] `<StartChatButton>` ("Tenho interesse") → **avisar o Kaike quando estiver pronto**
+- [x] `<StartChatButton>` ("Tenho interesse") criado em `src/components/chat/start-chat-button.tsx`; falta o Kaike encaixar no detalhe do anúncio
 - [x] `/mensagens`: lista de conversas (foto do anúncio, outro usuário, última mensagem, horário) + conversa aberta, no layout do Caike
-- [x] Enviar mensagem + **recebimento em tempo real** (Realtime)
+- [ ] Enviar mensagem + **recebimento em tempo real** (Realtime): assinatura implementada em `src/components/chat/chat-realtime.tsx`; habilitar `messages` na publicação Realtime do Supabase com o Josué e validar entre duas contas
 - [x] Auto-scroll, horário das mensagens, estado vazio ("nenhuma conversa ainda")
 
 ## Sprint 2 · 05/10–11/10 · Negociação e engajamento
