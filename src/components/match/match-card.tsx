@@ -69,7 +69,7 @@ export function MatchCard({
         {pct !== null ? (
           <span className="absolute top-3 left-3 flex items-center gap-1.5 rounded-pill bg-primary py-1 pr-3 pl-2 text-xs font-bold text-primary-foreground shadow-sm">
             <EstrelaFinds className="h-3.5 w-auto" />
-            {`% compatível`}
+            {`${pct}% compatível`}
           </span>
         ) : null}
 

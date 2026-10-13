@@ -83,16 +83,16 @@ export function MatchDeck({
                   </div>
                 )}
 
-                {/* A estrela da Lia carrega a compatibilidade: o número sozinho
-                    não dizia que aquilo é o match do Finds. */}
+                {/* A estrela fica ao lado do número, não atrás: as pontas são
+                    finas e o texto escrito dentro dela transbordava. */}
                 {pct !== null ? (
-                  <div className="absolute top-3 left-3">
-                    <div className="relative">
-                      <EstrelaFinds className="h-28 w-auto text-primary drop-shadow-sm" />
-                      <div className="absolute inset-0 flex flex-col items-center justify-center pt-2 text-primary-foreground">
-                        <span className="text-2xl leading-none font-bold">{`${pct}%`}</span>
-                        <span className="text-[10px] font-semibold">compatível</span>
-                      </div>
+                  <div className="absolute top-3 left-3 flex items-center gap-2.5 rounded-lg bg-background/95 py-2 pr-4 pl-3 shadow-sm">
+                    <EstrelaFinds className="h-9 w-auto shrink-0 text-primary" />
+                    <div className="flex flex-col leading-none">
+                      <span className="text-2xl font-bold text-foreground">{`${pct}%`}</span>
+                      <span className="mt-0.5 text-[11px] font-semibold text-muted-foreground">
+                        compatível
+                      </span>
                     </div>
                   </div>
                 ) : null}
