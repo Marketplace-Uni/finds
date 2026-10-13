@@ -7,7 +7,11 @@ type SeedUser = {
 	id: string;
 	full_name: string;
 	username: string;
+<<<<<<< Updated upstream
 	email: string;
+=======
+	bio: string;
+>>>>>>> Stashed changes
 	campus_id: string;
 };
 
@@ -337,7 +341,12 @@ async function main() {
 		userIds.set(user.id, data.user.id);
 		const { error: profileError } = await supabase
 			.from("profiles")
-			.update({ campus_id: user.campus_id, university_id: universityId })
+			.update({
+				full_name: user.full_name,
+				bio: user.bio,
+				campus_id: user.campus_id,
+				university_id: universityId,
+			})
 			.eq("id", data.user.id);
 		if (profileError) throw profileError;
 	}

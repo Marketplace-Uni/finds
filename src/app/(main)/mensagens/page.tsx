@@ -14,8 +14,15 @@ import {
   type Conversation,
 } from "@/src/components/chat/conversation-list";
 import { ErrorState } from "@/src/components/ui/states";
+<<<<<<< Updated upstream
+=======
+import { requireCompleteProfile } from "@/src/lib/auth";
+import { sendChatMessage } from "@/src/lib/chat/actions";
+import { formatMessageTime } from "@/src/lib/chat/format-message-time";
+>>>>>>> Stashed changes
 import { createClient } from "@/src/lib/supabase/server";
 
+<<<<<<< Updated upstream
 function formatMessageTime(value: string | null | undefined) {
   if (!value) return null;
 
@@ -73,6 +80,187 @@ async function sendMessageAction(conversationId: string, formData: FormData) {
   });
 
   if (!error) revalidatePath("/mensagens");
+=======
+async function updateTransactionAction(conversationId: string, formData: FormData) {
+  "use server";
+
+  const parsed = transactionActionSchema.safeParse({
+    status: formData.get("status"),
+    cancelReason: formData.get("cancel_reason") ?? "",
+  });
+  if (!parsed.success) throw new Error("Confira os dados da negociação.");
+
+  const returnTo = `/mensagens?conversation=${encodeURIComponent(conversationId)}`;
+  const profile = await requireCompleteProfile(returnTo);
+  const targetStatus = parsed.data.status;
+  const cancelReason = parsed.data.cancelReason ?? "";
+  const supabase = await createClient();
+
+  const { data: transaction, error: transactionError } = await supabase
+    .from("transactions")
+    .select(
+      "id, buyer_id, seller_id, status, buyer_completed_at, seller_completed_at, cancel_reason, listing_id, created_by",
+    )
+    .eq("conversation_id", conversationId)
+    .or(`buyer_id.eq.${profile.id},seller_id.eq.${profile.id}`)
+    .maybeSingle();
+  if (transactionError) throw new Error("Não foi possível carregar a negociação.");
+
+  if (!transaction) {
+    if (targetStatus !== "propose") {
+      throw new Error("Não existe uma negociação para atualizar.");
+    }
+
+    const { data: conversation, error: conversationError } = await supabase
+      .from("conversations")
+      .select("id, listing_id, buyer_id, seller_id")
+      .eq("id", conversationId)
+      .or(`buyer_id.eq.${profile.id},seller_id.eq.${profile.id}`)
+      .maybeSingle();
+
+    if (conversationError) throw new Error("Não foi possível verificar a conversa.");
+    if (!conversation || !conversation.listing_id) {
+      throw new Error("A conversa não está vinculada a um anúncio disponível.");
+    }
+    if (conversation.buyer_id !== profile.id) {
+      throw new Error("Somente quem iniciou a conversa pode propor a negociação.");
+    }
+
+    const { data: listing, error: listingError } = await supabase
+      .from("listings")
+      .select("owner_id, status")
+      .eq("id", conversation.listing_id)
+      .maybeSingle();
+    if (listingError) throw new Error("Não foi possível verificar o anúncio da conversa.");
+    if (!listing || listing.status !== "active" || listing.owner_id !== conversation.seller_id) {
+      throw new Error("Este anúncio não está disponível para uma nova negociação.");
+    }
+
+    const { error } = await supabase.from("transactions").insert({
+      conversation_id: conversation.id,
+      listing_id: conversation.listing_id,
+      buyer_id: conversation.buyer_id,
+      seller_id: conversation.seller_id,
+      status: "pending",
+      created_by: profile.id,
+    });
+
+    if (error) throw new Error("Não foi possível propor a negociação.");
+    revalidatePath("/mensagens");
+    revalidatePath("/negociacoes");
+    return;
+  }
+
+  const isBuyer = transaction.buyer_id === profile.id;
+  const isSeller = transaction.seller_id === profile.id;
+  if (!isBuyer && !isSeller) throw new Error("Você não participa desta negociação.");
+
+  if (targetStatus === "accept") {
+    if (transaction.status !== "pending" || !isSeller) {
+      throw new Error("Somente o anunciante pode aceitar uma proposta pendente.");
+    }
+
+    const { error } = await supabase
+      .from("transactions")
+      .update({ status: "confirmed" })
+      .eq("id", transaction.id)
+      .eq("status", "pending");
+
+    if (error) throw new Error("Não foi possível aceitar a negociação.");
+    revalidatePath("/mensagens");
+    revalidatePath("/negociacoes");
+    return;
+  }
+
+  if (targetStatus === "cancel") {
+    if (transaction.status !== "pending" && transaction.status !== "confirmed") {
+      throw new Error("Só é possível cancelar uma negociação pendente ou confirmada.");
+    }
+
+    const { error } = await supabase
+      .from("transactions")
+      .update({
+        status: "cancelled",
+        cancelled_by: profile.id,
+        cancel_reason: cancelReason,
+      })
+      .eq("id", transaction.id)
+      .in("status", ["pending", "confirmed"]);
+
+    if (error) throw new Error("Não foi possível cancelar a negociação.");
+    revalidatePath("/mensagens");
+    revalidatePath("/negociacoes");
+    return;
+  }
+
+  if (targetStatus === "complete") {
+    if (transaction.status !== "confirmed") {
+      throw new Error("A negociação precisa estar confirmada para marcar como concluída.");
+    }
+    if ((isBuyer && transaction.buyer_completed_at) || (isSeller && transaction.seller_completed_at)) {
+      throw new Error("Você já marcou esta negociação como concluída.");
+    }
+
+    const completionTime = new Date().toISOString();
+    const completionUpdate = isBuyer
+      ? await supabase
+          .from("transactions")
+          .update({ buyer_completed_at: completionTime })
+          .eq("id", transaction.id)
+          .eq("status", "confirmed")
+      : await supabase
+          .from("transactions")
+          .update({ seller_completed_at: completionTime })
+          .eq("id", transaction.id)
+          .eq("status", "confirmed");
+
+    if (completionUpdate.error) {
+      throw new Error("Não foi possível registrar sua confirmação de conclusão.");
+    }
+
+    const { data: updatedTransaction, error: updatedTransactionError } = await supabase
+      .from("transactions")
+      .select("buyer_completed_at, seller_completed_at")
+      .eq("id", transaction.id)
+      .maybeSingle();
+    if (updatedTransactionError || !updatedTransaction) {
+      throw new Error("Não foi possível confirmar o estado da negociação.");
+    }
+
+    const bothCompleted = !!updatedTransaction.buyer_completed_at && !!updatedTransaction.seller_completed_at;
+    if (bothCompleted) {
+      const { error: completionError } = await supabase
+        .from("transactions")
+        .update({ status: "completed" })
+        .eq("id", transaction.id)
+        .eq("status", "confirmed");
+      if (completionError) throw new Error("Não foi possível concluir a negociação.");
+
+      if (transaction.listing_id) {
+        const { data: listing, error: listingError } = await supabase
+          .from("listings")
+          .select("type")
+          .eq("id", transaction.listing_id)
+          .maybeSingle();
+        if (listingError) throw new Error("Não foi possível verificar o anúncio.");
+
+        if (listing?.type === "product") {
+          const { error: listingUpdateError } = await supabase
+            .from("listings")
+            .update({ status: "closed" })
+            .eq("id", transaction.listing_id);
+          if (listingUpdateError) throw new Error("Não foi possível encerrar o anúncio vendido.");
+        }
+      }
+    }
+
+    revalidatePath("/mensagens");
+    revalidatePath("/negociacoes");
+    return;
+  }
+
+  throw new Error("Esta ação não é válida para o estado atual da negociação.");
+>>>>>>> Stashed changes
 }
 
 export default async function MensagensPage({
@@ -253,6 +441,9 @@ export default async function MensagensPage({
 
       {selectedConversation ? (
         <ChatPanel
+          key={selectedConversation.id}
+          conversationId={selectedConversation.id}
+          userId={user.id}
           peer={{
             name:
               selectedConversation.peer?.full_name ||
@@ -266,12 +457,13 @@ export default async function MensagensPage({
           messages={(messageRows ?? []).map((message) => ({
             id: message.id,
             content: message.content,
+            createdAt: message.created_at ?? undefined,
             time: formatMessageTime(message.created_at),
             mine: message.sender_id === user.id,
             read: message.sender_id === user.id && message.read_at !== null,
           }))}
           backHref="/mensagens"
-          action={sendMessageAction.bind(null, selectedConversation.id)}
+          onSend={sendChatMessage.bind(null, selectedConversation.id)}
           headerSlot={
             <p className="truncate rounded-md bg-card px-3 py-2 text-xs text-muted-foreground">
               Anúncio: {selectedConversation.listing?.title}

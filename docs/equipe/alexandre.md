@@ -25,12 +25,20 @@
 
 ## Sprint 1 · 29/09–04/10 · Seed + Chat
 
-- [x] `scripts/seed.ts` (usa a `service_role`, **idempotente**: limpa e recria). Rodar no `finds-dev` **até 30/09** e avisar o time
+- [x] `scripts/seed.ts` (usa a `service_role`, **idempotente**: limpa e recria; perfis recebem nome e bio)
+- [ ] Confirmar execução no `finds-dev` e avisar o time — não rodei novamente porque o seed apaga e recria os dados
 - [x] Server action `startConversation(listingId)`: cria ou reabre (não pode conversar com o próprio anúncio; exige perfil completo)
+<<<<<<< Updated upstream
 - [ ] `<StartChatButton>` ("Tenho interesse") → **avisar o Kaike quando estiver pronto**
 - [x] `/mensagens`: lista de conversas (foto do anúncio, outro usuário, última mensagem, horário) + conversa aberta, no layout do Caike
 - [ ] Enviar mensagem + **recebimento em tempo real** (Realtime)
 - [ ] Auto-scroll, horário das mensagens, estado vazio ("nenhuma conversa ainda")
+=======
+- [x] `<StartChatButton>` ("Tenho interesse") — componente implementado em `src/components/chat/start-chat-button.tsx`; falta o Kaike conectá-lo ao `chatSlot` do detalhe do anúncio e avisá-lo
+- [x] `/mensagens`: lista de conversas (foto do anúncio, outro usuário, última mensagem, horário) + conversa aberta, no layout do Caike
+- [x] Enviar mensagem + **recebimento em tempo real** (Realtime) — envio, assinatura e atualização de leitura implementados; falta validar entre duas contas e confirmar que `messages` está habilitada na publicação `supabase_realtime` do Supabase
+- [x] Auto-scroll, horário das mensagens, estado vazio ("nenhuma conversa ainda")
+>>>>>>> Stashed changes
 
 ## Sprint 2 · 05/10–11/10 · Negociação e engajamento
 
