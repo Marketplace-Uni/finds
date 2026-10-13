@@ -122,3 +122,13 @@ img,
 video {
   max-width: 100%;
 }
+
+/* Esconde a barra de rolagem onde a navegação é feita por botões próprios —
+   hoje só o deck do match. O conteúdo continua rolável por roda, gesto e
+   teclado; some apenas a barra do navegador, que não acompanha a identidade. */
+@utility sem-barra-de-rolagem {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

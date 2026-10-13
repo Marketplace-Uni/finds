@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ImageOff, MapPin, MoveDown } from "lucide-react";
+import { ChevronDown, ChevronUp, ImageOff, MapPin } from "lucide-react";
 
 import { cn } from "@/src/lib/utils";
 import { formatPrice } from "@/src/lib/format";
@@ -26,6 +26,45 @@ export type MatchCandidate = {
   otherTraits?: string[];
 };
 
+/** Seta de navegação do deck, no vocabulário dos botões em pílula do Finds. */
+function SetaDeck({
+  href,
+  label,
+  desabilitada = false,
+  children,
+}: {
+  href: string;
+  label: string;
+  desabilitada?: boolean;
+  children: ReactNode;
+}) {
+  const estilo =
+    "grid size-10 place-items-center rounded-pill shadow-sm transition-colors [&_svg]:size-5";
+
+  if (desabilitada) {
+    return (
+      <span
+        aria-hidden
+        className={cn(estilo, "bg-background/60 text-muted-foreground/40")}
+      />
+    );
+  }
+
+  return (
+    <a
+      href={href}
+      aria-label={label}
+      className={cn(
+        estilo,
+        "bg-background text-primary hover:bg-primary hover:text-primary-foreground",
+        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none",
+      )}
+    >
+      {children}
+    </a>
+  );
+}
+
 /**
  * Uma tela por candidato, navegando por scroll — o jeito "um de cada vez" do
  * Tinder, mas sem arrastar com o mouse, que no desktop é ruim.
@@ -48,7 +87,12 @@ export function MatchDeck({
   return (
     <div
       className={cn(
-        "h-[calc(100svh-8rem)] snap-y snap-mandatory overflow-y-auto scroll-smooth",
+        // Sem `scroll-smooth`: o encaixe do snap já é animado pelo navegador, e
+        // as duas animações juntas brigavam — era o que deixava o rolar longo
+        // travado. `overscroll-contain` impede que o scroll vaze para a página
+        // ao chegar no fim da pilha.
+        "h-[calc(100svh-8rem)] snap-y snap-mandatory overflow-y-auto overscroll-y-contain",
+        "sem-barra-de-rolagem",
         className,
       )}
       aria-label="Pessoas compatíveis com você"
@@ -63,8 +107,32 @@ export function MatchDeck({
           <section
             key={candidate.id}
             id={`match-${index}`}
-            className="flex h-full snap-start snap-always items-center py-4"
+            className="relative flex h-full snap-start snap-always items-center py-4"
           >
+            {/* As setas repetem em cada tela na mesma posição, então parecem
+                fixas enquanto a pilha rola. Substituem a barra do navegador,
+                que não acompanha a identidade. */}
+            <nav
+              className="absolute top-1/2 right-3 z-10 flex -translate-y-1/2 flex-col gap-2"
+              aria-label="Navegar entre as pessoas"
+            >
+              <SetaDeck
+                href={`#match-${index - 1}`}
+                label="Pessoa anterior"
+                desabilitada={index === 0}
+              >
+                <ChevronUp aria-hidden />
+              </SetaDeck>
+              <SetaDeck
+                href={`#match-${index + 1}`}
+                label={
+                  index === candidates.length - 1 ? "Fim da lista" : "Próxima pessoa"
+                }
+              >
+                <ChevronDown aria-hidden />
+              </SetaDeck>
+            </nav>
+
             <article className="grid h-full w-full gap-6 overflow-hidden rounded-lg bg-card lg:grid-cols-2">
               <div className="relative min-h-48 bg-muted">
                 {candidate.imageUrl ? (
@@ -176,17 +244,9 @@ export function MatchDeck({
                   </Link>
                 </div>
 
-                <footer className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                  <span>{`${index + 1} de ${candidates.length}`}</span>
-                  {index < candidates.length - 1 ? (
-                    <a
-                      href={`#match-${index + 1}`}
-                      className="flex items-center gap-1 font-semibold hover:text-foreground"
-                    >
-                      Próxima pessoa
-                      <MoveDown className="size-3.5" aria-hidden />
-                    </a>
-                  ) : null}
+                {/* O link de "próxima" saiu: as setas ao lado fazem isso. */}
+                <footer className="mt-2 text-xs text-muted-foreground">
+                  {`${index + 1} de ${candidates.length}`}
                 </footer>
               </div>
             </article>
@@ -195,7 +255,7 @@ export function MatchDeck({
       })}
 
       {/* Fim da pilha: sem isto a última pessoa parece um erro de carregamento. */}
-      <section className="flex h-full snap-start flex-col items-center justify-center gap-4 text-center">
+      <section className="flex h-full snap-start snap-always flex-col items-center justify-center gap-4 text-center">
         <Zeca pose={5} className="h-32 w-auto text-primary" />
         <p className="text-lg font-bold text-foreground">
           Por enquanto é isso
