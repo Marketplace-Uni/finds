@@ -48,7 +48,11 @@ export function MatchDeck({
   return (
     <div
       className={cn(
-        "h-[calc(100svh-8rem)] snap-y snap-mandatory overflow-y-auto scroll-smooth",
+        // Sem `scroll-smooth`: o encaixe do snap já é animado pelo navegador, e
+        // as duas animações juntas brigavam — era o que deixava o rolar longo
+        // travado. `overscroll-contain` impede que o scroll vaze para a página
+        // ao chegar no fim da pilha.
+        "h-[calc(100svh-8rem)] snap-y snap-mandatory overflow-y-auto overscroll-y-contain",
         className,
       )}
       aria-label="Pessoas compatíveis com você"
@@ -195,7 +199,7 @@ export function MatchDeck({
       })}
 
       {/* Fim da pilha: sem isto a última pessoa parece um erro de carregamento. */}
-      <section className="flex h-full snap-start flex-col items-center justify-center gap-4 text-center">
+      <section className="flex h-full snap-start snap-always flex-col items-center justify-center gap-4 text-center">
         <Zeca pose={5} className="h-32 w-auto text-primary" />
         <p className="text-lg font-bold text-foreground">
           Por enquanto é isso
