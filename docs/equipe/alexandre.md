@@ -42,7 +42,7 @@
 - [x] `/negociacoes`: lista com filtro por status
 - [x] **Favoritos:** `<FavoriteButton>` (com o gate de perfil) + página `/favoritos`
 - [x] **Denúncias:** `<ReportButton>` + modal com motivos, gravando em `reports`
-- [x] `<UnreadBadge>` com consulta do contador de não lidas (P1; falta conectar na navbar)
+- [ ] `<UnreadBadge>`: consulta e componente prontos; falta o Caike conectar a contagem à navbar. A consulta considera apenas conversas do usuário.
 
 ## Sprint 3 · 12/10–18/10 · Avaliações + seed final
 
