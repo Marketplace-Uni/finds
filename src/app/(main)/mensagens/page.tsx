@@ -15,6 +15,7 @@ import {
   type Conversation,
 } from "@/src/components/chat/conversation-list";
 import { NegotiationCard } from "@/src/components/transactions/negotiation-card";
+import { ReviewDialog } from "@/src/components/transactions/review-dialog";
 import { ErrorState } from "@/src/components/ui/states";
 import { requireCompleteProfile } from "@/src/lib/auth";
 import { createClient } from "@/src/lib/supabase/server";
@@ -484,10 +485,24 @@ export default async function MensagensPage({
   const canPropose = Boolean(
     selectedConversation && !hasTransaction && selectedConversation.conversation.buyer_id === user.id,
   );
+  const { data: existingReview, error: reviewError } =
+    transaction?.status === "completed"
+      ? await supabase
+          .from("reviews")
+          .select("id")
+          .eq("transaction_id", transaction.id)
+          .eq("reviewer_id", user.id)
+          .maybeSingle()
+      : { data: null, error: null };
 
   if (transactionError) {
     return (
       <ErrorState description="Não foi possível carregar a negociação. Tente novamente." />
+    );
+  }
+  if (reviewError) {
+    return (
+      <ErrorState description="Não foi possível verificar sua avaliação. Tente novamente." />
     );
   }
 
@@ -618,6 +633,23 @@ export default async function MensagensPage({
                             : "Cancelar negociação"}
                         </button>
                       </form>
+                    ) : null}
+
+                    {transactionStatus === "completed" && transaction && !existingReview ? (
+                      <ReviewDialog
+                        transactionId={transaction.id}
+                        reviewedName={
+                          selectedConversation.peer?.full_name ||
+                          selectedConversation.peer?.username ||
+                          "a outra pessoa"
+                        }
+                      />
+                    ) : null}
+
+                    {transactionStatus === "completed" && existingReview ? (
+                      <p className="text-sm text-muted-foreground">
+                        Você já avaliou esta negociação.
+                      </p>
                     ) : null}
                     </div>
                   }
