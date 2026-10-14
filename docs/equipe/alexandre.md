@@ -48,10 +48,10 @@ Para executar a seed, configure `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_RO
 
 ## Sprint 3 · 12/10–18/10 · Avaliações + seed final
 
-- [ ] Modal de avaliação (1–5 estrelas + comentário) liberado após `completed`
-- [ ] `<ReviewsList>` + nota média → **avisar o Kaike**
+- [x] Modal de avaliação (1–5 estrelas + comentário) liberado após `completed`
+- [x] `<ReviewsList>` + nota média → **avisar o Kaike**
 - [ ] **Seed final no `finds-demo`:** as contas reais do time com histórico montado para o roteiro da demo (conversas, uma transação concluída, avaliações, perfil de convivência)
-- [ ] Robustez do chat: reconexão, sem mensagens duplicadas
+- [x] Robustez do chat: reconexão, sem mensagens duplicadas
 - [ ] Ensaiar a parte chat + negociação da demo (2 notebooks lado a lado)
 
 ## Reta final · 19–20/10
