@@ -32,6 +32,8 @@
 - [ ] Enviar mensagem + **recebimento em tempo real** (Realtime): assinatura implementada em `src/components/chat/chat-realtime.tsx`; habilitar `messages` na publicação Realtime do Supabase com o Josué e validar entre duas contas
 - [x] Auto-scroll, horário das mensagens, estado vazio ("nenhuma conversa ainda")
 
+Para executar a seed, configure `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` e `SUPABASE_SEED_TARGET` em `.env.local`. O destino pode ser `finds-dev` ou `finds-demo`; a seed só recria contas marcadas para o destino selecionado. `DATABASE_URL` não é usada pelo script. As imagens `supabase/seed/imagens_seed/anuncio-1` até `anuncio-50` devem acompanhar a ordem de `ad.json`; a seed as envia ao bucket `listing-images`. A seed v1 cria usuários fictícios, anúncios e conversas; o histórico de transações e avaliações da demo ainda precisa ser preparado na Sprint 3.
+
 ## Sprint 2 · 05/10–11/10 · Negociação e engajamento
 
 - [x] "Propor negociação" no chat → `pending`
