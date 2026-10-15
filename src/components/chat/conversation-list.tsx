@@ -65,7 +65,7 @@ export function ConversationList({
                 aria-current={conversa.active ? "page" : undefined}
                 className={cn(
                   "flex items-center gap-3 rounded-lg p-3 transition-colors",
-                  conversa.active ? "bg-card" : "hover:bg-card/60",
+                  conversa.active ? "bg-card" : "hover:bg-primary/60 hover:text-primary-foreground",
                 )}
               >
                 <Avatar className="size-11 shrink-0 border-2 border-secondary">

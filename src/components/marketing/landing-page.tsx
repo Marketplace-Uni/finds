@@ -60,41 +60,36 @@ export function LandingPage({ className }: { className?: string }) {
   return (
     <div className={cn("flex flex-col", className)}>
       <section className="relative overflow-hidden bg-nav px-6 py-20">
-        <div className="mx-auto flex max-w-conteudo flex-col items-start gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="relative z-10 flex max-w-xl flex-col gap-5">
-            <LogoFinds className="h-12 w-auto text-secondary" />
+        {/* Sem o Zeca e alinhado à esquerda, a pedido da Lia (14/10). */}
+        <div className="relative z-10 mx-auto flex max-w-conteudo flex-col items-start gap-5">
+          <LogoFinds className="h-12 w-auto text-secondary" />
 
-            <h1 className="text-4xl leading-tight font-bold text-nav-foreground sm:text-5xl">
-              O marketplace de quem é da UFU
-            </h1>
+          <h1 className="max-w-3xl text-4xl leading-tight font-bold text-nav-foreground sm:text-5xl">
+            O marketplace de quem é da UFU
+          </h1>
 
-            <p className="text-base leading-relaxed text-nav-foreground/80">
-              Compre, venda, ofereça serviços e ache com quem dividir moradia —&nbsp;sempre
-              com outro estudante do outro lado.
-            </p>
+          <p className="max-w-xl text-base leading-relaxed text-nav-foreground/80">
+            Compre, venda, ofereça serviços e ache com quem dividir moradia —&nbsp;sempre
+            com outro estudante do outro lado.
+          </p>
 
-            <div className="mt-2 flex flex-wrap gap-3">
-              <Button asChild className="rounded-pill px-8 py-6 text-base font-bold">
-                <Link href="/cadastro">Criar minha conta</Link>
-              </Button>
-              <Button
-                asChild
-                variant="ghost"
-                className="rounded-pill border-2 border-secondary px-8 py-6 text-base font-bold text-secondary hover:bg-secondary/10 hover:text-secondary"
-              >
-                <Link href="/entrar">Já tenho conta</Link>
-              </Button>
-            </div>
+          {/* A assinatura entra entre o texto e os botões. */}
+          <p className="font-mono text-xs text-secondary">
+            feito por estudantes, para estudantes
+          </p>
 
-            <p className="font-mono text-xs text-secondary">
-              feito por estudantes, para estudantes
-            </p>
+          <div className="mt-2 flex flex-wrap gap-3">
+            <Button asChild className="rounded-pill px-8 py-6 text-base font-bold">
+              <Link href="/cadastro">Criar minha conta</Link>
+            </Button>
+            <Button
+              asChild
+              variant="ghost"
+              className="rounded-pill border-2 border-secondary px-8 py-6 text-base font-bold text-secondary hover:bg-primary/60 hover:text-primary-foreground"
+            >
+              <Link href="/entrar">Já tenho conta</Link>
+            </Button>
           </div>
-
-          <Zeca
-            pose={1}
-            className="relative z-10 hidden h-80 w-auto shrink-0 text-primary lg:block"
-          />
         </div>
 
         <span
@@ -117,7 +112,7 @@ export function LandingPage({ className }: { className?: string }) {
               <li key={titulo} className="flex flex-col gap-3 rounded-lg bg-card p-6">
                 <Icone className="size-7 text-primary" aria-hidden />
                 <h3 className="font-bold text-foreground">{titulo}</h3>
-                <p className="text-sm text-muted-foreground">{texto}</p>
+                <p className="text-sm text-foreground/80">{texto}</p>
               </li>
             ))}
           </ul>
@@ -136,7 +131,7 @@ export function LandingPage({ className }: { className?: string }) {
                 </span>
                 <div>
                   <h3 className="font-bold text-foreground">{titulo}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">{texto}</p>
+                  <p className="mt-1 text-sm text-foreground/80">{texto}</p>
                 </div>
               </li>
             ))}

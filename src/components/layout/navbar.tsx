@@ -83,7 +83,7 @@ export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarPr
               asChild
               variant="ghost"
               size="icon"
-              className="size-10 text-nav-foreground hover:bg-white/10 [&_svg]:size-5"
+              className="size-10 text-nav-foreground hover:bg-primary/60 hover:text-primary-foreground [&_svg]:size-5"
             >
               <Link href="/favoritos" aria-label="Favoritos">
                 <Heart aria-hidden strokeWidth={2.5} />
@@ -94,7 +94,7 @@ export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarPr
               asChild
               variant="ghost"
               size="icon"
-              className="relative size-10 text-nav-foreground hover:bg-white/10 [&_svg]:size-5"
+              className="relative size-10 text-nav-foreground hover:bg-primary/60 hover:text-primary-foreground [&_svg]:size-5"
             >
               <Link href="/mensagens" aria-label="Mensagens">
                 <MessageCircle aria-hidden />
@@ -113,7 +113,7 @@ export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarPr
             <Button
               asChild
               variant="ghost"
-              className="rounded-pill text-nav-foreground hover:bg-white/10"
+              className="rounded-pill text-nav-foreground hover:bg-primary/60 hover:text-primary-foreground"
             >
               <Link href="/entrar">Entrar</Link>
             </Button>

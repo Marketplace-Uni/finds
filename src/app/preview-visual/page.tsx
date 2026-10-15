@@ -133,6 +133,7 @@ export default function PreviewVisualPage() {
           <h2 className="mb-1 text-xl font-bold">
             Match de roommates ⭐ — uma pessoa por vez
           </h2>
+
           <p className="mb-4 text-sm text-muted-foreground">
             Sprint 3. Produto é vitrine; roommate é gente. Cada candidato ocupa a
             tela e o scroll encaixa um por vez — o efeito do Tinder, sem arrastar
@@ -495,7 +496,7 @@ export default function PreviewVisualPage() {
                 {/* Menor e colado no "Entrar", como a Lia pediu. */}
                 <Button
                   variant="ghost"
-                  className="-mt-2 h-auto py-1 text-xs text-muted-foreground hover:bg-transparent"
+                  className="-mt-2 h-auto py-1 text-xs text-muted-foreground"
                 >
                   Esqueci minha senha
                 </Button>
@@ -667,7 +668,7 @@ export default function PreviewVisualPage() {
             reportSlot={
               <Button
                 variant="ghost"
-                className="h-auto rounded-pill py-1 text-sm font-semibold text-primary hover:bg-transparent hover:text-primary"
+                className="h-auto rounded-pill py-1 text-sm font-semibold text-primary"
               >
                 Denunciar anúncio
               </Button>
