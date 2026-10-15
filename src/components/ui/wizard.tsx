@@ -70,7 +70,7 @@ export function WizardShell({
           {backHref ? (
             <Link
               href={backHref}
-              className="absolute top-0 left-0 grid size-9 place-items-center rounded-pill text-foreground hover:bg-muted"
+              className="absolute top-0 left-0 grid size-9 place-items-center rounded-pill text-foreground hover:bg-primary/60 hover:text-primary-foreground"
               aria-label="Voltar"
             >
               <ArrowLeft className="size-5" aria-hidden />
