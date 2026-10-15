@@ -62,7 +62,8 @@ export function LandingPage({ className }: { className?: string }) {
       <section className="relative overflow-hidden bg-nav px-6 py-20">
         {/* Sem o Zeca e alinhado à esquerda, a pedido da Lia (14/10). */}
         <div className="relative z-10 mx-auto flex max-w-conteudo flex-col items-start gap-5">
-          <LogoFinds className="h-12 w-auto text-secondary" />
+          {/* Respiro extra entre a marca e a chamada. */}
+          <LogoFinds className="mb-6 h-12 w-auto text-secondary" />
 
           <h1 className="max-w-3xl text-4xl leading-tight font-bold text-nav-foreground sm:text-5xl">
             O marketplace de quem é da UFU
