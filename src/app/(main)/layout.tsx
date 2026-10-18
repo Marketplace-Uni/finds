@@ -2,7 +2,6 @@ import { Navbar } from "@/src/components/layout/navbar";
 import { CompleteProfileProvider } from "@/src/components/auth/complete-profile-gate";
 import { getCurrentProfile, touchLastSeen } from "@/src/lib/auth";
 import { getUnreadMessageCount } from "@/src/lib/chat/unread";
-import { createClient } from "@/src/lib/supabase/server";
 
 /**
  * Layout das telas logadas: navbar no topo e conteúdo centralizado.
@@ -14,17 +13,6 @@ import { createClient } from "@/src/lib/supabase/server";
 export default async function MainLayout({ children }: LayoutProps<"/">) {
   const profile = await getCurrentProfile();
   if (profile) await touchLastSeen(profile);
-
-  let campusLabel: string | null = null;
-  if (profile?.campus_id) {
-    const supabase = await createClient();
-    const { data: campus } = await supabase
-      .from("campuses")
-      .select("name, city")
-      .eq("id", profile.campus_id)
-      .single();
-    campusLabel = campus ? `${campus.name}, ${campus.city}` : null;
-  }
 
   // A contagem é enfeite: se falhar, a navbar mostra zero em vez de derrubar
   // todas as telas logadas, que é o que um throw aqui faria.
@@ -47,7 +35,7 @@ export default async function MainLayout({ children }: LayoutProps<"/">) {
 
   return (
     <CompleteProfileProvider isComplete={Boolean(profile?.campus_id)}>
-      <Navbar user={navbarUser} campus={campusLabel} unreadCount={unreadCount} />
+      <Navbar user={navbarUser} unreadCount={unreadCount} />
       <main className="mx-auto w-full max-w-conteudo flex-1 px-6 py-8">{children}</main>
     </CompleteProfileProvider>
   );

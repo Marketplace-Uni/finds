@@ -37,13 +37,15 @@ describe("buildListingDisplay", () => {
     expect(result.priceNote).toBeNull();
   });
 
-  it("roommate: monta os specs de moradia", () => {
+  it("roommate: monta os specs de moradia, com faixa de preço", () => {
     const result = buildListingDisplay("roommate", {
       mode: "procura_vaga",
       housing_type: "apartamento",
       neighborhood: "Santa Mônica",
       move_in_date: "2026-11-01",
       gender_preference: "feminino",
+      price_min: 500,
+      price_max: 700,
     });
 
     expect(result.specs).toEqual([
@@ -52,7 +54,23 @@ describe("buildListingDisplay", () => {
       { label: "Bairro", value: "Santa Mônica" },
       { label: "Data de entrada", value: "01/11/2026" },
       { label: "Preferência de gênero", value: "Feminino" },
+      { label: "Faixa de preço", value: "R$ 500,00 – R$ 700,00" },
     ]);
+    expect(result.priceNote).toBe("por mês");
+  });
+
+  it("roommate: faixa de preço igual mostra um valor só", () => {
+    const result = buildListingDisplay("roommate", {
+      mode: "oferece_vaga",
+      housing_type: "casa",
+      neighborhood: "Umuarama",
+      move_in_date: "2026-11-01",
+      gender_preference: "qualquer",
+      price_min: 500,
+      price_max: 500,
+    });
+
+    expect(result.specs.at(-1)).toEqual({ label: "Faixa de preço", value: "R$ 500,00" });
   });
 
   it("republic: amenities viram categorias e gênero vira atributo", () => {
@@ -61,6 +79,8 @@ describe("buildListingDisplay", () => {
       gender: "mista",
       neighborhood: "Umuarama",
       amenities: ["wifi", "mobiliada"],
+      price_min: 400,
+      price_max: 600,
     });
 
     expect(result.categories).toEqual(["wifi", "mobiliada"]);
@@ -68,7 +88,9 @@ describe("buildListingDisplay", () => {
     expect(result.specs).toEqual([
       { label: "Vagas", value: "2" },
       { label: "Bairro", value: "Umuarama" },
+      { label: "Faixa de preço", value: "R$ 400,00 – R$ 600,00" },
     ]);
+    expect(result.priceNote).toBe("por mês");
   });
 
   it("details inválido ou nulo não quebra, só vem vazio", () => {

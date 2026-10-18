@@ -1,42 +1,50 @@
-import { createClient } from "../../../../../lib/supabase/server"
-import { redirect } from "next/navigation"
+import { notFound, redirect } from "next/navigation";
 
-// 1. A tipagem de params agora é uma Promise
+import { createClient } from "@/src/lib/supabase/server";
+import { fetchCampusOptions } from "@/src/lib/listings";
+import { EditarForm } from "./editar-form";
+
 export default async function EditarAnuncioPage({ params }: { params: Promise<{ id: string }> }) {
-  // 2. Extraímos o id usando await
-  const { id } = await params
+  const { id } = await params;
 
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect('/entrar')
+    redirect("/entrar");
   }
 
   const { data: listing, error } = await supabase
-    .from('listings')
-    .select('*')
-    .eq('id', id) // 3. Usamos o id diretamente aqui
-    .single()
+    .from("listings")
+    .select("id, owner_id, type, title, description, price, campus_id, details")
+    .eq("id", id)
+    .maybeSingle();
 
   if (error || !listing) {
-    redirect('/404')
+    notFound();
   }
 
-  // Validação principal: só o dono pode editar
+  // Só o dono pode editar.
   if (listing.owner_id !== user.id) {
-    redirect('/')
+    redirect("/");
   }
+
+  const campuses = await fetchCampusOptions();
 
   return (
-    <div className="container mx-auto p-6 max-w-2xl">
-      <h1 className="text-2xl font-bold mb-6">Editar Anúncio: {listing.title}</h1>
-      
-      {/* 
-        Aqui você vai importar o componente de Formulário (Wizard) do Caike
-        passando o 'listing' como defaultValues para preencher os campos.
-      */}
-      <p>Área reservada para o formulário do Caike.</p>
-    </div>
-  )
+    <EditarForm
+      listing={{
+        id: listing.id,
+        type: listing.type,
+        title: listing.title,
+        description: listing.description ?? "",
+        price: listing.price,
+        campus_id: listing.campus_id,
+        details: (listing.details as Record<string, unknown>) ?? {},
+      }}
+      campuses={campuses}
+    />
+  );
 }

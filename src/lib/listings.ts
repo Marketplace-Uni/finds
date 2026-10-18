@@ -1,10 +1,26 @@
 import { createClient } from "@/src/lib/supabase/server";
 import { TYPE_OPTIONS, type FilterOption } from "@/src/components/discovery/filters-sidebar";
 import { LISTING_TYPE_BY_FILTER_VALUE, type ListingFilters } from "@/src/lib/listings-filters";
+import { productDetailsSchema, serviceDetailsSchema } from "@/src/lib/validations/listings";
 import type { Database, Json } from "@/src/types/database";
 import type { ListingType } from "@/src/lib/listing-details";
 
 export const LISTINGS_PAGE_SIZE = 12;
+
+/**
+ * Categorias de produto + serviço (únicas opções que têm `category` em
+ * `details`), extraídas dos schemas do Josué pra não duplicar a lista à mão.
+ * Alimenta o fieldset "Categoria" do `<FiltersSidebar>`, que antes ficava
+ * escondido por não receber `categories` (ver PENDENCIAS-KAIKE.md).
+ */
+export const CATEGORY_OPTIONS: FilterOption[] = [
+  ...new Set([
+    ...productDetailsSchema.shape.category.unwrap().options,
+    ...serviceDetailsSchema.shape.category.unwrap().options,
+  ]),
+]
+  .sort()
+  .map((value) => ({ value, label: value.charAt(0).toUpperCase() + value.slice(1) }));
 
 export type ListingSummary = {
   id: string;
@@ -69,12 +85,8 @@ export async function fetchCampusOptions(): Promise<FilterOption[]> {
 }
 
 /**
- * Busca anúncios ativos para o feed e a busca, aplicando os filtros da URL.
- *
- * `categoria` e `condicao` ainda não são filtráveis: vivem dentro de
- * `listings.details` (JSONB), cujo formato por tipo de anúncio é entrega do
- * Josué (Sprint 1 dele) e ainda não existe em nenhuma branch — o filtro fica
- * só na URL/UI por enquanto, sem efeito na query.
+ * Busca anúncios ativos para o feed e a busca, aplicando os filtros da URL,
+ * incluindo `categoria`/`condicao` (dentro de `listings.details`, jsonb).
  */
 export async function fetchListings(filters: ListingFilters, page: number) {
   const supabase = await createClient();
@@ -94,6 +106,13 @@ export async function fetchListings(filters: ListingFilters, page: number) {
   if (filters.campus) query = query.eq("campus_id", filters.campus);
   if (filters.precoMin !== null) query = query.gte("price", filters.precoMin);
   if (filters.precoMax !== null) query = query.lte("price", filters.precoMax);
+
+  // `categoria`/`condicao` vivem em `details` (jsonb): filtrar pelo valor de
+  // texto extraído com `->>`, suportado pelo PostgREST. Só produto/serviço
+  // têm `category`, e só produto tem `condition` — os outros tipos nunca
+  // batem, o que é o comportamento certo ao aplicar esses filtros.
+  if (filters.categoria.length > 0) query = query.in("details->>category", filters.categoria);
+  if (filters.condicao.length > 0) query = query.in("details->>condition", filters.condicao);
 
   if (filters.q) {
     const termo = filters.q.replace(/[%,]/g, " ").trim();
@@ -162,6 +181,27 @@ export async function fetchRoommateListings(): Promise<RoommateListingSummary[]>
   }));
 }
 
+/** Nome e bio de donos de anúncio, em lote, para o `<MatchDeck>` em `/roommates`. */
+export async function fetchOwnerProfiles(
+  ownerIds: string[],
+): Promise<Map<string, { name: string; bio: string | null }>> {
+  const map = new Map<string, { name: string; bio: string | null }>();
+  const uniqueIds = [...new Set(ownerIds)];
+  if (uniqueIds.length === 0) return map;
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, full_name, username, bio")
+    .in("id", uniqueIds);
+  if (error) throw error;
+
+  for (const row of data ?? []) {
+    map.set(row.id, { name: row.full_name ?? row.username ?? "Sem nome", bio: row.bio ?? null });
+  }
+  return map;
+}
+
 /** Anúncios ativos de um usuário, para o grid em `/perfil/[username]`. */
 export async function fetchUserListings(ownerId: string): Promise<ListingSummary[]> {
   const supabase = await createClient();
@@ -181,6 +221,32 @@ export async function fetchUserListings(ownerId: string): Promise<ListingSummary
     location: campusName(row.campuses),
     typeLabel: typeLabel(row.type),
     imageUrl: coverImageUrl(supabase, row.listing_images),
+  }));
+}
+
+export type OwnerListingSummary = ListingSummary & {
+  status: Database["public"]["Enums"]["listing_status"];
+};
+
+/** Todos os anúncios do dono (qualquer status), para `/meus-anuncios`. */
+export async function fetchOwnerListings(ownerId: string): Promise<OwnerListingSummary[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("listings")
+    .select("id, title, price, type, status, campuses(name), listing_images(path, position)")
+    .eq("owner_id", ownerId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    title: row.title,
+    price: row.price,
+    location: campusName(row.campuses),
+    typeLabel: typeLabel(row.type),
+    imageUrl: coverImageUrl(supabase, row.listing_images),
+    status: row.status,
   }));
 }
 

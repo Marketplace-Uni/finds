@@ -19,20 +19,39 @@ export const serviceDetailsSchema = z.object({
   price_unit: z.enum(["hora", "projeto", "diaria", "mensalidade", "a combinar"]),
 })
 
-export const roommateDetailsSchema = z.object({
-  mode: z.enum(["oferece_vaga", "procura_vaga"]),
-  housing_type: z.enum(["apartamento", "casa"]),
-  neighborhood: z.string().min(2, "Bairro é obrigatório"),
-  move_in_date: z.string().min(1, "Data de entrada é obrigatória"),
-  gender_preference: z.enum(["qualquer", "feminino", "masculino"]),
-})
+// Roommate/república usam faixa de preço (quem procura ou oferece vaga nem
+// sempre tem um valor fechado) em vez do preço único de produto/serviço.
+const priceRangeFields = {
+  price_min: z.coerce.number().min(0, "O preço mínimo não pode ser negativo"),
+  price_max: z.coerce.number().min(0, "O preço máximo não pode ser negativo"),
+}
 
-export const republicDetailsSchema = z.object({
-  vacancies: z.coerce.number().min(1, "Deve ter pelo menos 1 vaga"),
-  gender: z.enum(["feminina", "masculina", "mista"]),
-  neighborhood: z.string().min(2, "Bairro é obrigatório"),
-  amenities: z.array(z.string()).min(1, "Adicione pelo menos uma comodidade"),
-})
+export const roommateDetailsSchema = z
+  .object({
+    mode: z.enum(["oferece_vaga", "procura_vaga"]),
+    housing_type: z.enum(["apartamento", "casa"]),
+    neighborhood: z.string().min(2, "Bairro é obrigatório"),
+    move_in_date: z.string().min(1, "Data de entrada é obrigatória"),
+    gender_preference: z.enum(["qualquer", "feminino", "masculino"]),
+    ...priceRangeFields,
+  })
+  .refine((data) => data.price_max >= data.price_min, {
+    message: "O preço máximo deve ser maior ou igual ao mínimo",
+    path: ["price_max"],
+  })
+
+export const republicDetailsSchema = z
+  .object({
+    vacancies: z.coerce.number().min(1, "Deve ter pelo menos 1 vaga"),
+    gender: z.enum(["feminina", "masculina", "mista"]),
+    neighborhood: z.string().min(2, "Bairro é obrigatório"),
+    amenities: z.array(z.string()).min(1, "Adicione pelo menos uma comodidade"),
+    ...priceRangeFields,
+  })
+  .refine((data) => data.price_max >= data.price_min, {
+    message: "O preço máximo deve ser maior ou igual ao mínimo",
+    path: ["price_max"],
+  })
 
 // Schema completo para a Action de Produto
 export const createProductSchema = baseListingSchema.extend({

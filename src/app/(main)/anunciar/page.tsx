@@ -1,7 +1,10 @@
 import Link from "next/link"
-// TODO: Importar o Gate de Perfil Completo do Kaike aqui
 
-export default function AnunciarPage() {
+import { requireCompleteProfile } from "@/src/lib/auth"
+
+export default async function AnunciarPage() {
+  await requireCompleteProfile("/anunciar")
+
   return (
     <div className="container mx-auto p-6 max-w-4xl">
       <h1 className="text-3xl font-bold mb-8">O que você quer anunciar?</h1>
