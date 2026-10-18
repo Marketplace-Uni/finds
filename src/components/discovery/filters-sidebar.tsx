@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SlidersHorizontal } from "lucide-react";
 
 import { Button } from "@/src/components/ui/button";
 import { cn } from "@/src/lib/utils";
@@ -114,10 +115,26 @@ export function FiltersSidebar({
 }: FiltersSidebarProps) {
   return (
     <aside className={cn("w-full lg:w-64 lg:shrink-0", className)}>
-      <form action={action} className="flex flex-col gap-6 lg:sticky lg:top-6">
+      {/* No celular os filtros ficam atrás de um botão, para não empurrarem os
+          anúncios para baixo. O checkbox escondido faz as vezes do estado, e a
+          partir de lg o `lg:flex` do formulário ignora o checkbox e deixa a
+          coluna sempre aberta — sem client component. */}
+      <input id="abrir-filtros" type="checkbox" className="peer sr-only" />
+      <label
+        htmlFor="abrir-filtros"
+        className="mb-4 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-pill bg-muted px-4 py-2.5 text-sm font-semibold text-foreground lg:hidden"
+      >
+        <SlidersHorizontal className="size-4" aria-hidden />
+        Filtros
+      </label>
+
+      <form
+        action={action}
+        className="hidden flex-col gap-6 peer-checked:flex lg:sticky lg:top-6 lg:flex"
+      >
         {q ? <input type="hidden" name="q" value={q} /> : null}
 
-        <h2 className="text-lg font-bold text-foreground">Filtros</h2>
+        <h2 className="hidden text-lg font-bold text-foreground lg:block">Filtros</h2>
 
         <fieldset>
           <Legend>Tipo</Legend>

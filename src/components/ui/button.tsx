@@ -11,12 +11,15 @@ const buttonVariants = cva(
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
+        // Hover único no Finds: laranja mais claro, para o clique chegar no
+        // laranja cheio (decisão da Lia). Vale para tudo que começa neutro —
+        // ghost, outline e os chips. Os botões que já são coloridos apenas
+        // escurecem, senão o hover ficaria mais claro que o estado normal.
         outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+          "border bg-background shadow-xs hover:bg-primary/60 hover:text-primary-foreground",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        ghost: "hover:bg-primary/60 hover:text-primary-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {

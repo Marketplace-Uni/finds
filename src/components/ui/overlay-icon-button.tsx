@@ -20,7 +20,7 @@ export function OverlayIconButton({
       type="button"
       className={cn(
         "grid size-9 place-items-center rounded-pill bg-background text-foreground shadow-sm",
-        "transition-colors hover:bg-card focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+        "transition-colors hover:bg-primary/60 hover:text-primary-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
         "[&_svg]:size-4.5",
         className,
       )}

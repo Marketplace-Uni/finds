@@ -1,6 +1,7 @@
 import { Navbar } from "@/src/components/layout/navbar";
 import { CompleteProfileProvider } from "@/src/components/auth/complete-profile-gate";
 import { getCurrentProfile, touchLastSeen } from "@/src/lib/auth";
+import { getUnreadMessageCount } from "@/src/lib/chat/unread";
 import { createClient } from "@/src/lib/supabase/server";
 
 /**
@@ -9,8 +10,6 @@ import { createClient } from "@/src/lib/supabase/server";
  * Lê a sessão e o perfil aqui (Server Component) e repassa pra Navbar; o
  * `<CompleteProfileProvider>` guarda se o perfil está completo pra qualquer
  * `useCompleteProfileGate()` filho abrir o modal em vez de navegar.
- *
- * TODO (Alexandre): `unreadCount` de mensagens não lidas ainda está fixo em 0.
  */
 export default async function MainLayout({ children }: LayoutProps<"/">) {
   const profile = await getCurrentProfile();
@@ -27,6 +26,17 @@ export default async function MainLayout({ children }: LayoutProps<"/">) {
     campusLabel = campus ? `${campus.name}, ${campus.city}` : null;
   }
 
+  // A contagem é enfeite: se falhar, a navbar mostra zero em vez de derrubar
+  // todas as telas logadas, que é o que um throw aqui faria.
+  let unreadCount = 0;
+  if (profile) {
+    try {
+      unreadCount = await getUnreadMessageCount(profile.id);
+    } catch {
+      unreadCount = 0;
+    }
+  }
+
   const navbarUser = profile
     ? {
         name: profile.full_name ?? profile.username ?? "Perfil",
@@ -37,7 +47,7 @@ export default async function MainLayout({ children }: LayoutProps<"/">) {
 
   return (
     <CompleteProfileProvider isComplete={Boolean(profile?.campus_id)}>
-      <Navbar user={navbarUser} campus={campusLabel} />
+      <Navbar user={navbarUser} campus={campusLabel} unreadCount={unreadCount} />
       <main className="mx-auto w-full max-w-conteudo flex-1 px-6 py-8">{children}</main>
     </CompleteProfileProvider>
   );

@@ -15,6 +15,8 @@ type StartConversationResult =
 				| 'database_error'
 		}
 
+export type { StartConversationResult }
+
 export async function startConversation(
 	listingId: string,
 ): Promise<StartConversationResult> {
@@ -110,4 +112,16 @@ export async function startConversation(
 	}
 
 	return { success: false, error: 'database_error' }
+}
+
+export async function startConversationFormAction(
+	_previousResult: StartConversationResult | null,
+	formData: FormData,
+): Promise<StartConversationResult> {
+	const listingId = formData.get('listing_id')
+	if (typeof listingId !== 'string') {
+		return { success: false, error: 'invalid_listing' }
+	}
+
+	return startConversation(listingId)
 }

@@ -123,10 +123,12 @@ Componentes, em ordem de prioridade:
 
 ## Sprint 3 · 12/10–18/10 · Vitrine e polimento
 
-- [ ] **Ilustração do match** — a Lia entrega até terça, 13/10; encaixar no `MatchCard` quando chegar
-
-- [ ] Landing page para deslogados
-- [ ] Responsivo básico: navbar no celular, grid em 1 coluna, sidebar vira botão "Filtros"
+- [X] **Contagem de não lidas na navbar** — a consulta do Alexandre já existia; o layout `(main)` agora a chama e a navbar usa o `<UnreadBadge>` dele. Falha na contagem não derruba as telas logadas
+- [X] **Ilustração do match** — estrela recebida em 13/10 e aplicada: grande no `MatchDeck`, com a compatibilidade dentro, e pequena no selo do `MatchCard`
+- [X] Landing page para deslogados — `<LandingPage>` pronta em `src/components/marketing/`. **Decisão (11/10): a raiz mostra a landing para visitante e o feed para quem está logado.** Falta o Kaike ler a sessão em `(main)/page.tsx` e escolher qual renderizar
+- [X] Responsivo básico: navbar no celular, grid em 1 coluna, sidebar vira botão "Filtros"
+- [ ] 🚨 **Responsividade de verdade no celular (urgente)** — abrir o site no mobile e corrigir o que quebrar, tela por tela. O "responsivo básico" acima cobriu só navbar, grid e filtros
+- [X] **Repensar a tela de match** — `<MatchDeck>` pronto: uma pessoa por vez em tela cheia, navegando por scroll-snap, com a estrela da Lia carregando a compatibilidade. Falta o Kaike trocar a grade pelo deck em `/roommates`
 - [ ] 🎨 **QA geral com a designer (~15/10):** percorrer o app inteiro, listar os ajustes e priorizar
 - [ ] Aplicar os ajustes do QA (distribuir entre o time o que for grande)
 - [ ] Pedir à designer o material do estande (banner, QR code, 2–3 slides) e revisar com ela

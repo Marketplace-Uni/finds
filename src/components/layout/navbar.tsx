@@ -4,6 +4,7 @@ import { Heart, MapPin, MessageCircle, Plus, Search } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { LogoFinds } from "@/src/components/layout/logo-finds";
 import { UserMenu, type NavbarUser } from "@/src/components/layout/user-menu";
+import { UnreadBadge } from "@/src/components/chat/unread-badge";
 
 type NavbarProps = {
   /** Quem está logado. `null` mostra a navbar de visitante. */
@@ -24,17 +25,24 @@ type NavbarProps = {
 export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarProps) {
   return (
     <header className="bg-nav text-nav-foreground">
-      <div className="mx-auto flex h-16 max-w-conteudo items-center gap-4 px-6">
+      {/* No celular a busca cai para a segunda linha: logo e ações não cabem
+          junto com ela. A partir de md tudo volta para uma linha só. */}
+      <div className="mx-auto flex max-w-conteudo flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:px-6 md:h-16 md:flex-nowrap md:py-0">
         {/* Logo em verde-limão, a pedido da Lia (07/10). */}
         <Link
           href="/"
           className="shrink-0 text-secondary"
           aria-label="Finds, página inicial"
         >
-          <LogoFinds className="h-7 w-auto" />
+          <LogoFinds className="h-6 w-auto sm:h-7" />
         </Link>
 
-        <form action="/busca" className="relative min-w-0 flex-1">
+        <form
+          action="/busca"
+          // `basis-full` (e não `w-full`) é o que força a quebra de linha: com
+          // `flex-1` a base vai a zero e o campo encolhe em vez de descer.
+          className="relative order-last min-w-0 basis-full md:order-none md:flex-1 md:basis-auto"
+        >
           <label htmlFor="busca-navbar" className="sr-only">
             Buscar anúncios
           </label>
@@ -59,14 +67,14 @@ export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarPr
         ) : null}
 
         {user ? (
-          <nav className="flex items-center gap-1" aria-label="Atalhos da conta">
+          <nav className="ml-auto flex items-center gap-1 md:ml-0" aria-label="Atalhos da conta">
             <Button
               asChild
               className="rounded-pill bg-primary text-primary-foreground hover:bg-primary/90"
             >
               <Link href="/anunciar">
                 <Plus aria-hidden />
-                Anunciar
+                <span className="hidden sm:inline">Anunciar</span>
               </Link>
             </Button>
 
@@ -75,7 +83,7 @@ export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarPr
               asChild
               variant="ghost"
               size="icon"
-              className="size-10 text-nav-foreground hover:bg-white/10 [&_svg]:size-5"
+              className="size-10 text-nav-foreground hover:bg-primary/60 hover:text-primary-foreground [&_svg]:size-5"
             >
               <Link href="/favoritos" aria-label="Favoritos">
                 <Heart aria-hidden strokeWidth={2.5} />
@@ -86,26 +94,26 @@ export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarPr
               asChild
               variant="ghost"
               size="icon"
-              className="relative size-10 text-nav-foreground hover:bg-white/10 [&_svg]:size-5"
+              className="relative size-10 text-nav-foreground hover:bg-primary/60 hover:text-primary-foreground [&_svg]:size-5"
             >
               <Link href="/mensagens" aria-label="Mensagens">
                 <MessageCircle aria-hidden />
-                {unreadCount > 0 ? (
-                  <span className="absolute top-0.5 right-0.5 grid min-w-4 place-items-center rounded-pill bg-primary px-1 text-[10px] leading-4 font-bold text-primary-foreground">
-                    {unreadCount > 9 ? "9+" : unreadCount}
-                  </span>
-                ) : null}
+                {/* O badge é do Alexandre: usar o componente dele em vez de
+                    repetir o visual aqui mantém os dois iguais. */}
+                <span className="absolute top-0.5 right-0.5">
+                  <UnreadBadge count={unreadCount} />
+                </span>
               </Link>
             </Button>
 
             <UserMenu user={user} />
           </nav>
         ) : (
-          <nav className="flex items-center gap-2" aria-label="Entrar ou criar conta">
+          <nav className="ml-auto flex items-center gap-2 md:ml-0" aria-label="Entrar ou criar conta">
             <Button
               asChild
               variant="ghost"
-              className="rounded-pill text-nav-foreground hover:bg-white/10"
+              className="rounded-pill text-nav-foreground hover:bg-primary/60 hover:text-primary-foreground"
             >
               <Link href="/entrar">Entrar</Link>
             </Button>

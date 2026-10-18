@@ -27,10 +27,12 @@
 
 - [x] `scripts/seed.ts` (usa a `service_role`, **idempotente**: limpa e recria). Rodar no `finds-dev` **até 30/09** e avisar o time
 - [x] Server action `startConversation(listingId)`: cria ou reabre (não pode conversar com o próprio anúncio; exige perfil completo)
-- [x] `<StartChatButton>` ("Tenho interesse") → **avisar o Kaike quando estiver pronto**
+- [x] `<StartChatButton>` ("Tenho interesse") criado em `src/components/chat/start-chat-button.tsx`; falta o Kaike encaixar no detalhe do anúncio
 - [x] `/mensagens`: lista de conversas (foto do anúncio, outro usuário, última mensagem, horário) + conversa aberta, no layout do Caike
-- [x] Enviar mensagem + **recebimento em tempo real** (Realtime)
+- [ ] Enviar mensagem + **recebimento em tempo real** (Realtime): assinatura implementada em `src/components/chat/chat-realtime.tsx`; habilitar `messages` na publicação Realtime do Supabase com o Josué e validar entre duas contas
 - [x] Auto-scroll, horário das mensagens, estado vazio ("nenhuma conversa ainda")
+
+Para executar a seed, configure `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` e `SUPABASE_SEED_TARGET` em `.env.local`. O destino pode ser `finds-dev` ou `finds-demo`; a seed só recria contas marcadas para o destino selecionado. `DATABASE_URL` não é usada pelo script. As imagens `supabase/seed/imagens_seed/anuncio-1` até `anuncio-50` devem acompanhar a ordem de `ad.json`; a seed as envia ao bucket `listing-images`. A seed v1 cria usuários fictícios, anúncios e conversas; o histórico de transações e avaliações da demo ainda precisa ser preparado na Sprint 3.
 
 ## Sprint 2 · 05/10–11/10 · Negociação e engajamento
 
@@ -42,14 +44,14 @@
 - [x] `/negociacoes`: lista com filtro por status
 - [x] **Favoritos:** `<FavoriteButton>` (com o gate de perfil) + página `/favoritos`
 - [x] **Denúncias:** `<ReportButton>` + modal com motivos, gravando em `reports`
-- [x] `<UnreadBadge>` com consulta do contador de não lidas (P1; falta conectar na navbar)
+- [ ] `<UnreadBadge>`: consulta e componente prontos; falta o Caike conectar a contagem à navbar. A consulta considera apenas conversas do usuário.
 
 ## Sprint 3 · 12/10–18/10 · Avaliações + seed final
 
-- [ ] Modal de avaliação (1–5 estrelas + comentário) liberado após `completed`
-- [ ] `<ReviewsList>` + nota média → **avisar o Kaike**
+- [x] Modal de avaliação (1–5 estrelas + comentário) liberado após `completed`
+- [x] `<ReviewsList>` + nota média → **avisar o Kaike**
 - [ ] **Seed final no `finds-demo`:** as contas reais do time com histórico montado para o roteiro da demo (conversas, uma transação concluída, avaliações, perfil de convivência)
-- [ ] Robustez do chat: reconexão, sem mensagens duplicadas
+- [x] Robustez do chat: reconexão, sem mensagens duplicadas
 - [ ] Ensaiar a parte chat + negociação da demo (2 notebooks lado a lado)
 
 ## Reta final · 19–20/10

@@ -3,10 +3,12 @@ import { Heart } from "lucide-react";
 import { Navbar } from "@/src/components/layout/navbar";
 import { LogoFinds } from "@/src/components/layout/logo-finds";
 import { AuthArt } from "@/src/components/layout/auth-art";
+import { LandingPage } from "@/src/components/marketing/landing-page";
 import { ListingCard } from "@/src/components/listings/listing-card";
 import { AnunciarBanner } from "@/src/components/listings/anunciar-banner";
 import { ListingTabs } from "@/src/components/listings/listing-tabs";
 import { MatchCard } from "@/src/components/match/match-card";
+import { MatchDeck } from "@/src/components/match/match-deck";
 import { ConvivenciaPicker } from "@/src/components/match/convivencia-picker";
 import { ProfileHeader } from "@/src/components/profile/profile-header";
 import { NegotiationCard } from "@/src/components/transactions/negotiation-card";
@@ -115,9 +117,88 @@ export default function PreviewVisualPage() {
         />
       </section>
 
+        <section className="mb-10">
+          <h2 className="mx-auto mb-1 w-full max-w-conteudo px-6 text-xl font-bold">
+            Landing para visitantes
+          </h2>
+          <p className="mx-auto mb-4 w-full max-w-conteudo px-6 text-sm text-muted-foreground">
+            Sprint 3. Aparece na raiz para quem não está logado; com sessão, a raiz
+            mostra o feed.
+          </p>
+          <LandingPage />
+        </section>
+
       <div className="mx-auto flex w-full max-w-conteudo flex-col gap-10 px-6">
         <section>
-          <h2 className="mb-1 text-xl font-bold">Match de roommates ⭐</h2>
+          <h2 className="mb-1 text-xl font-bold">
+            Match de roommates ⭐ — uma pessoa por vez
+          </h2>
+
+          <p className="mb-4 text-sm text-muted-foreground">
+            Sprint 3. Produto é vitrine; roommate é gente. Cada candidato ocupa a
+            tela e o scroll encaixa um por vez — o efeito do Tinder, sem arrastar
+            com o mouse. <strong className="text-foreground">Role dentro da caixa</strong>{" "}
+            abaixo.
+          </p>
+          <div className="overflow-hidden rounded-lg bg-background">
+            <MatchDeck
+              className="h-[32rem]"
+              candidates={[
+                {
+                  id: "1",
+                  href: "/anuncios/10",
+                  title: "Vaga em república no Santa Mônica",
+                  personName: "Mariana Oliveira",
+                  personBio:
+                    "Engenharia Química, 4º período. Durmo cedo porque acordo às 6h, e gosto de deixar a cozinha limpa.",
+                  price: 550,
+                  priceNote: "por mês",
+                  location: "Santa Mônica",
+                  score: 0.87,
+                  commonTraits: ["dorme cedo", "organizada", "não fuma"],
+                  otherTraits: ["tem pet", "cozinha bastante"],
+                },
+                {
+                  id: "2",
+                  href: "/anuncios/11",
+                  title: "Divido apartamento de 2 quartos",
+                  personName: "Felipe Alves",
+                  personBio:
+                    "Computação. Trabalho de casa à tarde, então silêncio nesse horário ajuda muito.",
+                  price: 700,
+                  priceNote: "por mês",
+                  location: "Umuarama",
+                  score: 0.62,
+                  commonTraits: ["gosta de silêncio", "organizado"],
+                  otherTraits: ["noturno"],
+                },
+                {
+                  id: "3",
+                  href: "/anuncios/12",
+                  title: "Quarto individual perto do campus",
+                  personName: "Beltrana Souza",
+                  personBio: "Medicina Veterinária. Divido a casa com dois gatos.",
+                  price: 480,
+                  priceNote: "por mês",
+                  location: "Glória",
+                  score: 0.35,
+                  commonTraits: ["não fuma"],
+                  otherTraits: ["tem pet", "recebe visitas", "noturna"],
+                },
+              ]}
+              actionSlot={() => (
+                <Button className="rounded-pill px-6 py-5 font-bold">
+                  Tenho interesse
+                </Button>
+              )}
+            />
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-bold">
+            Match em grade (versão anterior)
+          </h2>
           <p className="mb-4 text-sm text-muted-foreground">
             Sprint 2. O selo de compatibilidade e as tags em comum — que são o
             &quot;porquê&quot; do número. Não existe tela para isso no Figma; composto
@@ -415,7 +496,7 @@ export default function PreviewVisualPage() {
                 {/* Menor e colado no "Entrar", como a Lia pediu. */}
                 <Button
                   variant="ghost"
-                  className="-mt-2 h-auto py-1 text-xs text-muted-foreground hover:bg-transparent"
+                  className="-mt-2 h-auto py-1 text-xs text-muted-foreground"
                 >
                   Esqueci minha senha
                 </Button>
@@ -431,7 +512,7 @@ export default function PreviewVisualPage() {
             telas; no desktop convivem. Repare que os dois lados usam a mesma cor de
             balão, como no Figma — muda o alinhamento e o canto reto.
           </p>
-          <div className="flex h-[520px] gap-4 rounded-lg bg-card/50 p-4">
+          <div className="flex h-[520px] flex-col gap-4 rounded-lg bg-card/50 p-4 lg:flex-row">
             <ConversationList
               conversations={[
                 {
@@ -587,7 +668,7 @@ export default function PreviewVisualPage() {
             reportSlot={
               <Button
                 variant="ghost"
-                className="h-auto rounded-pill py-1 text-sm font-semibold text-primary hover:bg-transparent hover:text-primary"
+                className="h-auto rounded-pill py-1 text-sm font-semibold text-primary"
               >
                 Denunciar anúncio
               </Button>

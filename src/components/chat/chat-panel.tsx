@@ -103,7 +103,7 @@ export function ChatPanel({
         {backHref ? (
           <Link
             href={backHref}
-            className="grid size-8 shrink-0 place-items-center rounded-pill text-nav-foreground hover:bg-white/10 lg:hidden"
+            className="grid size-8 shrink-0 place-items-center rounded-pill text-nav-foreground hover:bg-primary/60 hover:text-primary-foreground lg:hidden"
             aria-label="Voltar para as conversas"
           >
             <ArrowLeft className="size-5" aria-hidden />

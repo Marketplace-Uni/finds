@@ -47,6 +47,7 @@ Um marketplace **fechado para a comunidade da UFU**, onde a pessoa do outro lado
 | Landing page para usuário deslogado | Baixo | Caike |
 | Contador de mensagens não lidas | Baixo | Alexandre |
 | Recuperar senha | Baixo | Kaike |
+| Curso do usuário no perfil (seletor por campus) | Baixo, mas precisa de 1 migration (`profiles.course`) | Kaike (UI/validação) + Josué (migration) |
 
 ### ⚪ Backlog (entra na apresentação como "próximos passos", não será implementado)
 

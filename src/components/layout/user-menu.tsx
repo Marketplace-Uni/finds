@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronDown, LogOut, Settings, Tag, User as UserIcon } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown, LogOut, Loader2, Settings, Tag, User as UserIcon } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar";
 import {
@@ -12,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
+import { sairAction } from "@/src/app/sair/actions";
 
 export type NavbarUser = {
   name: string;
@@ -30,6 +32,8 @@ function initials(name: string) {
 }
 
 export function UserMenu({ user }: { user: NavbarUser }) {
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -70,11 +74,22 @@ export function UserMenu({ user }: { user: NavbarUser }) {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/sair">
+        <DropdownMenuItem
+          disabled={isSigningOut}
+          onSelect={(event) => {
+            // Mantém o menu aberto pra dar tempo de mostrar "Saindo...":
+            // por padrão o Radix fecha o menu assim que um item é selecionado.
+            event.preventDefault();
+            setIsSigningOut(true);
+            sairAction();
+          }}
+        >
+          {isSigningOut ? (
+            <Loader2 className="animate-spin" aria-hidden />
+          ) : (
             <LogOut aria-hidden />
-            Sair
-          </Link>
+          )}
+          {isSigningOut ? "Saindo..." : "Sair"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

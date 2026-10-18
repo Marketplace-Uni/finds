@@ -9,14 +9,17 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { ChatPanel } from "@/src/components/chat/chat-panel";
+import { ChatRealtime } from "@/src/components/chat/chat-realtime";
 import {
   ConversationList,
   type Conversation,
 } from "@/src/components/chat/conversation-list";
 import { NegotiationCard } from "@/src/components/transactions/negotiation-card";
+import { ReviewDialog } from "@/src/components/transactions/review-dialog";
 import { ErrorState } from "@/src/components/ui/states";
 import { requireCompleteProfile } from "@/src/lib/auth";
 import { createClient } from "@/src/lib/supabase/server";
+import { sendMessageSchema } from "@/src/lib/validations/chat";
 import { transactionActionSchema } from "@/src/lib/validations/transactions";
 
 function formatMessageTime(value: string | null | undefined) {
@@ -51,31 +54,54 @@ function formatMessageTime(value: string | null | undefined) {
 async function sendMessageAction(conversationId: string, formData: FormData) {
   "use server";
 
-  const content = String(formData.get("content") ?? "").trim();
-  if (!content || content.length > 2000) return;
+  const parsed = sendMessageSchema.safeParse({
+    conversationId,
+    content: formData.get("content"),
+  });
+  if (!parsed.success) {
+    redirect(
+      `/mensagens?conversation=${encodeURIComponent(conversationId)}&message_error=invalid`,
+    );
+  }
 
   const supabase = await createClient();
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (authError || !user) redirect("/entrar?next=%2Fmensagens");
 
-  const { data: conversation } = await supabase
+  const { data: conversation, error: conversationError } = await supabase
     .from("conversations")
     .select("id")
-    .eq("id", conversationId)
+    .eq("id", parsed.data.conversationId)
     .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
     .maybeSingle();
 
-  if (!conversation) return;
+  if (conversationError) {
+    redirect(
+      `/mensagens?conversation=${encodeURIComponent(parsed.data.conversationId)}&message_error=failed`,
+    );
+  }
+  if (!conversation) {
+    redirect(
+      `/mensagens?conversation=${encodeURIComponent(parsed.data.conversationId)}&message_error=unavailable`,
+    );
+  }
 
   const { error } = await supabase.from("messages").insert({
     conversation_id: conversation.id,
     sender_id: user.id,
-    content,
+    content: parsed.data.content,
   });
 
-  if (!error) revalidatePath("/mensagens");
+  if (error) {
+    redirect(
+      `/mensagens?conversation=${encodeURIComponent(parsed.data.conversationId)}&message_error=failed`,
+    );
+  }
+
+  revalidatePath("/mensagens");
 }
 
 async function updateTransactionAction(conversationId: string, formData: FormData) {
@@ -262,7 +288,10 @@ async function updateTransactionAction(conversationId: string, formData: FormDat
 export default async function MensagensPage({
   searchParams,
 }: PageProps<"/mensagens">) {
-  const { conversation: requestedConversationId } = await searchParams;
+  const {
+    conversation: requestedConversationId,
+    message_error: requestedMessageError,
+  } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -272,6 +301,9 @@ export default async function MensagensPage({
   const selectedConversationId = Array.isArray(requestedConversationId)
     ? requestedConversationId[0]
     : requestedConversationId;
+  const messageError = Array.isArray(requestedMessageError)
+    ? requestedMessageError[0]
+    : requestedMessageError;
 
   const { data: conversationRows, error: conversationsError } = await supabase
     .from("conversations")
@@ -453,10 +485,24 @@ export default async function MensagensPage({
   const canPropose = Boolean(
     selectedConversation && !hasTransaction && selectedConversation.conversation.buyer_id === user.id,
   );
+  const { data: existingReview, error: reviewError } =
+    transaction?.status === "completed"
+      ? await supabase
+          .from("reviews")
+          .select("id")
+          .eq("transaction_id", transaction.id)
+          .eq("reviewer_id", user.id)
+          .maybeSingle()
+      : { data: null, error: null };
 
   if (transactionError) {
     return (
       <ErrorState description="Não foi possível carregar a negociação. Tente novamente." />
+    );
+  }
+  if (reviewError) {
+    return (
+      <ErrorState description="Não foi possível verificar sua avaliação. Tente novamente." />
     );
   }
 
@@ -472,16 +518,29 @@ export default async function MensagensPage({
   }));
 
   return (
-    <div className="flex h-[calc(100dvh-13rem)] min-h-[28rem] gap-4">
-      <ConversationList
-        conversations={conversations}
-        className={`lg:border-r lg:border-border lg:pr-4 ${
-          selectedConversation ? "hidden lg:flex" : "flex"
-        }`}
-      />
+    <div className="flex flex-col gap-3">
+      {messageError ? (
+        <p
+          role="alert"
+          className="rounded-md border border-destructive/30 bg-card px-4 py-3 text-sm text-destructive"
+        >
+          {messageError === "invalid"
+            ? "Digite uma mensagem com até 2000 caracteres."
+            : messageError === "unavailable"
+              ? "Esta conversa não está disponível para sua conta."
+              : "Não foi possível enviar a mensagem. Tente novamente."}
+        </p>
+      ) : null}
+      <div className="flex h-[calc(100dvh-13rem)] min-h-[28rem] gap-4">
+        <ConversationList
+          conversations={conversations}
+          className={`lg:border-r lg:border-border lg:pr-4 ${
+            selectedConversation ? "hidden lg:flex" : "flex"
+          }`}
+        />
 
-      {selectedConversation ? (
-        <ChatPanel
+        {selectedConversation ? (
+          <ChatPanel
           peer={{
             name:
               selectedConversation.peer?.full_name ||
@@ -503,6 +562,10 @@ export default async function MensagensPage({
           action={sendMessageAction.bind(null, selectedConversation.id)}
           headerSlot={
             <div className="flex flex-col gap-2">
+              <ChatRealtime
+                conversationId={selectedConversation.id}
+                messageCount={messageRows?.length ?? 0}
+              />
               <p className="truncate rounded-md bg-card px-3 py-2 text-xs text-muted-foreground">
                 Anúncio: {selectedConversation.listing?.title}
               </p>
@@ -571,6 +634,23 @@ export default async function MensagensPage({
                         </button>
                       </form>
                     ) : null}
+
+                    {transactionStatus === "completed" && transaction && !existingReview ? (
+                      <ReviewDialog
+                        transactionId={transaction.id}
+                        reviewedName={
+                          selectedConversation.peer?.full_name ||
+                          selectedConversation.peer?.username ||
+                          "a outra pessoa"
+                        }
+                      />
+                    ) : null}
+
+                    {transactionStatus === "completed" && existingReview ? (
+                      <p className="text-sm text-muted-foreground">
+                        Você já avaliou esta negociação.
+                      </p>
+                    ) : null}
                     </div>
                   }
                 />
@@ -595,20 +675,21 @@ export default async function MensagensPage({
           }
           className="flex"
         />
-      ) : (
-        <div className="hidden min-w-0 flex-1 items-center justify-center text-center lg:flex">
-          <div>
-            <h2 className="font-semibold text-foreground">
-              {conversationItems.length ? "Abra uma conversa" : "Sua caixa de entrada está vazia"}
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {conversationItems.length
-                ? "Selecione uma conversa para ver as mensagens."
-                : "Quando você conversar sobre um anúncio, ela aparecerá aqui."}
-            </p>
+        ) : (
+          <div className="hidden min-w-0 flex-1 items-center justify-center text-center lg:flex">
+            <div>
+              <h2 className="font-semibold text-foreground">
+                {conversationItems.length ? "Abra uma conversa" : "Sua caixa de entrada está vazia"}
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {conversationItems.length
+                  ? "Selecione uma conversa para ver as mensagens."
+                  : "Quando você conversar sobre um anúncio, ela aparecerá aqui."}
+              </p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

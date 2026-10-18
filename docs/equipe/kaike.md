@@ -36,7 +36,10 @@
 - [x] `requireCompleteProfile()` + `useCompleteProfileGate()` + modal — **avisar o Josué e o Alexandre: já está pronto** (`src/lib/auth.ts` e `src/components/auth/complete-profile-gate.tsx`); usa `src/components/ui/dialog.tsx`, um modal simples que fiz pq o Caike ainda não desenhou um no Figma — ele refina depois
 - [x] Feed: query paginada ("carregar mais") + filtros com **estado na URL** (`?tipo=produto&campus=...`): tipo, campus, faixa de preço — `src/lib/listings.ts`; `categoria`/`condicao` ficam só na UI por ora (vivem em `listings.details`, formato ainda não entregue pelo Josué)
 - [x] Busca por texto → `/busca?q=` (título + descrição, `ilike`) — mesma query de `src/lib/listings.ts`
-- [ ] `/anuncios/[id]`: buscar o anúncio + fotos + anunciante e exibir os `details` do tipo (usa os schemas do Josué) — ainda não iniciado: falta o schema de `details` por tipo de anúncio (Sprint 1 do Josué, ainda não entregue em nenhuma branch)
+- [x] `/anuncios/[id]`: buscar o anúncio + fotos + anunciante e exibir os `details` do tipo (usa os schemas do Josué) — desbloqueado quando `src/lib/validations/listings.ts` chegou na `main`; `fetchListingDetail()` em `src/lib/listings.ts`, mapeamento dos `details` por tipo em `src/lib/listing-details.ts` (com teste), página monta o `<ListingDetail>` do Caike com `favoriteSlot`/`reportSlot` já plugados nos componentes prontos do Alexandre. **Pendente, fora da minha área:**
+  - `chatSlot` sem botão: a action `startConversation()` existe em `src/lib/chat/actions.ts`, mas falta o Alexandre criar o `<StartChatButton>` — hoje o slot fica `undefined` com um `// TODO(Alexandre)` no código
+  - Não deu pra testar na tela com dado real: o `finds-dev` está sem nenhum anúncio (`npm run seed` é destrutivo, não rodei sem combinar com o time) — testado só o caminho de "não encontrado"
+  - Reparei que `meus-anuncios/page.tsx` (Josué) usa `status` em português (`ativo/pausado/...`), inconsistente com o enum real do banco (`active/draft/paused/closed`) — vale avisar ele
 
 ## Sprint 2 · 05/10–11/10 · Perfil e Match ⭐
 
@@ -50,10 +53,15 @@
 
 ## Sprint 3 · 12/10–18/10 · Polimento
 
-- [ ] Recuperar senha (P1)
+- [x] Recuperar senha (P1) — `/recuperar-senha` (pede o e-mail, chama `supabase.auth.resetPasswordForEmail`) e `/redefinir-senha` (lê a sessão de recuperação que o link do e-mail cria no browser via `onAuthStateChange("PASSWORD_RECOVERY")`, chama `supabase.auth.updateUser({ password })`). Schemas em `src/lib/validations/auth.ts`. **Pendência operacional, não é código:** o `redirectTo` (`{origin}/redefinir-senha`) precisa estar na lista de "Redirect URLs" do projeto Supabase (`finds-dev`/`finds-demo`) — sem isso o Supabase rejeita o link. Avisei o time ([issue #28](https://github.com/Marketplace-Uni/finds/issues/28))
+- [x] Login/cadastro: toggle de mostrar/ocultar senha (`<PasswordField>` novo em `src/components/ui/password-field.tsx` — versão simples, o Caike refina depois, mesmo padrão do `ui/dialog.tsx`), link "Esqueceu a senha?" em `/entrar`, e um "Bem-vindo(a) ao Finds!" + logo em `/cadastro` pro celular (onde o `<AuthArt>` do Caike, que já tem isso, fica escondido). Telas de carregamento em `/entrar`, `/cadastro`, `/recuperar-senha` e `/redefinir-senha`
+- [x] Conserta o logout: trocado o Route Handler GET de `/sair` (que exigia dar F5 pra aplicar — `<Link>` navegava client-side e o Router Cache mantinha o navbar "logado") por uma Server Action (`src/app/sair/actions.ts`) com `revalidatePath` + `redirect("/entrar")`, igual o padrão já usado em `entrar()`/`cadastrar()`. **Mexi no `<UserMenu>` do Caike** (`src/components/layout/user-menu.tsx`) pra trocar o `<Link>` por um item com estado "Saindo..." (spinner) enquanto desloga — troquei só o gatilho/estado, mantive o visual (ícone, texto, classes) igual; avisar o Caike pra revisar
 - [ ] Conferir que o match fica bonito com os dados do seed final (combinar com o Alexandre)
 - [ ] Ajustes do QA de design que caírem para você
 - [ ] Ensaiar a parte do match no roteiro da demo
+- [x] Telas de carregamento (`loading.tsx` com a logo do Finds, `<LoadingState>` novo em `src/components/ui/states.tsx` — versão simples, o Caike refina depois) em `/busca`, `/anuncios/[id]`, `/perfil/[username]`, `/roommates`, `/configuracoes` e `/completar-perfil`. **Não fiz** em `(main)/page.tsx` (feed) porque um `loading.tsx` ali embaixo cascata pras rotas irmãs que não são minhas (`anunciar`, `meus-anuncios`, `mensagens`, `favoritos`, `negociacoes`) — combinar com o time antes de adicionar
+- [x] Animação de entrada (fade + slide sutil) em `/perfil/[username]` e `/anuncios/[id]` — `@keyframes` inline em cada página (não mexi em `globals.css`, é tema do Caike), escopo contido só nessas duas por enquanto
+- [x] Campo "Curso" no perfil: `src/lib/courses.ts` com os cursos por campus de Uberlândia (pesquisei no catálogo oficial da Prograd/UFU, 4ª edição), seletor dependente do campus em `/configuracoes`, validado na Server Action. **Pendência real, documentada em issue:** falta a coluna `profiles.course` (migration do Josué) — por enquanto o curso é validado mas **não é salvo**, com aviso disso na própria tela
 
 ## Reta final · 19–20/10
 - [ ] Bug bash + só correções

@@ -90,7 +90,7 @@ export function PhotoPicker({
               type="button"
               onClick={() => remover(index)}
               aria-label={`Remover foto ${index + 1}`}
-              className="absolute top-1 right-1 grid size-6 place-items-center rounded-pill bg-background/90 text-foreground hover:bg-background"
+              className="absolute top-1 right-1 grid size-6 place-items-center rounded-pill bg-background/90 text-foreground hover:bg-primary/60 hover:text-primary-foreground"
             >
               <X className="size-3.5" aria-hidden />
             </button>

@@ -7,6 +7,7 @@ type SeedUser = {
 	id: string;
 	full_name: string;
 	username: string;
+	bio: string;
 	campus_id: string;
 };
 
@@ -19,12 +20,11 @@ type SeedListing = {
 	owner_id: string;
 	campus_id: string;
 	details: Record<string, unknown>;
-	url: string;
 };
 
 type SeedTrait = { key: string; label: string; trait_group: string };
+type SeedImage = { path: string; contentType: string; bytes: Buffer };
 
-const seedMarker = "finds-dev";
 const universityId = "00000000-0000-4000-8000-000000000001";
 
 function seedEmail(user: Pick<SeedUser, "username">): string {
@@ -182,6 +182,37 @@ function readJson<T>(fileName: string): T {
 	return JSON.parse(readFileSync(resolve(process.cwd(), fileName), "utf8")) as T;
 }
 
+function readSeedImages(count: number, target: string): SeedImage[] {
+	const directory = resolve(process.cwd(), "supabase/seed/imagens_seed");
+	const extensions = ["jpg", "webp", "png"] as const;
+
+	return Array.from({ length: count }, (_, index) => {
+		const matchingFiles = extensions
+			.map((extension) => `anuncio-${index + 1}.${extension}`)
+			.filter((candidate) => existsSync(resolve(directory, candidate)));
+		if (matchingFiles.length !== 1) {
+			throw new Error(
+				`Esperada exatamente uma imagem para o anúncio ${index + 1} em imagens_seed; encontradas ${matchingFiles.length}.`,
+			);
+		}
+		const [fileName] = matchingFiles;
+
+		const extension = fileName.split(".").at(-1);
+		const contentType =
+			extension === "webp"
+				? "image/webp"
+				: extension === "png"
+					? "image/png"
+					: "image/jpeg";
+
+		return {
+			path: `seed-${target}/${fileName}`,
+			contentType,
+			bytes: readFileSync(resolve(directory, fileName)),
+		};
+	});
+}
+
 function validateSeed(users: SeedUser[], listings: SeedListing[]) {
 	const userIds = new Set(users.map((user) => user.id));
 	const campusIds = new Set(campuses.map((campus) => campus.id));
@@ -201,11 +232,10 @@ function validateSeed(users: SeedUser[], listings: SeedListing[]) {
 		listings.some(
 			(listing) =>
 				!userIds.has(listing.owner_id) ||
-				!campusIds.has(listing.campus_id) ||
-				!URL.canParse(listing.url),
+				!campusIds.has(listing.campus_id),
 		)
 	) {
-		throw new Error("Há anúncio com proprietário, campus ou URL inválido.");
+		throw new Error("Há anúncio com proprietário ou campus inválido.");
 	}
 	if (users.some((user) => !traitAssignments[user.id])) {
 		throw new Error("Há usuário sem seleção de traits na seed.");
@@ -233,6 +263,7 @@ async function main() {
 	if (process.env.SUPABASE_SEED_TARGET !== "finds-dev") {
 		// throw new Error("Defina SUPABASE_SEED_TARGET=finds-dev para confirmar o destino.");
 	}
+	const seedMarker = seedTarget;
 
 	const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 	const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -245,6 +276,7 @@ async function main() {
 	const users = readJson<SeedUser[]>("supabase/seed/users.json");
 	const listings = readJson<SeedListing[]>("supabase/seed/ad.json");
 	validateSeed(users, listings);
+	const seedImages = readSeedImages(listings.length, seedTarget);
 
 	const supabase = createClient(supabaseUrl, serviceRoleKey, {
 		auth: { autoRefreshToken: false, persistSession: false },
@@ -268,10 +300,25 @@ async function main() {
 	);
 	if (conflictingUsers.length > 0) {
 		throw new Error(
-			`E-mails da seed já pertencem a contas sem o marcador finds-dev: ${conflictingUsers
+			`E-mails da seed já pertencem a contas sem o marcador ${seedMarker}: ${conflictingUsers
 				.map((user) => user.email)
 				.join(", ")}. Nenhuma conta foi removida.`,
 		);
+	}
+
+	for (let index = 0; index < seedImages.length; index += 5) {
+		const batch = seedImages.slice(index, index + 5);
+		const results = await Promise.all(
+			batch.map((image) =>
+				supabase.storage.from("listing-images").upload(image.path, image.bytes, {
+					cacheControl: "3600",
+					contentType: image.contentType,
+					upsert: true,
+				}),
+			),
+		);
+		const failedUpload = results.find((result) => result.error)?.error;
+		if (failedUpload) throw failedUpload;
 	}
 
 	const oldSeedUsers = existingUsers.filter(
@@ -341,7 +388,11 @@ async function main() {
 		userIds.set(user.id, data.user.id);
 		const { error: profileError } = await supabase
 			.from("profiles")
-			.update({ campus_id: user.campus_id, university_id: universityId })
+			.update({
+				campus_id: user.campus_id,
+				university_id: universityId,
+				bio: user.bio,
+			})
 			.eq("id", data.user.id);
 		if (profileError) throw profileError;
 	}
@@ -382,9 +433,9 @@ async function main() {
 	if (listingsError) throw listingsError;
 	const listingIds = new Map(savedListings.map((listing) => [listing.title, listing.id]));
 
-	const imageRows = listings.map((listing) => ({
+	const imageRows = listings.map((listing, index) => ({
 		listing_id: listingIds.get(listing.title),
-		path: listing.url,
+		path: seedImages[index].path,
 		position: 0,
 	}));
 	const { error: imagesError } = await supabase.from("listing_images").insert(imageRows);
@@ -437,7 +488,7 @@ async function main() {
 	if (messagesError) throw messagesError;
 
 	console.info(
-		`Seed concluída em finds-dev: ${users.length} usuários, ${listings.length} anúncios, ${imageRows.length} imagens e ${conversationRows.length} conversas.`,
+		`Seed concluída em ${seedTarget}: ${users.length} usuários, ${listings.length} anúncios, ${imageRows.length} imagens enviadas ao Storage e ${conversationRows.length} conversas.`,
 	);
 }
 

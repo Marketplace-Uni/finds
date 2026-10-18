@@ -1,6 +1,8 @@
 import { createClient } from "@/src/lib/supabase/server";
 import { TYPE_OPTIONS, type FilterOption } from "@/src/components/discovery/filters-sidebar";
 import { LISTING_TYPE_BY_FILTER_VALUE, type ListingFilters } from "@/src/lib/listings-filters";
+import type { Database, Json } from "@/src/types/database";
+import type { ListingType } from "@/src/lib/listing-details";
 
 export const LISTINGS_PAGE_SIZE = 12;
 
@@ -37,6 +39,18 @@ function coverImageUrl(
 ): string | null {
   const capa = [...(images ?? [])].sort((a, b) => (a.position ?? 0) - (b.position ?? 0))[0];
   return capa ? supabase.storage.from("listing-images").getPublicUrl(capa.path).data.publicUrl : null;
+}
+
+/** Todas as fotos do anúncio (não só a capa), ordenadas, para a galeria do detalhe. */
+function imageUrls(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  images: ImageRow[] | null | undefined,
+): { url: string }[] {
+  return [...(images ?? [])]
+    .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+    .map((image) => ({
+      url: supabase.storage.from("listing-images").getPublicUrl(image.path).data.publicUrl,
+    }));
 }
 
 // Sem o Database tipado em lib/supabase/server.ts, o embed 1:1 (ex.: listing
@@ -168,4 +182,69 @@ export async function fetchUserListings(ownerId: string): Promise<ListingSummary
     typeLabel: typeLabel(row.type),
     imageUrl: coverImageUrl(supabase, row.listing_images),
   }));
+}
+
+export type ListingDetailSeller = {
+  username: string;
+  name: string;
+  avatarUrl: string | null;
+  lastSeenAt: string | null;
+};
+
+export type ListingDetailData = {
+  id: string;
+  ownerId: string;
+  title: string;
+  description: string;
+  price: number | null;
+  type: ListingType;
+  status: Database["public"]["Enums"]["listing_status"];
+  details: Json | null;
+  images: { url: string }[];
+  seller: ListingDetailSeller;
+};
+
+/**
+ * Busca um anúncio pelo id para a página `/anuncios/[id]`, com todas as fotos
+ * e os dados do anunciante. `null` quando o anúncio não existe ou a RLS o
+ * esconde (ex.: rascunho/pausado de outra pessoa) — a página trata os dois
+ * casos como "não encontrado".
+ */
+export async function fetchListingDetail(id: string): Promise<ListingDetailData | null> {
+  const supabase = await createClient();
+
+  const { data: listing, error } = await supabase
+    .from("listings")
+    .select(
+      "id, owner_id, title, description, price, type, status, details, listing_images(path, position)",
+    )
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  if (!listing) return null;
+
+  const { data: owner, error: ownerError } = await supabase
+    .from("profiles")
+    .select("username, full_name, avatar_url, last_seen_at")
+    .eq("id", listing.owner_id)
+    .maybeSingle();
+  if (ownerError) throw ownerError;
+
+  return {
+    id: listing.id,
+    ownerId: listing.owner_id,
+    title: listing.title,
+    description: listing.description ?? "",
+    price: listing.price,
+    type: listing.type,
+    status: listing.status,
+    details: listing.details,
+    images: imageUrls(supabase, listing.listing_images),
+    seller: {
+      username: owner?.username ?? "",
+      name: owner?.full_name ?? owner?.username ?? "Sem nome",
+      avatarUrl: owner?.avatar_url ?? null,
+      lastSeenAt: owner?.last_seen_at ?? null,
+    },
+  };
 }

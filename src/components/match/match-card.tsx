@@ -4,6 +4,7 @@ import { ImageOff } from "lucide-react";
 
 import { cn } from "@/src/lib/utils";
 import { formatPrice } from "@/src/lib/format";
+import { EstrelaFinds } from "@/src/components/ui/estrela-finds";
 
 export type MatchCardProps = {
   href: string;
@@ -65,8 +66,10 @@ export function MatchCard({
           </div>
         )}
 
+        {/* Fundo claro, estrela laranja e escrita em marrom (Lia, 14/10). */}
         {pct !== null ? (
-          <span className="absolute top-3 left-3 rounded-pill bg-primary px-3 py-1 text-xs font-bold text-primary-foreground shadow-sm">
+          <span className="absolute top-3 left-3 flex items-center gap-1.5 rounded-pill bg-background py-1 pr-3 pl-2 text-xs font-bold text-foreground shadow-sm">
+            <EstrelaFinds className="h-3.5 w-auto text-primary" />
             {`${pct}% compatível`}
           </span>
         ) : null}

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { requireUser } from "@/src/lib/auth";
 import { createClient } from "@/src/lib/supabase/server";
+import { coursesForCampus } from "@/src/lib/courses";
 import { editarPerfilSchema } from "@/src/lib/validations/profile";
 
 export type EditarPerfilState = {
@@ -25,13 +26,30 @@ export async function editarPerfil(
   const user = await requireUser("/configuracoes");
   const supabase = await createClient();
 
+  // `?? ""` em vez de repassar o que `FormData.get()` devolve direto: um
+  // <select> sem opção não-desabilitada selecionada (ex.: lista de campus
+  // vazia) não manda nenhum valor pro form, e vira `null` aqui — o que faria
+  // o zod reclamar com uma mensagem de erro de tipo em inglês, em vez da
+  // mensagem em pt-BR do `.uuid()`.
   const parsed = editarPerfilSchema.safeParse({
-    fullName: formData.get("fullName"),
-    bio: formData.get("bio"),
-    campusId: formData.get("campusId"),
+    fullName: formData.get("fullName") ?? "",
+    bio: formData.get("bio") ?? "",
+    campusId: formData.get("campusId") ?? "",
+    course: formData.get("course") ?? "",
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
+  }
+
+  if (parsed.data.course) {
+    const { data: campus } = await supabase
+      .from("campuses")
+      .select("name")
+      .eq("id", parsed.data.campusId)
+      .maybeSingle();
+    if (!coursesForCampus(campus?.name).includes(parsed.data.course)) {
+      return { error: "Selecione um curso válido para o campus escolhido." };
+    }
   }
 
   let avatarUrl: string | undefined;
@@ -52,12 +70,19 @@ export async function editarPerfil(
     avatarUrl = supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl;
   }
 
+  // `course` já está validado acima, mas NÃO entra no update ainda: a coluna
+  // `profiles.course` não existe no banco (falta a migration do Josué, ver
+  // issue). Mandar esse campo pro `.update()` agora quebraria o salvamento
+  // inteiro do perfil (PostgREST rejeita coluna inexistente). Quando a
+  // migration subir e os tipos forem regenerados, troque por
+  // `course: parsed.data.course || null,` aqui embaixo.
   const { error } = await supabase
     .from("profiles")
     .update({
       full_name: parsed.data.fullName,
       bio: parsed.data.bio || null,
       campus_id: parsed.data.campusId,
+      course: parsed.data.course || null, // ✅ Linha adicionada!
       ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
     })
     .eq("id", user.id);
