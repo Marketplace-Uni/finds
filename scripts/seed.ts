@@ -3,6 +3,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 
+const seedTarget = process.env.SUPABASE_SEED_TARGET || 'finds-dev';
+
 type SeedUser = {
 	id: string;
 	full_name: string;
@@ -260,8 +262,11 @@ async function main() {
 		process.loadEnvFile(".env.local");
 	}
 
-	if (process.env.SUPABASE_SEED_TARGET !== "finds-dev") {
-		// throw new Error("Defina SUPABASE_SEED_TARGET=finds-dev para confirmar o destino.");
+	const seedTarget = process.env.SUPABASE_SEED_TARGET;
+	if (seedTarget !== "finds-dev" && seedTarget !== "finds-demo") {
+		throw new Error(
+			"Defina SUPABASE_SEED_TARGET=finds-dev ou SUPABASE_SEED_TARGET=finds-demo para confirmar o destino.",
+		);
 	}
 	const seedMarker = seedTarget;
 
