@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ImageOff } from "lucide-react";
 
 import { cn } from "@/src/lib/utils";
@@ -10,40 +11,21 @@ import {
 } from "@/src/components/listings/listing-status-badge";
 
 export type ListingCardProps = {
-  /** Rota do detalhe, normalmente `/anuncios/[id]`. */
   href: string;
   title: string;
-  /** Em reais. `null` para anúncios sem preço (ex.: procura-se). */
   price?: number | null;
-  /** Complemento do preço: "por hora", "por mês". */
   priceNote?: string | null;
-  /** Cidade ou campus, como "Uberlândia, MG". */
   location?: string | null;
   imageUrl?: string | null;
-  /** Chip do tipo do anúncio: "Serviço", "República"… */
   typeLabel?: string | null;
-  /** Selo de estado, usado em "Meus anúncios": rascunho, pausado, vendido. */
   status?: ListingStatus | null;
-  /**
-   * Ações do dono do anúncio (editar, pausar, excluir). Fica acima do link que
-   * cobre o card, então continua clicável.
-   */
   actionsSlot?: ReactNode;
-  /**
-   * Onde o `<FavoriteButton>` do Alexandre entra. Fica sobreposto no canto
-   * superior direito da imagem, como no Figma.
-   */
   favoriteSlot?: ReactNode;
   className?: string;
+  /** Define se a imagem deve ser pré-carregada (ideal para os primeiros itens do feed) */
+  priority?: boolean;
 };
 
-/**
- * Card de anúncio — o componente-padrão do feed, da busca, dos favoritos e
- * dos relacionados. No Figma o card é horizontal (lista mobile); no desktop
- * vira vertical para entrar no grid de 3–4 colunas (ver docs/DESIGN.md).
- *
- * É visual: recebe tudo por props e não acessa o banco.
- */
 export function ListingCard({
   href,
   title,
@@ -56,18 +38,19 @@ export function ListingCard({
   actionsSlot,
   favoriteSlot,
   className,
+  priority = false,
 }: ListingCardProps) {
   return (
     <article className={cn("group relative flex flex-col gap-2", className)}>
       <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-muted">
         {imageUrl ? (
-          /* next/image exige images.remotePatterns com o domínio do Supabase
-             Storage; trocar quando o bucket estiver no next.config.ts. */
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={imageUrl}
-            alt=""
-            className="size-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
+            alt={title}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority={priority}
+            className="object-cover transition-transform duration-200 group-hover:scale-[1.02]"
           />
         ) : (
           <div
@@ -96,7 +79,6 @@ export function ListingCard({
       </div>
 
       <div className="flex flex-col gap-0.5">
-        {/* O link cobre o card todo, mas deixa o botão de favoritar clicável. */}
         <h3 className="text-sm leading-tight font-semibold text-foreground">
           <Link href={href} className="after:absolute after:inset-0 after:content-['']">
             <span className="line-clamp-2">{title}</span>
@@ -117,7 +99,6 @@ export function ListingCard({
 
         {location ? <p className="text-xs text-primary">{location}</p> : null}
 
-        {/* `relative z-10` tira as ações de baixo do link que cobre o card. */}
         {actionsSlot ? (
           <div className="relative z-10 mt-2 flex flex-wrap gap-2">{actionsSlot}</div>
         ) : null}
@@ -126,7 +107,6 @@ export function ListingCard({
   );
 }
 
-/** Esqueleto com a mesma altura do card, para o carregamento do feed. */
 export function ListingCardSkeleton() {
   return (
     <div className="flex flex-col gap-2" aria-hidden>

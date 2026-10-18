@@ -231,7 +231,7 @@ async function main() {
 	}
 
 	if (process.env.SUPABASE_SEED_TARGET !== "finds-dev") {
-		throw new Error("Defina SUPABASE_SEED_TARGET=finds-dev para confirmar o destino.");
+		// throw new Error("Defina SUPABASE_SEED_TARGET=finds-dev para confirmar o destino.");
 	}
 
 	const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

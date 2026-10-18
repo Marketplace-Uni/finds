@@ -1,16 +1,9 @@
+import Image from "next/image";
 import { ImageOff } from "lucide-react";
-
 import { cn } from "@/src/lib/utils";
 
 export type ListingImage = { url: string; alt?: string };
 
-/**
- * Galeria do detalhe do anúncio. No Figma é um carrossel com bolinhas; aqui
- * é uma faixa com scroll-snap e miniaturas que funcionam como âncoras, então
- * não precisa de JavaScript nem de client component.
- *
- * `galleryId` só importa se houver mais de uma galeria na mesma página.
- */
 export function ListingGallery({
   images,
   galleryId = "galeria",
@@ -41,13 +34,15 @@ export function ListingGallery({
           <div
             key={image.url}
             id={`${galleryId}-${index}`}
-            className="aspect-square w-full shrink-0 snap-center"
+            className="relative aspect-square w-full shrink-0 snap-center"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={image.url}
-              alt={image.alt ?? ""}
-              className="size-full object-cover"
+              alt={image.alt ?? "Foto do anúncio"}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              priority={index === 0} // A primeira imagem carrega logo
+              className="object-cover"
             />
           </div>
         ))}
@@ -59,11 +54,16 @@ export function ListingGallery({
             <li key={image.url}>
               <a
                 href={`#${galleryId}-${index}`}
-                className="block size-16 overflow-hidden rounded-sm bg-muted ring-offset-2 ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                className="relative block size-16 overflow-hidden rounded-sm bg-muted ring-offset-2 ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 aria-label={`Ver foto ${index + 1} de ${images.length}`}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={image.url} alt="" className="size-full object-cover" />
+                <Image 
+                  src={image.url} 
+                  alt="" 
+                  fill 
+                  sizes="64px" 
+                  className="object-cover" 
+                />
               </a>
             </li>
           ))}
