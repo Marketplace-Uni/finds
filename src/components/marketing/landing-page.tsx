@@ -3,7 +3,7 @@ import { Handshake, House, ShoppingBag, Wrench } from "lucide-react";
 
 import { Button } from "@/src/components/ui/button";
 import { LogoFinds } from "@/src/components/layout/logo-finds";
-import { Zeca } from "@/src/components/ui/zeca";
+import { Zeca, type ZecaPose } from "@/src/components/ui/zeca";
 import { cn } from "@/src/lib/utils";
 
 const TIPOS = [
@@ -28,6 +28,52 @@ const TIPOS = [
     texto: "Ache alguém para dividir moradia com a rotina parecida com a sua.",
   },
 ];
+
+/** Poses mostradas na vitrine do mascote, uma de cada vez. */
+const POSES_VITRINE: ZecaPose[] = [1, 2, 4, 3, 7];
+
+/** Duração de um ciclo completo (todas as poses, uma vez cada). */
+const VITRINE_DURACAO_S = 20;
+
+/**
+ * "Vitrine" do Zeca: as poses se revezam sozinhas, uma de cada vez, com um
+ * crossfade suave — só CSS (`@keyframes` + `animation-delay` negativo por
+ * pose), sem JavaScript nem `use client`, já que a landing inteira é Server
+ * Component. Pedido do Guilherme (18/10); não tinha equivalente no Figma.
+ *
+ * A pose de cada vez some deslizando só a opacidade, perto do limite da sua
+ * fatia do ciclo (0–2% entra, 18–20% sai, numa fatia de 20% = 1/5 do ciclo) —
+ * o fim do fade-out de uma pose cai exatamente onde começa o fade-in da
+ * próxima, sem brecha nem sobreposição longa.
+ */
+function MascoteVitrine() {
+  const fatia = VITRINE_DURACAO_S / POSES_VITRINE.length;
+
+  return (
+    <div className="relative hidden h-72 w-72 shrink-0 lg:block" aria-hidden>
+      <style>{`
+        @keyframes finds-mascote-vitrine {
+          0%, 100% { opacity: 0; }
+          2% { opacity: 1; }
+          18% { opacity: 1; }
+          20% { opacity: 0; }
+        }
+      `}</style>
+      {POSES_VITRINE.map((pose, index) => (
+        <div
+          key={pose}
+          className="absolute inset-0 flex items-center justify-center"
+          style={{
+            animation: `finds-mascote-vitrine ${VITRINE_DURACAO_S}s ease-in-out infinite`,
+            animationDelay: `-${index * fatia}s`,
+          }}
+        >
+          <Zeca pose={pose} className="h-64 w-auto text-secondary" />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 const PASSOS = [
   {
@@ -59,38 +105,56 @@ const PASSOS = [
 export function LandingPage({ className }: { className?: string }) {
   return (
     <div className={cn("flex flex-col", className)}>
-      <section className="relative overflow-hidden bg-nav px-6 py-20">
-        {/* Sem o Zeca e alinhado à esquerda, a pedido da Lia (14/10). */}
-        <div className="relative z-10 mx-auto flex max-w-conteudo flex-col items-start gap-5">
-          {/* Respiro extra entre a marca e a chamada. */}
-          <LogoFinds className="mb-6 h-12 w-auto text-secondary" />
+      {/*
+        Full-bleed: o layout logado (src/app/(main)/layout.tsx) centraliza o
+        conteúdo num <main max-w-conteudo>, o que também apertava a landing
+        do visitante. `left-1/2 -mx-[50vw] w-screen` estoura essa largura e
+        deixa o retângulo marrom ocupando a tela inteira; o conteúdo interno
+        (abaixo) continua com seu próprio `max-w-conteudo`. O `-mt-8` cancela
+        o `py-8` desse mesmo `<main>` (fixo, igual em toda tela logada) pra
+        colar o marrom na navbar, sem tirar o respiro das outras páginas.
+      */}
+      <section className="relative left-1/2 -mt-8 w-screen -mx-[50vw] overflow-hidden bg-nav px-6 py-20">
+        {/*
+          O Zeca volta aqui a pedido do Guilherme (18/10) — a Lia tinha
+          pedido pra tirar o mascote desse tipo de painel em 14/10 (ver
+          docs/DESIGN.md). Vale confirmar com ela/o Caike no próximo
+          checkpoint.
+        */}
+        <div className="relative z-10 mx-auto flex max-w-conteudo flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-col items-start gap-5">
+            {/* Respiro extra entre a marca e a chamada. */}
+            <LogoFinds className="mb-6 h-12 w-auto text-secondary" />
 
-          <h1 className="max-w-3xl text-4xl leading-tight font-bold text-nav-foreground sm:text-5xl">
-            O marketplace de quem é da UFU
-          </h1>
+            <h1 className="max-w-3xl text-4xl leading-tight font-bold text-nav-foreground sm:text-5xl">
+              O marketplace de quem é da UFU
+            </h1>
 
-          <p className="max-w-xl text-base leading-relaxed text-nav-foreground/80">
-            Compre, venda, ofereça serviços e ache com quem dividir moradia —&nbsp;sempre
-            com outro estudante do outro lado.
-          </p>
+            <p className="max-w-xl text-base leading-relaxed text-nav-foreground/80">
+              Compre, venda, ofereça serviços e ache com quem dividir moradia —&nbsp;sempre
+              com outro estudante do outro lado.
+            </p>
 
-          {/* A assinatura entra entre o texto e os botões. */}
-          <p className="font-mono text-xs text-secondary">
-            feito por estudantes, para estudantes
-          </p>
+            {/* A assinatura entra entre o texto e os botões. */}
+            <p className="font-mono text-xs text-secondary">
+              feito por estudantes, para estudantes
+            </p>
 
-          <div className="mt-2 flex flex-wrap gap-3">
-            <Button asChild className="rounded-pill px-8 py-6 text-base font-bold">
-              <Link href="/cadastro">Criar minha conta</Link>
-            </Button>
-            <Button
-              asChild
-              variant="ghost"
-              className="rounded-pill border-2 border-secondary px-8 py-6 text-base font-bold text-secondary hover:bg-primary/60 hover:text-primary-foreground"
-            >
-              <Link href="/entrar">Já tenho conta</Link>
-            </Button>
+            <div className="mt-2 flex flex-wrap gap-3">
+              <Button asChild className="rounded-pill px-8 py-6 text-base font-bold">
+                <Link href="/cadastro">Criar minha conta</Link>
+              </Button>
+              <Button
+                asChild
+                variant="ghost"
+                className="rounded-pill border-2 border-secondary px-8 py-6 text-base font-bold text-secondary hover:bg-primary/60 hover:text-primary-foreground"
+              >
+                <Link href="/entrar">Já tenho conta</Link>
+              </Button>
+            </div>
           </div>
+
+          <MascoteVitrine />
         </div>
 
         <span

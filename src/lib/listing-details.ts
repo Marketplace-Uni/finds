@@ -4,6 +4,7 @@ import {
   roommateDetailsSchema,
   serviceDetailsSchema,
 } from "./validations/listings";
+import { formatPrice } from "./format";
 import type { Database, Json } from "@/src/types/database";
 
 export type ListingType = Database["public"]["Enums"]["listing_type"];
@@ -68,6 +69,11 @@ function formatMoveInDate(value: string): string {
   return date.toLocaleDateString("pt-BR", { timeZone: "UTC" });
 }
 
+/** "R$ 500,00" quando min = max, senão "R$ 500,00 – R$ 700,00". */
+function formatPriceRange(min: number, max: number): string {
+  return min === max ? formatPrice(min) : `${formatPrice(min)} – ${formatPrice(max)}`;
+}
+
 /**
  * Monta `categories`/`attributes`/`specs`/`priceNote` para o `<ListingDetail>`
  * a partir do `details` (jsonb) de um anúncio, validado pelos schemas do
@@ -103,7 +109,8 @@ export function buildListingDisplay(type: ListingType, details: Json | null): Li
     case "roommate": {
       const parsed = roommateDetailsSchema.safeParse(details);
       if (!parsed.success) return EMPTY_DISPLAY;
-      const { mode, housing_type, neighborhood, move_in_date, gender_preference } = parsed.data;
+      const { mode, housing_type, neighborhood, move_in_date, gender_preference, price_min, price_max } =
+        parsed.data;
       return {
         categories: [],
         attributes: [],
@@ -116,22 +123,24 @@ export function buildListingDisplay(type: ListingType, details: Json | null): Li
             label: "Preferência de gênero",
             value: GENDER_PREFERENCE_LABELS[gender_preference] ?? gender_preference,
           },
+          { label: "Faixa de preço", value: formatPriceRange(price_min, price_max) },
         ],
-        priceNote: null,
+        priceNote: "por mês",
       };
     }
     case "republic": {
       const parsed = republicDetailsSchema.safeParse(details);
       if (!parsed.success) return EMPTY_DISPLAY;
-      const { vacancies, gender, neighborhood, amenities } = parsed.data;
+      const { vacancies, gender, neighborhood, amenities, price_min, price_max } = parsed.data;
       return {
         categories: amenities,
         attributes: [gender],
         specs: [
           { label: "Vagas", value: String(vacancies) },
           { label: "Bairro", value: neighborhood },
+          { label: "Faixa de preço", value: formatPriceRange(price_min, price_max) },
         ],
-        priceNote: null,
+        priceNote: "por mês",
       };
     }
     default:

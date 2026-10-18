@@ -1,16 +1,15 @@
 import Link from "next/link";
-import { Heart, MapPin, MessageCircle, Plus, Search } from "lucide-react";
+import { Heart, MessageCircle, Plus, Search } from "lucide-react";
 
 import { Button } from "@/src/components/ui/button";
 import { LogoFinds } from "@/src/components/layout/logo-finds";
 import { UserMenu, type NavbarUser } from "@/src/components/layout/user-menu";
 import { UnreadBadge } from "@/src/components/chat/unread-badge";
+import { Zeca } from "@/src/components/ui/zeca";
 
 type NavbarProps = {
   /** Quem está logado. `null` mostra a navbar de visitante. */
   user?: NavbarUser | null;
-  /** Campus escolhido, mostrado ao lado do alfinete. */
-  campus?: string | null;
   /** Conversas não lidas; o badge só aparece acima de zero. */
   unreadCount?: number;
 };
@@ -22,7 +21,7 @@ type NavbarProps = {
  *
  * É visual: recebe tudo por props e não acessa o banco.
  */
-export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarProps) {
+export function Navbar({ user = null, unreadCount = 0 }: NavbarProps) {
   return (
     <header className="bg-nav text-nav-foreground">
       {/* No celular a busca cai para a segunda linha: logo e ações não cabem
@@ -37,37 +36,48 @@ export function Navbar({ user = null, campus = null, unreadCount = 0 }: NavbarPr
           <LogoFinds className="h-6 w-auto sm:h-7" />
         </Link>
 
-        <form
-          action="/busca"
-          // `basis-full` (e não `w-full`) é o que força a quebra de linha: com
-          // `flex-1` a base vai a zero e o campo encolhe em vez de descer.
-          className="relative order-last min-w-0 basis-full md:order-none md:flex-1 md:basis-auto"
-        >
-          <label htmlFor="busca-navbar" className="sr-only">
-            Buscar anúncios
-          </label>
-          <Search
-            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-            aria-hidden
-          />
-          <input
-            id="busca-navbar"
-            type="search"
-            name="q"
-            placeholder="O que você está procurando hoje?"
-            className="h-10 w-full rounded-md bg-muted pr-4 pl-9 text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-secondary focus-visible:outline-none"
-          />
-        </form>
-
-        {campus ? (
-          <span className="hidden items-center gap-1 text-sm lg:flex">
-            <MapPin className="size-4 text-secondary" aria-hidden />
-            {campus}
-          </span>
+        {/*
+          Só mostra pra quem está logado: deslogado não tem feed nem busca
+          pra ir (a raiz mostra a landing, não os anúncios), então o campo
+          não levava a lugar nenhum — pedido do Guilherme (18/10).
+        */}
+        {user ? (
+          <form
+            action="/busca"
+            // `basis-full` (e não `w-full`) é o que força a quebra de linha: com
+            // `flex-1` a base vai a zero e o campo encolhe em vez de descer.
+            className="relative order-last min-w-0 basis-full md:order-none md:flex-1 md:basis-auto"
+          >
+            <label htmlFor="busca-navbar" className="sr-only">
+              Buscar anúncios
+            </label>
+            <Search
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden
+            />
+            <input
+              id="busca-navbar"
+              type="search"
+              name="q"
+              placeholder="O que você está procurando hoje?"
+              className="h-10 w-full rounded-md bg-muted pr-4 pl-9 text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-secondary focus-visible:outline-none"
+            />
+          </form>
         ) : null}
 
         {user ? (
           <nav className="ml-auto flex items-center gap-1 md:ml-0" aria-label="Atalhos da conta">
+            <Button
+              asChild
+              variant="ghost"
+              className="rounded-pill text-nav-foreground hover:bg-primary/60 hover:text-primary-foreground"
+            >
+              <Link href="/roommates">
+                <Zeca pose={1} className="size-5" />
+                <span className="hidden sm:inline">Roommates</span>
+              </Link>
+            </Button>
+
             <Button
               asChild
               className="rounded-pill bg-primary text-primary-foreground hover:bg-primary/90"

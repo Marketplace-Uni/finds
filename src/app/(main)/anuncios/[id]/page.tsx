@@ -11,6 +11,7 @@ import { ListingGrid } from "@/src/components/listings/listing-grid";
 import { ListingStatusBadge } from "@/src/components/listings/listing-status-badge";
 import { FavoriteButton } from "@/src/components/favorites/favorite-button";
 import { ReportButton } from "@/src/components/reports/report-button";
+import { StartChatButton } from "@/src/components/chat/start-chat-button";
 import { Button } from "@/src/components/ui/button";
 import { ErrorState } from "@/src/components/ui/states";
 
@@ -109,10 +110,9 @@ export default async function AnuncioDetalhePage({
               <Link href={`/anuncios/${listing.id}/editar`}>Editar anúncio</Link>
             </Button>
           ) : (
-            // TODO(Alexandre): <StartChatButton listingId={listing.id} /> — a
-            // Server Action `startConversation()` já existe em
-            // src/lib/chat/actions.ts, falta o componente de botão.
-            undefined
+            // O próprio botão trata "não logado" (redireciona pra /entrar) e
+            // "perfil incompleto" (redireciona pra /completar-perfil).
+            <StartChatButton listingId={listing.id} />
           )
         }
         relatedSlot={

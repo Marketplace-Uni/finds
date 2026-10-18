@@ -108,13 +108,9 @@ export default function PreviewVisualPage() {
 
       <section className="flex flex-col gap-2">
         <h2 className="mx-auto w-full max-w-conteudo px-6 text-sm font-semibold text-muted-foreground">
-          Navbar — logado, com campus e 3 mensagens não lidas
+          Navbar — logado, com 3 mensagens não lidas
         </h2>
-        <Navbar
-          user={{ name: "Caike Araújo", username: "caike" }}
-          campus="Santa Mônica"
-          unreadCount={3}
-        />
+        <Navbar user={{ name: "Caike Araújo", username: "caike" }} unreadCount={3} />
       </section>
 
         <section className="mb-10">

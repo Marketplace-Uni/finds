@@ -10,6 +10,7 @@ import {
   parsePage,
 } from "@/src/lib/listings-filters";
 import {
+  CATEGORY_OPTIONS,
   fetchCampusOptions,
   fetchListings,
   type ListingSummary,
@@ -50,6 +51,7 @@ export default async function BuscaPage({ searchParams }: PageProps<"/busca">) {
         action="/busca"
         q={filters.q ?? undefined}
         campuses={campuses}
+        categories={CATEGORY_OPTIONS}
         selected={{ ...filters, campus: filters.campus ?? undefined }}
       />
 

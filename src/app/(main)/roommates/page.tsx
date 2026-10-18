@@ -1,13 +1,11 @@
-import Link from "next/link";
-
 import { requireUser } from "@/src/lib/auth";
-import { fetchRoommateListings } from "@/src/lib/listings";
+import { fetchOwnerProfiles, fetchRoommateListings } from "@/src/lib/listings";
 import { fetchTraitLabels, fetchUserTraits, fetchUserTraitsBulk } from "@/src/lib/traits";
 import { matchingTraitKeys, matchScore } from "@/src/lib/match";
-import { ListingGrid } from "@/src/components/listings/listing-grid";
-import { MatchCard } from "@/src/components/match/match-card";
+import { MatchDeck, type MatchCandidate } from "@/src/components/match/match-deck";
 import { Button } from "@/src/components/ui/button";
 import { EmptyState, ErrorState } from "@/src/components/ui/states";
+import Link from "next/link";
 
 export default async function RoommatesPage() {
   const user = await requireUser("/roommates");
@@ -39,12 +37,22 @@ export default async function RoommatesPage() {
 
   const outros = listings.filter((listing) => listing.ownerId !== user.id);
 
-  const [ownerTraitsById, traitLabels] = await Promise.all([
+  if (outros.length === 0) {
+    return (
+      <EmptyState
+        title="Nenhum anúncio de roommate ou república por aqui ainda"
+        description="Volte mais tarde — novos anúncios aparecem aqui conforme o pessoal publica."
+      />
+    );
+  }
+
+  const [ownerTraitsById, traitLabels, ownerProfiles] = await Promise.all([
     fetchUserTraitsBulk(outros.map((listing) => listing.ownerId)),
     fetchTraitLabels(),
+    fetchOwnerProfiles(outros.map((listing) => listing.ownerId)),
   ]);
 
-  const comScore = outros
+  const candidates: MatchCandidate[] = outros
     .map((listing) => {
       const ownerTraits = ownerTraitsById.get(listing.ownerId) ?? {
         self: new Set<string>(),
@@ -54,18 +62,23 @@ export default async function RoommatesPage() {
       const commonTraits = matchingTraitKeys(myTraits, ownerTraits).map(
         (key) => traitLabels.get(key) ?? key,
       );
-      return { ...listing, score, commonTraits };
+      const owner = ownerProfiles.get(listing.ownerId);
+
+      return {
+        id: listing.id,
+        href: `/anuncios/${listing.id}`,
+        title: listing.title,
+        personName: owner?.name ?? "Sem nome",
+        personBio: owner?.bio ?? null,
+        price: listing.price,
+        priceNote: "por mês",
+        location: listing.location,
+        imageUrl: listing.imageUrl,
+        score,
+        commonTraits,
+      };
     })
     .sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
-
-  if (comScore.length === 0) {
-    return (
-      <EmptyState
-        title="Nenhum anúncio de roommate ou república por aqui ainda"
-        description="Volte mais tarde — novos anúncios aparecem aqui conforme o pessoal publica."
-      />
-    );
-  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -76,21 +89,7 @@ export default async function RoommatesPage() {
         </p>
       </div>
 
-      <ListingGrid className="lg:grid-cols-3 xl:grid-cols-4">
-        {comScore.map((listing) => (
-          <MatchCard
-            key={listing.id}
-            href={`/anuncios/${listing.id}`}
-            title={listing.title}
-            price={listing.price}
-            priceNote="por mês"
-            location={listing.location}
-            imageUrl={listing.imageUrl}
-            score={listing.score}
-            commonTraits={listing.commonTraits}
-          />
-        ))}
-      </ListingGrid>
+      <MatchDeck candidates={candidates} />
     </div>
   );
 }
