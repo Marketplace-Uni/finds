@@ -62,6 +62,9 @@ export default async function RoommatesPage() {
       const commonTraits = matchingTraitKeys(myTraits, ownerTraits).map(
         (key) => traitLabels.get(key) ?? key,
       );
+      const otherTraits = [...ownerTraits.self]
+        .filter((key) => !myTraits.wanted.has(key))
+        .map((key) => traitLabels.get(key) ?? key);
       const owner = ownerProfiles.get(listing.ownerId);
 
       return {
@@ -76,6 +79,7 @@ export default async function RoommatesPage() {
         imageUrl: listing.imageUrl,
         score,
         commonTraits,
+        otherTraits,
       };
     })
     .sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
