@@ -77,4 +77,6 @@
 - [x] Opções de categoria em `/anunciar` (produto/serviço) e grupos de traits do perfil de convivência com a primeira letra maiúscula
 - [x] Landing: "Como funciona" virou 3 seções com efeito de foco ao rolar (GSAP), texto de um lado e o Zeca do outro
 - [x] Roommates: corrigido o bug do scroll do `MatchDeck` pulando de pessoa cedo demais (snap obrigatório + altura fixa); adicionado efeito de "scroll expand" (GSAP) e foto clicável pro anúncio
-- [x] Plano de revisão do algoritmo de match + expansão das tags de convivência — `docs/PLANO-MATCH-CONVIVENCIA.md` (algoritmo já validado como correto com dado real; achados e sugestão de 8 tags novas documentados, nada implementado ainda)
+- [x] Plano de revisão do algoritmo de match + expansão das tags de convivência — `docs/PLANO-MATCH-CONVIVENCIA.md` (algoritmo já validado como correto com dado real; achados e sugestão de 8 tags novas documentados)
+- [x] Implementados os achados do plano acima (20/10, pedido do Guilherme): bug do `otherTraits` corrigido, `saveUserTraits()` salva antes de apagar, 8 tags novas no seed — falta rodar `npm run seed` em `finds-dev`/`finds-demo` (combinar com o time, é destrutivo) e decidir com o Caike/Lia o aviso de "perfil incompleto"
+- [x] Movido o link de "Perfil de convivência" de `/configuracoes` pro menu da conta (dropdown do `<UserMenu>`, abaixo de "Configurações") — avisar o Caike pra revisar o ícone/visual do item novo
