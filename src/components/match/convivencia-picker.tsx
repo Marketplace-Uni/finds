@@ -1,5 +1,11 @@
+"use client";
+
+import { useActionState, useEffect, useRef } from "react";
+import { toast } from "sonner";
+
 import { Button } from "@/src/components/ui/button";
 import { cn } from "@/src/lib/utils";
+import type { ConvivenciaState } from "@/src/app/(main)/configuracoes/convivencia/actions";
 
 export type Trait = {
   /** Chave no banco, ex.: "dorme-cedo". */
@@ -15,9 +21,17 @@ type ConvivenciaPickerProps = {
   self?: string[];
   /** Chaves marcadas em "procuro". */
   wanted?: string[];
-  action?: React.ComponentProps<"form">["action"];
+  /** Sem ação real (caso do `/preview-visual`, que não tem conta por trás),
+   * o botão só existe pro visual — não salva nada. */
+  action?: (prevState: ConvivenciaState, formData: FormData) => Promise<ConvivenciaState>;
   className?: string;
 };
+
+const initialState: ConvivenciaState = {};
+
+async function semAcao(prevState: ConvivenciaState): Promise<ConvivenciaState> {
+  return prevState;
+}
 
 /** Chip selecionável — o mesmo padrão dos filtros: input escondido + label. */
 function TraitChip({
@@ -116,8 +130,22 @@ export function ConvivenciaPicker({
   action,
   className,
 }: ConvivenciaPickerProps) {
+  const [state, formAction, isPending] = useActionState(action ?? semAcao, initialState);
+  const ultimoAvisado = useRef(0);
+
+  useEffect(() => {
+    if (!state.attempt || state.attempt === ultimoAvisado.current) return;
+    ultimoAvisado.current = state.attempt;
+
+    if (state.error) {
+      toast.error(state.error);
+    } else if (state.success) {
+      toast.success("Perfil de convivência atualizado!");
+    }
+  }, [state]);
+
   return (
-    <form action={action} className={cn("flex flex-col gap-8", className)}>
+    <form action={formAction} className={cn("flex flex-col gap-8", className)}>
       <div className="grid gap-8 lg:grid-cols-2">
         <Coluna
           name="sou"
@@ -136,8 +164,8 @@ export function ConvivenciaPicker({
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit" className="rounded-pill px-8">
-          Salvar perfil de convivência
+        <Button type="submit" disabled={isPending} className="rounded-pill px-8">
+          {isPending ? "Salvando..." : "Salvar perfil de convivência"}
         </Button>
       </div>
     </form>
