@@ -9,10 +9,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { ChatPanel } from "@/src/components/chat/chat-panel";
-import {
-  ConversationList,
-  type Conversation,
-} from "@/src/components/chat/conversation-list";
+import { ConversationListLive } from "@/src/components/chat/conversation-list-live";
+import type { Conversation } from "@/src/components/chat/conversation-list";
 import { NegotiationCard } from "@/src/components/transactions/negotiation-card";
 import { ReviewDialog } from "@/src/components/transactions/review-dialog";
 import { ErrorState } from "@/src/components/ui/states";
@@ -514,8 +512,8 @@ export default async function MensagensPage({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex h-[calc(100dvh-13rem)] min-h-[28rem] gap-4">
-        <ConversationList
-          conversations={conversations}
+        <ConversationListLive
+          initialConversations={conversations}
           className={`lg:border-r lg:border-border lg:pr-4 ${
             selectedConversation ? "hidden lg:flex" : "flex"
           }`}
