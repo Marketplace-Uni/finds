@@ -83,6 +83,11 @@ export async function fetchUserTraitsBulk(userIds: string[]): Promise<Map<string
  * `<ConvivenciaPicker>`. A PK é `(user_id, trait_id)`: uma trait só pode ser
  * "sou" OU "procuro" por vez — se a mesma key vier nos dois grupos (não
  * deveria, mas o form é só HTML), "procuro" tem prioridade.
+ *
+ * Grava a lista nova (upsert, não conflita com o que já existe) antes de
+ * apagar o que ficou de fora — mesmo padrão usado em `updateListing()` pras
+ * fotos: se o passo de gravação falhar por algo transitório, a pessoa não
+ * perde o perfil de convivência inteiro, só a tentativa de salvar.
  */
 export async function saveUserTraits(
   userId: string,
@@ -115,11 +120,29 @@ export async function saveUserTraits(
     rows.push({ user_id: userId, trait_id: traitId, kind: "self" });
   }
 
-  const { error: deleteError } = await supabase.from("user_traits").delete().eq("user_id", userId);
-  if (deleteError) throw deleteError;
+  const { data: currentRows, error: currentError } = await supabase
+    .from("user_traits")
+    .select("trait_id")
+    .eq("user_id", userId);
+  if (currentError) throw currentError;
 
   if (rows.length > 0) {
-    const { error: insertError } = await supabase.from("user_traits").insert(rows);
-    if (insertError) throw insertError;
+    const { error: upsertError } = await supabase
+      .from("user_traits")
+      .upsert(rows, { onConflict: "user_id,trait_id" });
+    if (upsertError) throw upsertError;
+  }
+
+  const idsToRemove = (currentRows ?? [])
+    .map((row) => row.trait_id)
+    .filter((traitId) => !seenTraitIds.has(traitId));
+
+  if (idsToRemove.length > 0) {
+    const { error: deleteError } = await supabase
+      .from("user_traits")
+      .delete()
+      .eq("user_id", userId)
+      .in("trait_id", idsToRemove);
+    if (deleteError) throw deleteError;
   }
 }

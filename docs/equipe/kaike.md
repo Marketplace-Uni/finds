@@ -77,10 +77,6 @@
 - [x] Opções de categoria em `/anunciar` (produto/serviço) e grupos de traits do perfil de convivência com a primeira letra maiúscula
 - [x] Landing: "Como funciona" virou 3 seções com efeito de foco ao rolar (GSAP), texto de um lado e o Zeca do outro
 - [x] Roommates: corrigido o bug do scroll do `MatchDeck` pulando de pessoa cedo demais (snap obrigatório + altura fixa); adicionado efeito de "scroll expand" (GSAP) e foto clicável pro anúncio
-- [x] Plano de revisão do algoritmo de match + expansão das tags de convivência — `docs/PLANO-MATCH-CONVIVENCIA.md` (algoritmo já validado como correto com dado real; achados e sugestão de 8 tags novas documentados, nada implementado ainda)
-- [x] Corrige produção: 400 `INVALID_IMAGE_OPTIMIZE_REQUEST` em toda foto de anúncio (`images.remotePatterns` faltando) — [PR #45](https://github.com/Marketplace-Uni/finds/pull/45)
-- [x] Estrela da avaliação: corrigido pra acender todas as estrelas à esquerda da clicada (era um `<div className="contents">` quebrando o seletor CSS entre pares input/label)
-- [x] Média de avaliação + quantidade no perfil público: `<ReviewsList>` já existia pronta mas nunca foi plugada (`TODO(Alexandre)`) — plugada, e o resumo do cabeçalho do perfil também passou a receber os dados reais
-- [x] Encerramento automático do anúncio generalizado pra todos os tipos (antes só "product") + aviso de confirmação no card da negociação — achado um bug de RLS nesse processo (comprador não conseguia encerrar o anúncio do vendedor), documentado na [issue #46](https://github.com/Marketplace-Uni/finds/issues/46) com a migration já escrita
-- [x] Confirmação (modal) antes de encerrar ou excluir um anúncio em `/meus-anuncios`; `deleteListing()` agora também limpa as fotos do Storage (antes só apagava a linha do banco)
-- [x] `docs/PLANO-CHAT-REALTIME.md` atualizado: os passos 2-6 já estavam implementados em código, mas o documento nunca registrava isso — só o passo 7 tinha o "✅ implementado"
+- [x] Plano de revisão do algoritmo de match + expansão das tags de convivência — `docs/PLANO-MATCH-CONVIVENCIA.md` (algoritmo já validado como correto com dado real; achados e sugestão de 8 tags novas documentados)
+- [x] Implementados os achados do plano acima (20/10, pedido do Guilherme): bug do `otherTraits` corrigido, `saveUserTraits()` salva antes de apagar, 8 tags novas no seed, aviso de "perfil incompleto" em `/roommates` (`InlineNotice` novo em `ui/states.tsx`, avisar o Caike pra revisar o visual) — falta só rodar `npm run seed` em `finds-dev`/`finds-demo` (combinar com o time, é destrutivo)
+- [x] Movido o link de "Perfil de convivência" de `/configuracoes` pro menu da conta (dropdown do `<UserMenu>`, abaixo de "Configurações") — avisar o Caike pra revisar o ícone/visual do item novo

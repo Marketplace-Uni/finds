@@ -75,6 +75,43 @@ export function LoadingState({
   );
 }
 
+/**
+ * Aviso inline sutil — ao contrário de EmptyState/ErrorState (bloco central,
+ * tela toda), este fica ao lado do conteúdo normal da página, pra avisar algo
+ * sem travar a tela (ex.: perfil de convivência incompleto em /roommates).
+ * Versão simples, o Caike refina depois.
+ */
+export function InlineNotice({
+  title,
+  description,
+  pose = 6,
+  action,
+  className,
+}: {
+  title: string;
+  description?: string;
+  pose?: ZecaPose;
+  action?: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-3 rounded-lg border border-border bg-muted/50 px-4 py-3",
+        className,
+      )}
+      role="status"
+    >
+      <Zeca pose={pose} className="h-10 w-auto shrink-0 text-primary" />
+      <div className="flex-1 text-sm">
+        <p className="font-semibold text-foreground">{title}</p>
+        {description ? <p className="text-muted-foreground">{description}</p> : null}
+      </div>
+      {action}
+    </div>
+  );
+}
+
 /** Estado de erro padrão, para quando a busca de dados falha. */
 export function ErrorState({
   title = "Não conseguimos carregar isso",

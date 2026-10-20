@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ChevronDown, LogOut, Loader2, Settings, Tag, User as UserIcon } from "lucide-react";
+import { ChevronDown, LogOut, Loader2, Settings, Tag, User as UserIcon, Users } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar";
 import {
@@ -74,6 +74,12 @@ export function UserMenu({ user }: { user: NavbarUser }) {
           <Link href="/configuracoes">
             <Settings aria-hidden />
             Configurações
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/configuracoes/convivencia">
+            <Users aria-hidden />
+            Perfil de convivência
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

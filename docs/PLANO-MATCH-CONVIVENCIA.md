@@ -167,18 +167,24 @@ eliminatórios depois, é um projeto à parte da expansão de tags proposta aqui
 
 ## Recomendação / próximos passos, em ordem
 
-1. **Corrigir `otherTraits`** (🔴 acima) — pequeno, autocontido, sem risco, completa uma
-   seção da tela que já existe e já tem o design pronto.
-2. **Inverter a ordem do `saveUserTraits()`** (🟡 acima) — mesmo padrão já usado em
-   `updateListing()`, baixo risco, evita perder o perfil de alguém por um erro
-   transitório.
-3. **Decidir com o Caike/Lia** o aviso de "perfil incompleto" (🟢 acima) — é UX, não
-   código; registrar a decisão antes de implementar.
-4. **Adicionar as 8 tags novas** da tabela acima (ou o subconjunto que o time aprovar)
-   em `scripts/seed.ts` + `npm run seed` nos dois ambientes — não precisa de migration,
-   é só dado.
+1. ✅ **Corrigir `otherTraits`** (🔴 acima) — feito em 20/10 (commit `d80865c`):
+   `roommates/page.tsx` agora calcula as tags "sou" do dono que eu não procuro e
+   preenche `otherTraits` do `MatchCandidate`; a seção "Também é" aparece de verdade.
+2. ✅ **Inverter a ordem do `saveUserTraits()`** (🟡 acima) — feito em 20/10
+   (commit `def6d1f`): agora faz upsert (`on conflict user_id,trait_id`) da lista nova
+   antes de apagar o que ficou de fora, mesmo padrão do `updateListing()`.
+3. ✅ **Aviso de "perfil incompleto"** (🟢 acima) — feito em 20/10 (commit `7be5172`),
+   sem esperar a decisão formal do Caike/Lia (pedido direto do Guilherme): `InlineNotice`
+   novo em `ui/states.tsx` (versão simples, Caike refina o visual depois), mostrado acima
+   do `<MatchDeck>` em `/roommates` quando `myTraits.self.size === 0`, com o Zeca
+   confuso e link pra `/configuracoes/convivencia`.
+4. ✅ **Adicionar as 8 tags novas** da tabela acima — feito em 20/10 (commit `5829838`),
+   em `scripts/seed.ts`. **Falta rodar `npm run seed` em `finds-dev`/`finds-demo`** pra
+   aplicar (o upsert por `key` é seguro, mas combinar com o time antes, já que o seed é
+   destrutivo pro resto dos dados).
 5. (Opcional, maior) Revisitar o grupo novo/traits sensíveis listados acima **com a
-   designer antes**, não como parte deste plano.
+   designer antes**, não como parte deste plano — ainda não feito.
 
-Nenhum destes passos foi executado — fica pra revisão e priorização do time antes de
-qualquer implementação, mesmo critério já usado pro `docs/PLANO-CHAT-REALTIME.md`.
+Os passos 1, 2, 3 e 4 foram implementados em 20/10 (pedido do Guilherme). O passo 5
+segue como estava: fica pra revisão e priorização do time, mesmo critério já usado pro
+`docs/PLANO-CHAT-REALTIME.md`.
