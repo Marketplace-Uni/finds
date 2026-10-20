@@ -65,6 +65,10 @@
 
 ## Reta final · 19–20/10
 - [ ] Bug bash + só correções
-- [ ] Verificar interação entre contas: anúncio, chat
+- [x] Verificar interação entre contas: anúncio, chat — testado com 2 contas reais; o chat tem bloqueio de infraestrutura, ver abaixo
 - [x] Melhorar UX: inserir páginas novas sobre cada serviço dentro da página principal (`/como-funciona/<tipo>`, 19-20/10), verificar responsividade no mobile (auditoria por leitura de código em 20/10 — ver `docs/PENDENCIAS-RESOLUCAO.md` item 10; falta conferir em aparelho real os dois offsets fixos anotados lá)
 - [x] Verificar pendencias em PENDENCIAS-RESOLUCAO — revisado em 20/10, atualizado com os achados de hoje (bug do scroll da landing, bug de `/entrar` no celular, causa raiz do chat lento)
+- [x] Chat em tempo real de verdade (`docs/PLANO-CHAT-REALTIME.md`, Passos 1–6): N+1 da prévia de conversas resolvido, Realtime aplicado direto no estado (sem `router.refresh()`), envio otimista, lista de conversas reordenando sozinha. Código completo e testado — bloqueado só por infraestrutura (publicação Realtime do Supabase não entrega eventos, ver [issue #43](https://github.com/Marketplace-Uni/finds/issues/43))
+- [x] Revisão de segurança adversarial do diff da sessão + correção dos 3 achados "Importante" (limite de fotos no servidor, ordem insert-antes-de-delete em `updateListing()`, cleanup do GSAP) — nenhum achado "Crítico"
+- [x] Lote de ajustes de UI da reta final: seta dos selects de `/anunciar`, preview ao vivo também em "Editar Anúncio", efeito no menu da conta, toast de confirmação no perfil de convivência
+- [x] Dependências novas instaladas: `gsap` (scroll da landing) e `sonner` (toasts) — ver `docs/ARQUITETURA.md`
