@@ -6,6 +6,7 @@ import { cn } from "@/src/lib/utils";
 import { WizardShell } from "@/src/components/ui/wizard";
 import { Field, TextAreaField, TextField, controlClass } from "@/src/components/ui/field";
 import { DateFieldBR } from "@/src/components/ui/date-field-br";
+import { EditImagesField } from "@/src/components/listings/edit-images-field";
 import type { FilterOption } from "@/src/components/discovery/filters-sidebar";
 import type { ListingType } from "@/src/lib/listing-details";
 import { updateListing, type ListingFormState } from "@/src/app/actions/listings";
@@ -142,6 +143,7 @@ export function EditarForm({
     price: number | null;
     campus_id: string | null;
     details: Details;
+    images: { path: string; url: string }[];
   };
   campuses: FilterOption[];
 }) {
@@ -518,9 +520,7 @@ export function EditarForm({
       ) : null}
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        Edição de fotos ainda não disponível aqui — ver PENDENCIAS-KAIKE.md.
-      </p>
+      <EditImagesField initialImages={listing.images} />
 
       {state.error ? (
         <p className="text-xs font-medium text-destructive" role="alert">

@@ -289,8 +289,7 @@ export async function createListingForm(
 }
 
 /**
- * Edita um anúncio existente (só o dono). Não mexe nas fotos nesta rodada —
- * ver PENDENCIAS-KAIKE.md.
+ * Edita um anúncio existente (só o dono) — campos de texto/seleção e fotos.
  */
 export async function updateListing(
   id: string,
@@ -314,6 +313,23 @@ export async function updateListing(
     return errorState(_prevState, parsed.error.issues[0]?.message ?? "Dados inválidos.", formData)
   }
 
+  // Confere dono e fotos atuais ANTES de escrever qualquer coisa. Nunca
+  // confiar só no `.eq("owner_id", user.id)` do update: ele simplesmente não
+  // afeta nenhuma linha se o anúncio for de outra pessoa (sem erro), o que
+  // esconderia a tentativa em vez de recusá-la com uma mensagem clara.
+  const { data: current, error: currentError } = await supabase
+    .from("listings")
+    .select("owner_id, listing_images(path)")
+    .eq("id", id)
+    .maybeSingle()
+
+  if (currentError || !current) {
+    return errorState(_prevState, "Anúncio não encontrado.", formData)
+  }
+  if (current.owner_id !== user.id) {
+    return errorState(_prevState, "Você não tem permissão para editar este anúncio.", formData)
+  }
+
   const { error } = await supabase
     .from("listings")
     .update({
@@ -327,6 +343,59 @@ export async function updateListing(
     .eq("owner_id", user.id)
 
   if (error) return errorState(_prevState, "Não foi possível salvar as alterações.", formData)
+
+  // Fotos: o que ficou marcado como "mantido" no formulário só é aceito se já
+  // pertencia a este anúncio de verdade — nunca confiar direto no `path` que
+  // chega no campo oculto, ou alguém poderia forjar o path de outro anúncio
+  // (de outro usuário) para "herdar" uma foto que não é dele.
+  const pathsAtuais = (current.listing_images ?? []).map((image) => image.path)
+  const pathsMantidos = formData
+    .getAll("existing_image_paths")
+    .filter((value): value is string => typeof value === "string")
+    .filter((path) => pathsAtuais.includes(path))
+  const pathsRemovidos = pathsAtuais.filter((path) => !pathsMantidos.includes(path))
+
+  let novosPaths: string[] = []
+  try {
+    novosPaths = await uploadImages(formData)
+  } catch (err) {
+    // Os campos de texto já foram salvos acima; só as fotos falharam.
+    return errorState(
+      _prevState,
+      err instanceof Error ? err.message : "Erro ao enviar as fotos.",
+      formData,
+    )
+  }
+
+  const pathsFinais = [...pathsMantidos, ...novosPaths]
+
+  // Reescreve `listing_images` do zero com a lista final (mantidas + novas),
+  // em vez de tentar um diff fino de posição — mais simples e já cobre
+  // reordenar a capa quando a primeira foto é removida.
+  const { error: deleteRowsError } = await supabase
+    .from("listing_images")
+    .delete()
+    .eq("listing_id", id)
+
+  if (deleteRowsError) {
+    return errorState(_prevState, "Não foi possível atualizar as fotos.", formData)
+  }
+
+  if (pathsFinais.length > 0) {
+    const { error: insertRowsError } = await supabase.from("listing_images").insert(
+      pathsFinais.map((path, index) => ({ listing_id: id, path, position: index })),
+    )
+    if (insertRowsError) {
+      return errorState(_prevState, "Não foi possível atualizar as fotos.", formData)
+    }
+  }
+
+  // Limpeza do Storage é melhor-esforço: o anúncio já está consistente no
+  // banco (as linhas de `listing_images` acima não referenciam mais esses
+  // arquivos) mesmo que a remoção física falhe por um motivo transitório.
+  if (pathsRemovidos.length > 0) {
+    await supabase.storage.from("listing-images").remove(pathsRemovidos)
+  }
 
   revalidatePath(`/anuncios/${id}`)
   revalidatePath("/meus-anuncios")
