@@ -113,6 +113,25 @@ body {
    Isto não substitui corrigir a causa — só evita que ela estrague a página. */
 html {
   overflow-x: clip;
+  /* Reserva o espaço da barra de rolagem sempre (apareça ela ou não), pra
+     nada precisar compensar sua largura quando ela some — ver o comentário
+     abaixo, em `[data-scroll-locked]`. */
+  scrollbar-gutter: stable;
+}
+
+/* Abrir qualquer menu/popover do Radix (ex.: o menu da conta) trava o
+   scroll da página e injeta `margin-right: <largura da barra> !important`
+   no body pra compensar a barra que sumiu — sem isso o conteúdo "pularia"
+   de largura. Só que a navbar é `position: sticky` e cobre só a largura do
+   body, então essa margem abria uma fresta branca do lado direito dela bem
+   na hora que o menu aparecia. Com `scrollbar-gutter: stable` acima, esse
+   espaço já fica reservado o tempo todo — a barra nunca "some" de verdade,
+   então a compensação do Radix fica redundante (e é ela quem causa a
+   fresta). Zera ela aqui: precisa de um seletor mais específico que o do
+   Radix (`body[data-scroll-locked]`) pra vencer a cascata mesmo a técnica
+   dele sendo injetada depois, no `<head>`. */
+html body[data-scroll-locked] {
+  margin-right: 0 !important;
 }
 
 /* Imagem sem largura definida é a causa mais comum de estouro. Os SVGs ficam
