@@ -70,7 +70,7 @@ function formatMoveInDate(value: string): string {
 }
 
 /** "R$ 500,00" quando min = max, senão "R$ 500,00 – R$ 700,00". */
-function formatPriceRange(min: number, max: number): string {
+export function formatPriceRange(min: number, max: number): string {
   return min === max ? formatPrice(min) : `${formatPrice(min)} – ${formatPrice(max)}`;
 }
 
