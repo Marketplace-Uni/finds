@@ -173,8 +173,11 @@ eliminatórios depois, é um projeto à parte da expansão de tags proposta aqui
 2. ✅ **Inverter a ordem do `saveUserTraits()`** (🟡 acima) — feito em 20/10
    (commit `def6d1f`): agora faz upsert (`on conflict user_id,trait_id`) da lista nova
    antes de apagar o que ficou de fora, mesmo padrão do `updateListing()`.
-3. **Decidir com o Caike/Lia** o aviso de "perfil incompleto" (🟢 acima) — ainda não
-   implementado; é UX, não código, e segue precisando da decisão do time antes.
+3. ✅ **Aviso de "perfil incompleto"** (🟢 acima) — feito em 20/10 (commit `7be5172`),
+   sem esperar a decisão formal do Caike/Lia (pedido direto do Guilherme): `InlineNotice`
+   novo em `ui/states.tsx` (versão simples, Caike refina o visual depois), mostrado acima
+   do `<MatchDeck>` em `/roommates` quando `myTraits.self.size === 0`, com o Zeca
+   confuso e link pra `/configuracoes/convivencia`.
 4. ✅ **Adicionar as 8 tags novas** da tabela acima — feito em 20/10 (commit `5829838`),
    em `scripts/seed.ts`. **Falta rodar `npm run seed` em `finds-dev`/`finds-demo`** pra
    aplicar (o upsert por `key` é seguro, mas combinar com o time antes, já que o seed é
@@ -182,6 +185,6 @@ eliminatórios depois, é um projeto à parte da expansão de tags proposta aqui
 5. (Opcional, maior) Revisitar o grupo novo/traits sensíveis listados acima **com a
    designer antes**, não como parte deste plano — ainda não feito.
 
-Os passos 1, 2 e 4 foram implementados em 20/10 (pedido do Guilherme). Os passos 3 e 5
-seguem como estavam: fica pra revisão e priorização do time, mesmo critério já usado pro
+Os passos 1, 2, 3 e 4 foram implementados em 20/10 (pedido do Guilherme). O passo 5
+segue como estava: fica pra revisão e priorização do time, mesmo critério já usado pro
 `docs/PLANO-CHAT-REALTIME.md`.
