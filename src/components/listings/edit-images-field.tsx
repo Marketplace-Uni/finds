@@ -20,6 +20,9 @@ type EditImagesFieldProps = {
   max?: number;
   label?: string;
   className?: string;
+  /** Avisa a URL de cada foto (a primeira é a capa) — usado pela prévia
+   * ao vivo do anúncio enquanto a pessoa edita. */
+  onPhotosChange?: (urls: string[]) => void;
 };
 
 /**
@@ -42,6 +45,7 @@ export function EditImagesField({
   max = 6,
   label = "Fotos do anúncio",
   className,
+  onPhotosChange,
 }: EditImagesFieldProps) {
   const [fotos, setFotos] = useState<Foto[]>(
     initialImages.map((image) => ({ kind: "existing", ...image })),
@@ -56,6 +60,11 @@ export function EditImagesField({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    onPhotosChange?.(fotos.map((foto) => foto.url));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fotos]);
 
   function sincronizarInput(lista: Foto[]) {
     if (!inputRef.current) return;
