@@ -1,0 +1,69 @@
+import { Handshake, House, ShoppingBag, Wrench, type LucideIcon } from "lucide-react";
+
+import type { ListingType } from "@/src/lib/listing-details";
+
+export type TokenMarca = "primary" | "secondary" | "accent" | "nav";
+
+/**
+ * Classes Tailwind por token, escritas por extenso (não construídas com
+ * template string) — o scanner do Tailwind precisa ver o nome da classe
+ * literal no código-fonte pra incluir no CSS final.
+ */
+export const CLASSES_POR_TOKEN: Record<TokenMarca, string> = {
+  primary: "bg-primary text-primary-foreground",
+  secondary: "bg-secondary text-secondary-foreground",
+  accent: "bg-accent text-accent-foreground",
+  nav: "bg-nav text-nav-foreground",
+};
+
+export type TipoAnuncio = {
+  type: ListingType;
+  /** Trecho da URL em `/anunciar/<slug>` e `/como-funciona/<slug>`. */
+  slug: "produto" | "servico" | "roommate" | "republica";
+  titulo: string;
+  texto: string;
+  Icone: LucideIcon;
+  /** Token do tema usado pra cor do card/chip deste tipo. */
+  token: TokenMarca;
+};
+
+/**
+ * Os 4 tipos de anúncio do Finds — ícone, texto e cor da marca num só lugar,
+ * reaproveitado por `/anunciar`, pela landing ("Quatro jeitos de usar") e
+ * pelas páginas `/como-funciona/<tipo>`, pra não repetir a mesma lista 3
+ * vezes com o risco de ficarem dessincronizadas.
+ */
+export const TIPOS_ANUNCIO: TipoAnuncio[] = [
+  {
+    type: "product",
+    slug: "produto",
+    titulo: "Produtos",
+    texto: "Da calculadora que você não usa mais ao móvel que não cabe na mudança.",
+    Icone: ShoppingBag,
+    token: "primary",
+  },
+  {
+    type: "service",
+    slug: "servico",
+    titulo: "Serviços",
+    texto: "Aula particular, conserto, design, frete. Quem faz bem está do seu lado.",
+    Icone: Wrench,
+    token: "secondary",
+  },
+  {
+    type: "roommate",
+    slug: "roommate",
+    titulo: "Roommates",
+    texto: "Ache alguém para dividir moradia com a rotina parecida com a sua.",
+    Icone: Handshake,
+    token: "accent",
+  },
+  {
+    type: "republic",
+    slug: "republica",
+    titulo: "Repúblicas",
+    texto: "Vagas perto do campus, anunciadas por quem já mora lá.",
+    Icone: House,
+    token: "nav",
+  },
+];
