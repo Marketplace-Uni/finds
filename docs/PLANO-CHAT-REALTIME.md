@@ -86,9 +86,15 @@ Trocar o `<form action={sendMessageAction}>` simples por um client component que
 
 Hoje qualquer mensagem nova em qualquer conversa também re-renderiza a lista inteira de conversas (parte do mesmo `MensagensPage`). Com os passos acima, isso deixa de acontecer sozinho — o que é bom (menos trabalho), mas a lista de conversas vai ficar com a prévia/hora desatualizada até a pessoa navegar de novo. Tratar como P1 depois dos passos 1-5 (que já resolvem a lentidão em si): assinar também `postgres_changes` em `messages` sem o filtro de `conversation_id` (ou em `conversations`, no `UPDATE` de `last_message_at`) numa assinatura à parte, só para atualizar a prévia/ordem da lista à esquerda, sem tocar na conversa aberta.
 
-### Passo 7 (opcional, não bloqueia nada acima) — "digitando..."
+### Passo 7 (opcional, não bloqueia nada acima) — "digitando..." ✅ implementado em 20/10/2026
 
 Já que o Realtime do Supabase inclui **Presence** (canal de presença, sem precisar de banco), dá para adicionar um indicador de "fulano está digitando..." como melhoria depois que o essencial (passos 1-6) estiver funcionando. Não é a causa da lentidão reportada — citar aqui só porque é um ganho barato com a mesma infraestrutura, caso o time queira.
+
+**Implementação:** `ChatConversation` (`src/components/chat/chat-conversation.tsx`) reaproveita o mesmo canal já aberto pro `postgres_changes` (`messages:${conversationId}`), com a chave de presença configurada como o próprio `user_id` — assim dá pra distinguir "sou eu" de "é a outra pessoa" direto nas chaves do `presenceState()`, sem guardar nada em lugar nenhum. No `onChange` do campo de mensagem, `track({ typing: true })` uma vez por rajada de teclas; um timer de 2s (`TYPING_TIMEOUT_MS`) sem nenhuma tecla nova dispara `track({ typing: false })` — o mesmo acontece ao enviar a mensagem ou perder o foco. `ChatPanel` passa `peer.name` como `peerName` pro aviso "Fulano está digitando...".
+
+**Achado importante:** Presence **não depende da publicação `postgres_changes`** que está bloqueada (ver `docs/PENDENCIAS-RESOLUCAO.md` item 🔴#5 / [issue #43](https://github.com/Marketplace-Uni/finds/issues/43)) — é um mecanismo à parte, só de WebSocket efêmero. Confirmado com um teste isolado (dois clientes Node, só a chave `anon`, sem login) antes de implementar: a sincronização de presença chega normalmente entre os dois, mesmo com o projeto `finds-dev` ainda sem o `postgres_changes` funcionando. **Então "digitando..." já funciona de verdade na demo**, mesmo que o restante do chat em tempo real (passos 2-6) continue esperando a correção de infraestrutura.
+
+**Verificado:** com 2 contas reais (uma criada só pra este teste, `kaike.qa.realtime@ufu.br`, mais a conta de seed `lucas.silva@ufu.br`) — abri uma conversa de verdade e confirmei nos dois sentidos: (a) o aviso "Lucas Santos Silva está digitando..." aparece na tela de quem está vendo quando o outro lado está digitando, e some de novo quando ele para/sai; (b) o campo de mensagem de fato dispara `track({ typing: true })` ao digitar e volta pra `false` sozinho ~2s depois de parar, inspecionando o estado de presença do canal por fora da aplicação.
 
 ### Verificação
 

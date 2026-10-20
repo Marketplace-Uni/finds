@@ -167,6 +167,7 @@ export function ChatPanel({
         <ChatConversation
           conversationId={conversationId}
           currentUserId={currentUserId}
+          peerName={peer.name}
           initialMessages={messages}
           action={
             action as (

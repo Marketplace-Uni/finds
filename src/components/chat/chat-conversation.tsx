@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useRef, useState } from "react";
 import { CheckCheck, Paperclip, Send } from "lucide-react";
+import type { RealtimeChannel } from "@supabase/supabase-js";
 
 import { createClient } from "@/src/lib/supabase/client";
 import { formatMessageTime } from "@/src/lib/chat/format";
@@ -53,6 +54,11 @@ function MessageBubble({ message }: { message: ChatMessage }) {
 
 const initialSendState: SendMessageState = {};
 
+// Quanto tempo sem digitar até considerar que a pessoa parou (passo 7 do
+// plano) — reseta a cada tecla, dispara `track({ typing: false })` se não
+// chegar nenhuma outra dentro desse intervalo.
+const TYPING_TIMEOUT_MS = 2000;
+
 type RealtimeMessageRow = {
   id: string;
   content: string;
@@ -60,6 +66,8 @@ type RealtimeMessageRow = {
   created_at: string;
   read_at: string | null;
 };
+
+type TypingPresence = { typing: boolean };
 
 /**
  * Lista de mensagens + formulário de envio, tudo com estado próprio no
@@ -73,15 +81,22 @@ type RealtimeMessageRow = {
  * - A mensagem otimista e a real se encontram pelo conteúdo — qualquer um
  *   dos dois caminhos (a Server Action responder, ou o evento Realtime da
  *   própria mensagem chegar) resolve a troca; o outro vira só um no-op.
+ * - "Digitando...": canal de Presence do Supabase (passo 7 do plano, sem
+ *   tabela nova) — cada lado faz `track({ typing })` no mesmo canal já aberto
+ *   pro `postgres_changes`; a chave de presença é o próprio `user_id`, então
+ *   dá pra distinguir "sou eu" de "é a outra pessoa" sem guardar nada.
  */
 export function ChatConversation({
   conversationId,
   currentUserId,
+  peerName,
   initialMessages,
   action,
 }: {
   conversationId: string;
   currentUserId: string;
+  /** Nome de quem está do outro lado, pro aviso "Fulano está digitando...". */
+  peerName: string;
   initialMessages: ChatMessage[];
   action: (prevState: SendMessageState, formData: FormData) => Promise<SendMessageState>;
 }) {
@@ -90,10 +105,14 @@ export function ChatConversation({
   const [connectionStatus, setConnectionStatus] = useState<
     "connecting" | "connected" | "reconnecting"
   >("connecting");
+  const [peerTyping, setPeerTyping] = useState(false);
 
   const seenIds = useRef(new Set(initialMessages.map((message) => message.id)));
   const lastHandledAttempt = useRef(0);
   const formRef = useRef<HTMLFormElement>(null);
+  const channelRef = useRef<RealtimeChannel | null>(null);
+  const isTypingRef = useRef(false);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Assina INSERT (mensagem nova) e UPDATE (`read_at`, quando a outra pessoa
   // lê) — as duas habilitadas na publicação Realtime do Supabase (passo 1).
@@ -103,7 +122,15 @@ export function ChatConversation({
     let isConnected = false;
 
     const channel = supabase
-      .channel(`messages:${conversationId}`)
+      .channel(`messages:${conversationId}`, { config: { presence: { key: currentUserId } } })
+      .on("presence", { event: "sync" }, () => {
+        if (!active) return;
+        const state = channel.presenceState<TypingPresence>();
+        const outraPessoaDigitando = Object.entries(state).some(
+          ([userId, presences]) => userId !== currentUserId && presences.some((p) => p.typing),
+        );
+        setPeerTyping(outraPessoaDigitando);
+      })
       .on(
         "postgres_changes",
         {
@@ -163,6 +190,10 @@ export function ChatConversation({
         if (status === "SUBSCRIBED") {
           isConnected = true;
           setConnectionStatus("connected");
+          // Registra a própria presença (começa sem digitar) — sem isso o
+          // `presenceState()` do outro lado nem sabe que este usuário está
+          // na conversa.
+          void channel.track({ typing: false } satisfies TypingPresence);
           return;
         }
         if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
@@ -171,13 +202,17 @@ export function ChatConversation({
         }
       });
 
+    channelRef.current = channel;
+
     const fallbackPing = setInterval(() => {
       if (!isConnected) setConnectionStatus("reconnecting");
     }, 5000);
 
     return () => {
       active = false;
+      channelRef.current = null;
       clearInterval(fallbackPing);
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
       void supabase.removeChannel(channel);
     };
   }, [conversationId, currentUserId]);
@@ -231,10 +266,34 @@ export function ChatConversation({
     return () => cancelAnimationFrame(frame);
   }, [messages.length]);
 
+  // Avisa "estou digitando" uma única vez por rajada de teclas, e agenda o
+  // aviso de "parei" pra depois de `TYPING_TIMEOUT_MS` sem nenhuma tecla nova
+  // — cada tecla reinicia o timer em vez de acumular vários.
+  function avisarDigitando() {
+    if (!isTypingRef.current) {
+      isTypingRef.current = true;
+      void channelRef.current?.track({ typing: true } satisfies TypingPresence);
+    }
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(pararDeDigitar, TYPING_TIMEOUT_MS);
+  }
+
+  function pararDeDigitar() {
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
+    }
+    if (isTypingRef.current) {
+      isTypingRef.current = false;
+      void channelRef.current?.track({ typing: false } satisfies TypingPresence);
+    }
+  }
+
   function enviar(formData: FormData) {
     const conteudo = String(formData.get("content") ?? "").trim();
     if (!conteudo) return;
 
+    pararDeDigitar();
     setMessages((atual) => [
       ...atual,
       { id: `temp-${crypto.randomUUID()}`, content: conteudo, mine: true, pending: true },
@@ -266,6 +325,17 @@ export function ChatConversation({
         ))}
       </ul>
 
+      <p
+        role="status"
+        aria-live="polite"
+        className={cn(
+          "px-4 pb-1 text-xs text-muted-foreground italic",
+          !peerTyping && "invisible",
+        )}
+      >
+        {peerName} está digitando...
+      </p>
+
       <form ref={formRef} action={enviar} className="flex items-center gap-2 px-4 pb-4">
         <div className="flex flex-1 items-center gap-2 rounded-pill bg-input px-4 py-2.5">
           <label htmlFor="chat-mensagem" className="sr-only">
@@ -276,6 +346,8 @@ export function ChatConversation({
             name="content"
             autoComplete="off"
             placeholder="Digite seu texto..."
+            onChange={avisarDigitando}
+            onBlur={pararDeDigitar}
             className="min-w-0 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
           />
           <button
