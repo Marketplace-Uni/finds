@@ -65,3 +65,6 @@
 
 ## Reta final · 19–20/10
 - [ ] Bug bash + só correções
+- [ ] Verificar interação entre contas: anúncio, chat
+- [x] Melhorar UX: inserir páginas novas sobre cada serviço dentro da página principal (`/como-funciona/<tipo>`, 19-20/10), verificar responsividade no mobile (auditoria por leitura de código em 20/10 — ver `docs/PENDENCIAS-RESOLUCAO.md` item 10; falta conferir em aparelho real os dois offsets fixos anotados lá)
+- [x] Verificar pendencias em PENDENCIAS-RESOLUCAO — revisado em 20/10, atualizado com os achados de hoje (bug do scroll da landing, bug de `/entrar` no celular, causa raiz do chat lento)
