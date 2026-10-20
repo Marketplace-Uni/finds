@@ -5,6 +5,7 @@ import { createClient } from "@/src/lib/supabase/server";
 import { fetchUserListings } from "@/src/lib/listings";
 import { formatLastSeen } from "@/src/lib/format";
 import { ProfileHeader } from "@/src/components/profile/profile-header";
+import { ReviewsList } from "@/src/components/profile/reviews-list";
 import { ListingCard } from "@/src/components/listings/listing-card";
 import { ListingGrid } from "@/src/components/listings/listing-grid";
 import { Button } from "@/src/components/ui/button";
@@ -31,13 +32,25 @@ export default async function PerfilPublicoPage({
     );
   }
 
-  const [viewer, listings] = await Promise.all([
+  const [viewer, listings, { data: ratingRows }] = await Promise.all([
     getCurrentProfile(),
     fetchUserListings(profile.id),
+    supabase.from("reviews").select("rating").eq("reviewed_id", profile.id),
   ]);
 
   const campus = Array.isArray(profile.campuses) ? profile.campuses[0] : profile.campuses;
   const ehOProprioPerfil = viewer?.id === profile.id;
+
+  // Mesmo cálculo do `<ReviewsList>` (que ainda busca os dados completos das
+  // avaliações pra listar cada uma) — aqui é só o resumo compacto que entra
+  // ao lado do campus/"ativo há X" no cabeçalho do perfil.
+  const ratings = (ratingRows ?? []).filter(
+    (row): row is { rating: number } => typeof row.rating === "number",
+  );
+  const averageRating =
+    ratings.length > 0
+      ? ratings.reduce((total, row) => total + row.rating, 0) / ratings.length
+      : null;
 
   return (
     <div className="flex flex-col gap-8 animate-[finds-fade-in_0.35s_ease-out]">
@@ -55,6 +68,8 @@ export default async function PerfilPublicoPage({
         bio={profile.bio}
         campus={campus?.name ?? null}
         lastSeen={formatLastSeen(profile.last_seen_at)}
+        rating={averageRating}
+        reviewCount={ratings.length}
         actionSlot={
           ehOProprioPerfil ? (
             <Button asChild variant="ghost" className="rounded-pill">
@@ -67,7 +82,7 @@ export default async function PerfilPublicoPage({
         }
       />
 
-      {/* TODO(Alexandre): <ReviewsList transactionId={...} /> aqui embaixo do cabeçalho. */}
+      <ReviewsList userId={profile.id} />
 
       <div>
         <h2 className="mb-4 text-xl font-bold text-foreground">Anúncios ativos</h2>
