@@ -256,21 +256,16 @@ async function updateTransactionAction(conversationId: string, formData: FormDat
         .eq("status", "confirmed");
       if (completionError) throw new Error("Não foi possível concluir a negociação.");
 
+      // Encerra o anúncio automaticamente pra qualquer tipo (produto, serviço,
+      // roommate, república) — antes só fazia isso pra "product"; o pedido
+      // original era "a negociação sobre um anúncio for fechada... o anúncio
+      // ... seja encerrado automaticamente", sem distinguir tipo.
       if (transaction.listing_id) {
-        const { data: listing, error: listingError } = await supabase
+        const { error: listingUpdateError } = await supabase
           .from("listings")
-          .select("type")
-          .eq("id", transaction.listing_id)
-          .maybeSingle();
-        if (listingError) throw new Error("Não foi possível verificar o anúncio.");
-
-        if (listing?.type === "product") {
-          const { error: listingUpdateError } = await supabase
-            .from("listings")
-            .update({ status: "closed" })
-            .eq("id", transaction.listing_id);
-          if (listingUpdateError) throw new Error("Não foi possível encerrar o anúncio vendido.");
-        }
+          .update({ status: "closed" })
+          .eq("id", transaction.listing_id);
+        if (listingUpdateError) throw new Error("Não foi possível encerrar o anúncio.");
       }
     }
 
@@ -327,7 +322,7 @@ export default async function MensagensPage({
 
   const [listingsResult, profilesResult, imagesResult] = await Promise.all([
     listingIds.length
-      ? supabase.from("listings").select("id, title").in("id", listingIds)
+      ? supabase.from("listings").select("id, title, status").in("id", listingIds)
       : Promise.resolve({ data: [], error: null }),
     peerIds.length
       ? supabase
@@ -551,6 +546,10 @@ export default async function MensagensPage({
                 <NegotiationCard
                   status={transactionStatus}
                   cancelReason={transaction?.cancel_reason ?? null}
+                  listingClosedAutomatically={
+                    transactionStatus === "completed" &&
+                    selectedConversation.listing?.status === "closed"
+                  }
                   waitingOther={
                     transactionStatus === "confirmed" &&
                     currentUserHasCompleted &&

@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 
 import {
   Dialog,
@@ -144,13 +144,19 @@ export function RatingInput({ name = "nota" }: { name?: string }) {
   return (
     <fieldset>
       <legend className="mb-2 text-sm font-medium text-foreground">Sua nota</legend>
-      {/* Ordem invertida no DOM: o `~` do CSS só alcança irmãos seguintes, então
-          as estrelas à esquerda da escolhida é que acendem. */}
+      {/* Ordem invertida no DOM (5,4,3,2,1) + `flex-row-reverse` pra mostrar
+          1,2,3,4,5 na tela: o `~` do CSS (via `peer-checked:`) só alcança
+          irmãos *seguintes* no DOM, que são visualmente as estrelas à
+          esquerda da escolhida — exatamente as que devem acender junto.
+          Cada `<input>`/`<label>` precisa ser irmão de verdade no DOM (sem
+          embrulhar em `<div className="contents">`: isso cria um nó real,
+          então o `~` não atravessa um `<div>` pro de dentro do outro) — daí
+          o `<Fragment>` em vez de um wrapper. */}
       <div className="flex flex-row-reverse justify-end gap-1">
         {[5, 4, 3, 2, 1].map((nota) => {
           const id = `${name}-${nota}`;
           return (
-            <div key={nota} className="contents">
+            <Fragment key={nota}>
               <input
                 id={id}
                 type="radio"
@@ -170,7 +176,7 @@ export function RatingInput({ name = "nota" }: { name?: string }) {
               >
                 ★
               </label>
-            </div>
+            </Fragment>
           );
         })}
       </div>

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { CircleCheck, CircleDashed, CircleX, Handshake } from "lucide-react";
+import { CheckCheck, CircleCheck, CircleDashed, CircleX, Handshake } from "lucide-react";
 
 import { cn } from "@/src/lib/utils";
 import { formatPrice } from "@/src/lib/format";
@@ -45,6 +45,9 @@ export type NegotiationCardProps = {
   cancelReason?: string | null;
   /** Quem já marcou como concluído, em `completed` parcial. */
   waitingOther?: boolean;
+  /** `true` quando o anúncio foi encerrado automaticamente por causa desta
+   * negociação concluída (ver `updateTransactionAction` em mensagens). */
+  listingClosedAutomatically?: boolean;
   /** Botões da etapa: aceitar, recusar, concluir, cancelar, avaliar. */
   actionsSlot?: ReactNode;
   className?: string;
@@ -65,6 +68,7 @@ export function NegotiationCard({
   price,
   cancelReason,
   waitingOther = false,
+  listingClosedAutomatically = false,
   actionsSlot,
   className,
 }: NegotiationCardProps) {
@@ -93,6 +97,13 @@ export function NegotiationCard({
           {waitingOther ? (
             <p className="mt-1 text-sm opacity-90">
               Você já marcou como concluído — falta a outra pessoa.
+            </p>
+          ) : null}
+
+          {listingClosedAutomatically ? (
+            <p className="mt-1 flex items-center gap-1.5 text-sm font-medium opacity-90">
+              <CheckCheck className="size-4 shrink-0" aria-hidden />
+              Anúncio encerrado automaticamente — negócio fechado.
             </p>
           ) : null}
         </div>

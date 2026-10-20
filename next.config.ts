@@ -13,12 +13,10 @@ const nextConfig: NextConfig = {
 
   // `<Image>` (listing-card.tsx, listing-gallery.tsx) recebe a URL pública
   // do Supabase Storage (`getPublicUrl()`, um host externo) — sem liberar
-  // esse host aqui, o otimizador de imagem do Next recusa toda requisição
-  // com 400 INVALID_IMAGE_OPTIMIZE_REQUEST (reproduzido em produção: nenhuma
-  // foto de anúncio carrega). `*.supabase.co` cobre os dois projetos
-  // (`finds-dev` e `finds-demo` têm refs diferentes, mesmo domínio-base); o
-  // `pathname` restringe ao caminho de bucket público, não libera o host
-  // inteiro à toa.
+  // esse host aqui, o Next recusa renderizar com "Invalid src prop" (e em
+  // produção, 400 INVALID_IMAGE_OPTIMIZE_REQUEST no endpoint de otimização).
+  // Mesma correção do PR #45 (fix/vercel-image-optimize) — replicada aqui
+  // porque esta branch também toca páginas que renderizam `<ListingCard>`.
   images: {
     remotePatterns: [
       {

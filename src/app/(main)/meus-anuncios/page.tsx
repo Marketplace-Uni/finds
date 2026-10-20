@@ -8,6 +8,7 @@ import { ListingTabs } from "@/src/components/listings/listing-tabs";
 import { Button } from "@/src/components/ui/button";
 import { EmptyState, ErrorState } from "@/src/components/ui/states";
 import { deleteListing, updateListingStatus } from "@/src/app/actions/listings";
+import { ConfirmActionButton } from "@/src/components/ui/confirm-action-button";
 
 const ABAS = [
   { value: "ativos", label: "Ativos" },
@@ -110,18 +111,25 @@ export default async function MeusAnunciosPage({
                   ) : null}
 
                   {listing.status !== "closed" ? (
-                    <form action={updateListingStatus.bind(null, listing.id, "closed")}>
-                      <button className="rounded-pill bg-muted px-3 py-1 text-xs font-semibold text-foreground hover:bg-primary/60 hover:text-primary-foreground">
-                        Encerrar
-                      </button>
-                    </form>
+                    <ConfirmActionButton
+                      action={updateListingStatus.bind(null, listing.id, "closed")}
+                      label="Encerrar"
+                      title="Encerrar este anúncio?"
+                      description={`"${listing.title}" deixa de aparecer no feed e na busca.`}
+                      confirmLabel="Encerrar anúncio"
+                      className="rounded-pill bg-muted px-3 py-1 text-xs font-semibold text-foreground hover:bg-primary/60 hover:text-primary-foreground"
+                    />
                   ) : null}
 
-                  <form action={deleteListing.bind(null, listing.id)}>
-                    <button className="rounded-pill bg-muted px-3 py-1 text-xs font-semibold text-destructive hover:bg-destructive hover:text-white">
-                      Excluir
-                    </button>
-                  </form>
+                  <ConfirmActionButton
+                    action={deleteListing.bind(null, listing.id)}
+                    label="Excluir"
+                    title="Excluir este anúncio?"
+                    description={`"${listing.title}" será excluído permanentemente, junto com as fotos. Essa ação não pode ser desfeita.`}
+                    confirmLabel="Excluir anúncio"
+                    destructive
+                    className="rounded-pill bg-muted px-3 py-1 text-xs font-semibold text-destructive hover:bg-destructive hover:text-white"
+                  />
                 </>
               }
             />
