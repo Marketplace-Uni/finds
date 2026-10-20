@@ -1,12 +1,14 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { WizardShell } from "@/src/components/ui/wizard";
 import { Field, TextAreaField, TextField, controlClass } from "@/src/components/ui/field";
 import { PhotoPicker } from "@/src/components/ui/photo-picker";
+import { ListingPreviewCard } from "@/src/components/listings/listing-preview-card";
 import type { FilterOption } from "@/src/components/discovery/filters-sidebar";
 import { createListingForm, type ListingFormState } from "@/src/app/actions/listings";
+import { formatPrice } from "@/src/lib/format";
 
 const initialState: ListingFormState = {};
 const criarAnuncio = createListingForm.bind(null, "service");
@@ -40,141 +42,185 @@ function v(state: ListingFormState, key: string): string | undefined {
 export function ServicoForm({ campuses }: { campuses: FilterOption[] }) {
   const [state, formAction, isPending] = useActionState(criarAnuncio, initialState);
 
+  const [preview, setPreview] = useState({
+    title: v(state, "title") ?? "",
+    description: v(state, "description") ?? "",
+    price: v(state, "price") ?? "",
+    campusId: v(state, "campus_id") ?? "",
+    category: v(state, "category") ?? "",
+    modality: v(state, "modality") ?? "",
+    priceUnit: v(state, "price_unit") ?? "",
+    photos: [] as string[],
+  });
+
+  const precoNumero = Number(preview.price);
+  const campusLabel = campuses.find((campus) => campus.value === preview.campusId)?.label;
+  const modalidadeLabel = MODALIDADES.find((m) => m.value === preview.modality)?.label;
+  const unidadeLabel = UNIDADES_PRECO.find((u) => u.value === preview.priceUnit)?.label;
+
   return (
-    <WizardShell
-      title="Anunciar serviço"
-      step={1}
-      totalSteps={1}
-      backHref="/anunciar"
-      action={formAction}
-      submitLabel={isPending ? "Publicando..." : "Publicar anúncio"}
-      secondaryAction={
-        <button
-          type="submit"
-          name="status"
-          value="draft"
-          className="text-sm font-semibold text-muted-foreground hover:text-foreground"
-        >
-          Salvar como rascunho
-        </button>
-      }
-    >
-      {/*
-        `key` muda a cada erro: força o React a remontar os campos com os
-        valores ecoados pela action. Só `defaultValue` não bastava pros
-        `<select>` — o reset automático do React depois de uma Server Action
-        volta pro valor de quando o campo montou, não para um `defaultValue`
-        atualizado (funcionava para `<input>` de texto, não para `<select>`).
-      */}
-      <div key={state.attempt ?? 0} className="contents">
-        <TextField
-          label="Título"
-          htmlFor="title"
-          name="title"
-          required
-          minLength={5}
-          defaultValue={v(state, "title")}
-        />
-        <TextAreaField
-          label="Descrição"
-          htmlFor="description"
-          name="description"
-          required
-          minLength={20}
-          defaultValue={v(state, "description")}
-        />
-        <TextField
-          label="Preço (R$)"
-          htmlFor="price"
-          name="price"
-          type="number"
-          min={0}
-          step="0.01"
-          required
-          defaultValue={v(state, "price")}
-        />
-
-        <Field label="Campus" htmlFor="campus_id">
-          <select
-            id="campus_id"
-            name="campus_id"
-            className={controlClass}
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_320px]">
+      <WizardShell
+        title="Anunciar serviço"
+        step={1}
+        totalSteps={1}
+        backHref="/anunciar"
+        action={formAction}
+        submitLabel={isPending ? "Publicando..." : "Publicar anúncio"}
+        secondaryAction={
+          <button
+            type="submit"
+            name="status"
+            value="draft"
+            className="text-sm font-semibold text-muted-foreground hover:text-foreground"
+          >
+            Salvar como rascunho
+          </button>
+        }
+      >
+        {/*
+          `key` muda a cada erro: força o React a remontar os campos com os
+          valores ecoados pela action. Só `defaultValue` não bastava pros
+          `<select>` — o reset automático do React depois de uma Server Action
+          volta pro valor de quando o campo montou, não para um `defaultValue`
+          atualizado (funcionava para `<input>` de texto, não para `<select>`).
+        */}
+        <div key={state.attempt ?? 0} className="contents">
+          <TextField
+            label="Título"
+            htmlFor="title"
+            name="title"
             required
-            defaultValue={v(state, "campus_id") ?? ""}
-          >
-            <option value="" disabled>
-              Selecione...
-            </option>
-            {campuses.map((campus) => (
-              <option key={campus.value} value={campus.value}>
-                {campus.label}
-              </option>
-            ))}
-          </select>
-        </Field>
-
-        <Field label="Categoria" htmlFor="category">
-          <select
-            id="category"
-            name="category"
-            className={controlClass}
-            defaultValue={v(state, "category") ?? ""}
-          >
-            <option value="">Selecione...</option>
-            {CATEGORIAS.map((categoria) => (
-              <option key={categoria} value={categoria}>
-                {categoria}
-              </option>
-            ))}
-          </select>
-        </Field>
-
-        <Field label="Modalidade" htmlFor="modality">
-          <select
-            id="modality"
-            name="modality"
-            className={controlClass}
+            minLength={5}
+            defaultValue={v(state, "title")}
+            onChange={(e) => setPreview((p) => ({ ...p, title: e.target.value }))}
+          />
+          <TextAreaField
+            label="Descrição"
+            htmlFor="description"
+            name="description"
             required
-            defaultValue={v(state, "modality") ?? ""}
-          >
-            <option value="" disabled>
-              Selecione...
-            </option>
-            {MODALIDADES.map((modalidade) => (
-              <option key={modalidade.value} value={modalidade.value}>
-                {modalidade.label}
-              </option>
-            ))}
-          </select>
-        </Field>
-
-        <Field label="Como cobra" htmlFor="price_unit">
-          <select
-            id="price_unit"
-            name="price_unit"
-            className={controlClass}
+            minLength={20}
+            defaultValue={v(state, "description")}
+            onChange={(e) => setPreview((p) => ({ ...p, description: e.target.value }))}
+          />
+          <TextField
+            label="Preço (R$)"
+            htmlFor="price"
+            name="price"
+            type="number"
+            min={0}
+            step="0.01"
             required
-            defaultValue={v(state, "price_unit") ?? ""}
-          >
-            <option value="" disabled>
-              Selecione...
-            </option>
-            {UNIDADES_PRECO.map((unidade) => (
-              <option key={unidade.value} value={unidade.value}>
-                {unidade.label}
+            defaultValue={v(state, "price")}
+            onChange={(e) => setPreview((p) => ({ ...p, price: e.target.value }))}
+          />
+
+          <Field label="Campus" htmlFor="campus_id">
+            <select
+              id="campus_id"
+              name="campus_id"
+              className={controlClass}
+              required
+              defaultValue={v(state, "campus_id") ?? ""}
+              onChange={(e) => setPreview((p) => ({ ...p, campusId: e.target.value }))}
+            >
+              <option value="" disabled>
+                Selecione...
               </option>
-            ))}
-          </select>
-        </Field>
-      </div>
+              {campuses.map((campus) => (
+                <option key={campus.value} value={campus.value}>
+                  {campus.label}
+                </option>
+              ))}
+            </select>
+          </Field>
 
-      <PhotoPicker name="images" />
+          <Field label="Categoria" htmlFor="category">
+            <select
+              id="category"
+              name="category"
+              className={controlClass}
+              defaultValue={v(state, "category") ?? ""}
+              onChange={(e) => setPreview((p) => ({ ...p, category: e.target.value }))}
+            >
+              <option value="">Selecione...</option>
+              {CATEGORIAS.map((categoria) => (
+                <option key={categoria} value={categoria}>
+                  {categoria}
+                </option>
+              ))}
+            </select>
+          </Field>
 
-      {state.error ? (
-        <p className="text-xs font-medium text-destructive" role="alert">
-          {state.error}
-        </p>
-      ) : null}
-    </WizardShell>
+          <Field label="Modalidade" htmlFor="modality">
+            <select
+              id="modality"
+              name="modality"
+              className={controlClass}
+              required
+              defaultValue={v(state, "modality") ?? ""}
+              onChange={(e) => setPreview((p) => ({ ...p, modality: e.target.value }))}
+            >
+              <option value="" disabled>
+                Selecione...
+              </option>
+              {MODALIDADES.map((modalidade) => (
+                <option key={modalidade.value} value={modalidade.value}>
+                  {modalidade.label}
+                </option>
+              ))}
+            </select>
+          </Field>
+
+          <Field label="Como cobra" htmlFor="price_unit">
+            <select
+              id="price_unit"
+              name="price_unit"
+              className={controlClass}
+              required
+              defaultValue={v(state, "price_unit") ?? ""}
+              onChange={(e) => setPreview((p) => ({ ...p, priceUnit: e.target.value }))}
+            >
+              <option value="" disabled>
+                Selecione...
+              </option>
+              {UNIDADES_PRECO.map((unidade) => (
+                <option key={unidade.value} value={unidade.value}>
+                  {unidade.label}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </div>
+
+        <PhotoPicker
+          name="images"
+          onPhotosChange={(urls) => setPreview((p) => ({ ...p, photos: urls }))}
+        />
+
+        {state.error ? (
+          <p className="text-xs font-medium text-destructive" role="alert">
+            {state.error}
+          </p>
+        ) : null}
+      </WizardShell>
+
+      <ListingPreviewCard
+        className="lg:sticky lg:top-24"
+        type="service"
+        title={preview.title}
+        description={preview.description}
+        priceLabel={
+          Number.isFinite(precoNumero) && preview.price !== ""
+            ? `${formatPrice(precoNumero)}${unidadeLabel ? ` ${unidadeLabel.toLowerCase()}` : ""}`
+            : null
+        }
+        campusLabel={campusLabel}
+        categories={preview.category ? [preview.category] : []}
+        specs={modalidadeLabel ? [{ label: "modalidade", value: modalidadeLabel }] : []}
+        photoUrl={preview.photos[0] ?? null}
+      />
+    </div>
   );
 }
