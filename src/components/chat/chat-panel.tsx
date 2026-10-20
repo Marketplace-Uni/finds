@@ -3,7 +3,9 @@ import Link from "next/link";
 import { ArrowLeft, CheckCheck, Paperclip, Send } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar";
+import { ChatConversation } from "@/src/components/chat/chat-conversation";
 import { cn } from "@/src/lib/utils";
+import type { SendMessageState } from "@/src/app/(main)/mensagens/page";
 
 export type ChatMessage = {
   id: string;
@@ -14,6 +16,10 @@ export type ChatMessage = {
   mine?: boolean;
   /** Mostra o duplo check nas próprias mensagens. */
   read?: boolean;
+  /** Mensagem otimista: ainda esperando a Server Action confirmar. */
+  pending?: boolean;
+  /** O envio falhou — mostra aviso em vez de simplesmente sumir. */
+  failed?: boolean;
 };
 
 export type ChatPeer = {
@@ -70,8 +76,20 @@ type ChatPanelProps = {
   messages: ChatMessage[];
   /** Volta para a lista — só aparece no mobile, onde os painéis não convivem. */
   backHref?: string;
-  /** Server action que envia a mensagem. */
-  action?: React.ComponentProps<"form">["action"];
+  /**
+   * Server action que envia a mensagem. Com `conversationId`/`currentUserId`
+   * também presentes, é a action no formato de `useActionState`
+   * (`(prevState, formData) => Promise<SendMessageState>`) usada pelo
+   * `ChatConversation` (tempo real + envio otimista). Sem esses dois, vira
+   * uma ação de formulário comum — é o caso do `/preview-visual`, que só
+   * mostra o visual estático, sem conversa de verdade por trás.
+   */
+  action?:
+    | React.ComponentProps<"form">["action"]
+    | ((prevState: SendMessageState, formData: FormData) => Promise<SendMessageState>);
+  /** Presente só na conversa de verdade (não no preview estático). */
+  conversationId?: string;
+  currentUserId?: string;
   /** Card de status da negociação, entre o cabeçalho e as mensagens. */
   headerSlot?: ReactNode;
   className?: string;
@@ -81,17 +99,22 @@ type ChatPanelProps = {
  * Painel direito do chat: cabeçalho escuro com a outra pessoa, as mensagens e
  * o campo de envio em pílula, como no Figma.
  *
- * O envio é um formulário comum; a rolagem automática e o tempo real ficam
- * com quem é dono da rota.
+ * Com `conversationId`/`currentUserId`, as mensagens e o envio ficam por
+ * conta do `ChatConversation` (client, tempo real + otimista). Sem eles,
+ * cai num `<ul>`/`<form>` estáticos — só usado pelo `/preview-visual`, que
+ * não tem uma conversa de verdade por trás.
  */
 export function ChatPanel({
   peer,
   messages,
   backHref,
   action,
+  conversationId,
+  currentUserId,
   headerSlot,
   className,
 }: ChatPanelProps) {
+  const live = conversationId && currentUserId;
   return (
     <section
       className={cn(
@@ -140,43 +163,62 @@ export function ChatPanel({
 
       {headerSlot ? <div className="px-4 pt-4">{headerSlot}</div> : null}
 
-      <ul
-        id="chat-mensagens"
-        className="flex flex-1 flex-col gap-2 overflow-y-auto px-4 py-4"
-      >
-        {messages.map((message) => (
-          <MessageBubble key={message.id} message={message} />
-        ))}
-      </ul>
-
-      <form action={action} className="flex items-center gap-2 px-4 pb-4">
-        <div className="flex flex-1 items-center gap-2 rounded-pill bg-input px-4 py-2.5">
-          <label htmlFor="chat-mensagem" className="sr-only">
-            Mensagem
-          </label>
-          <input
-            id="chat-mensagem"
-            name="content"
-            autoComplete="off"
-            placeholder="Digite seu texto..."
-            className="min-w-0 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
-          />
-          <button
-            type="button"
-            aria-label="Anexar arquivo"
-            className="grid size-7 shrink-0 place-items-center rounded-pill text-muted-foreground hover:text-foreground"
+      {live ? (
+        <ChatConversation
+          conversationId={conversationId}
+          currentUserId={currentUserId}
+          initialMessages={messages}
+          action={
+            action as (
+              prevState: SendMessageState,
+              formData: FormData,
+            ) => Promise<SendMessageState>
+          }
+        />
+      ) : (
+        <>
+          <ul
+            id="chat-mensagens"
+            className="flex flex-1 flex-col gap-2 overflow-y-auto px-4 py-4"
           >
-            <Paperclip className="size-4" aria-hidden />
-          </button>
-        </div>
-        <button
-          type="submit"
-          aria-label="Enviar mensagem"
-          className="grid size-11 shrink-0 place-items-center rounded-pill bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-        >
-          <Send className="size-5" aria-hidden />
-        </button>
-      </form>
+            {messages.map((message) => (
+              <MessageBubble key={message.id} message={message} />
+            ))}
+          </ul>
+
+          <form
+            action={action as React.ComponentProps<"form">["action"]}
+            className="flex items-center gap-2 px-4 pb-4"
+          >
+            <div className="flex flex-1 items-center gap-2 rounded-pill bg-input px-4 py-2.5">
+              <label htmlFor="chat-mensagem" className="sr-only">
+                Mensagem
+              </label>
+              <input
+                id="chat-mensagem"
+                name="content"
+                autoComplete="off"
+                placeholder="Digite seu texto..."
+                className="min-w-0 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+              />
+              <button
+                type="button"
+                aria-label="Anexar arquivo"
+                className="grid size-7 shrink-0 place-items-center rounded-pill text-muted-foreground hover:text-foreground"
+              >
+                <Paperclip className="size-4" aria-hidden />
+              </button>
+            </div>
+            <button
+              type="submit"
+              aria-label="Enviar mensagem"
+              className="grid size-11 shrink-0 place-items-center rounded-pill bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            >
+              <Send className="size-5" aria-hidden />
+            </button>
+          </form>
+        </>
+      )}
     </section>
   );
 }

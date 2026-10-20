@@ -9,7 +9,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { ChatPanel } from "@/src/components/chat/chat-panel";
-import { ChatRealtime } from "@/src/components/chat/chat-realtime";
 import {
   ConversationList,
   type Conversation,
@@ -19,49 +18,47 @@ import { ReviewDialog } from "@/src/components/transactions/review-dialog";
 import { ErrorState } from "@/src/components/ui/states";
 import { requireCompleteProfile } from "@/src/lib/auth";
 import { createClient } from "@/src/lib/supabase/server";
+import { formatMessageTime } from "@/src/lib/chat/format";
+import { pickLastMessagePerConversation } from "@/src/lib/chat/last-message";
 import { sendMessageSchema } from "@/src/lib/validations/chat";
 import { transactionActionSchema } from "@/src/lib/validations/transactions";
 
-function formatMessageTime(value: string | null | undefined) {
-  if (!value) return null;
+export type SendMessageState = {
+  error?: string;
+  /** A mensagem recém-criada — o client usa isso pra trocar a versão
+   * otimista pela real (ou o Realtime já fez isso antes, o que vier primeiro). */
+  message?: { id: string; content: string; createdAt: string };
+  /** Incrementa a cada chamada, pro client saber que é uma resposta nova
+   * (mesmo padrão de `ListingFormState.attempt`). */
+  attempt?: number;
+};
 
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
-
-  const today = new Date();
-  const isSameDay = (left: Date, right: Date) =>
-    left.getFullYear() === right.getFullYear() &&
-    left.getMonth() === right.getMonth() &&
-    left.getDate() === right.getDate();
-
-  if (isSameDay(date, today)) {
-    return date.toLocaleTimeString("pt-BR", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
-
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
-  if (isSameDay(date, yesterday)) return "ontem";
-
-  return date.toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-  });
-}
-
-async function sendMessageAction(conversationId: string, formData: FormData) {
+/**
+ * Insere a mensagem e devolve o estado pro client (compatível com
+ * `useActionState`) em vez de redirecionar — o `ChatConversation` (client)
+ * já mostra a mensagem otimista e usa esse retorno só pra confirmar/trocar
+ * pela versão real, então uma navegação cheia aqui só atrapalharia.
+ *
+ * Sem `revalidatePath`: o Supabase Realtime já entrega a mensagem pra todo
+ * mundo que está com a conversa aberta (inclusive quem mandou, via esse
+ * retorno) — pedir pro Next refazer a página inteira a cada mensagem era
+ * exatamente a causa da demora reportada (ver docs/PLANO-CHAT-REALTIME.md).
+ */
+async function sendMessageAction(
+  conversationId: string,
+  prevState: SendMessageState,
+  formData: FormData,
+): Promise<SendMessageState> {
   "use server";
+
+  const attempt = (prevState.attempt ?? 0) + 1;
 
   const parsed = sendMessageSchema.safeParse({
     conversationId,
     content: formData.get("content"),
   });
   if (!parsed.success) {
-    redirect(
-      `/mensagens?conversation=${encodeURIComponent(conversationId)}&message_error=invalid`,
-    );
+    return { error: "Digite uma mensagem com até 2000 caracteres.", attempt };
   }
 
   const supabase = await createClient();
@@ -69,6 +66,7 @@ async function sendMessageAction(conversationId: string, formData: FormData) {
     data: { user },
     error: authError,
   } = await supabase.auth.getUser();
+  // Sem sessão não dá pra "voltar o estado" — precisa mesmo navegar pro login.
   if (authError || !user) redirect("/entrar?next=%2Fmensagens");
 
   const { data: conversation, error: conversationError } = await supabase
@@ -79,29 +77,30 @@ async function sendMessageAction(conversationId: string, formData: FormData) {
     .maybeSingle();
 
   if (conversationError) {
-    redirect(
-      `/mensagens?conversation=${encodeURIComponent(parsed.data.conversationId)}&message_error=failed`,
-    );
+    return { error: "Não foi possível enviar a mensagem. Tente novamente.", attempt };
   }
   if (!conversation) {
-    redirect(
-      `/mensagens?conversation=${encodeURIComponent(parsed.data.conversationId)}&message_error=unavailable`,
-    );
+    return { error: "Esta conversa não está disponível para sua conta.", attempt };
   }
 
-  const { error } = await supabase.from("messages").insert({
-    conversation_id: conversation.id,
-    sender_id: user.id,
-    content: parsed.data.content,
-  });
+  const { data: inserted, error } = await supabase
+    .from("messages")
+    .insert({
+      conversation_id: conversation.id,
+      sender_id: user.id,
+      content: parsed.data.content,
+    })
+    .select("id, created_at")
+    .single();
 
-  if (error) {
-    redirect(
-      `/mensagens?conversation=${encodeURIComponent(parsed.data.conversationId)}&message_error=failed`,
-    );
+  if (error || !inserted) {
+    return { error: "Não foi possível enviar a mensagem. Tente novamente.", attempt };
   }
 
-  revalidatePath("/mensagens");
+  return {
+    message: { id: inserted.id, content: parsed.data.content, createdAt: inserted.created_at },
+    attempt,
+  };
 }
 
 async function updateTransactionAction(conversationId: string, formData: FormData) {
@@ -288,10 +287,7 @@ async function updateTransactionAction(conversationId: string, formData: FormDat
 export default async function MensagensPage({
   searchParams,
 }: PageProps<"/mensagens">) {
-  const {
-    conversation: requestedConversationId,
-    message_error: requestedMessageError,
-  } = await searchParams;
+  const { conversation: requestedConversationId } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -301,9 +297,6 @@ export default async function MensagensPage({
   const selectedConversationId = Array.isArray(requestedConversationId)
     ? requestedConversationId[0]
     : requestedConversationId;
-  const messageError = Array.isArray(requestedMessageError)
-    ? requestedMessageError[0]
-    : requestedMessageError;
 
   const { data: conversationRows, error: conversationsError } = await supabase
     .from("conversations")
@@ -372,28 +365,29 @@ export default async function MensagensPage({
     }
   }
 
-  const conversationsWithLastMessage = await Promise.all(
-    validConversations.map(async (conversation) => {
-      const { data: lastMessage, error } = await supabase
+  // Uma única query pra última mensagem de TODAS as conversas, em vez de uma
+  // query por conversa (era um N+1: com 50 conversas, 50 round-trips só pra
+  // montar essa prévia — ver docs/PLANO-CHAT-REALTIME.md, passo 2).
+  const conversationIds = validConversations.map((conversation) => conversation.id);
+  const { data: recentMessages, error: recentMessagesError } = conversationIds.length
+    ? await supabase
         .from("messages")
-        .select("content, created_at")
-        .eq("conversation_id", conversation.id)
+        .select("conversation_id, content, created_at")
+        .in("conversation_id", conversationIds)
         .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+    : { data: [], error: null };
 
-      return { conversation, lastMessage, error };
-    }),
-  );
-
-  if (conversationsWithLastMessage.some((item) => item.error)) {
+  if (recentMessagesError) {
     return (
       <ErrorState description="Não foi possível carregar suas conversas. Tente novamente." />
     );
   }
 
-  const conversationItems = conversationsWithLastMessage
-    .flatMap(({ conversation, lastMessage }) => {
+  const lastMessageByConversation = pickLastMessagePerConversation(recentMessages ?? []);
+
+  const conversationItems = validConversations
+    .flatMap((conversation) => {
+      const lastMessage = lastMessageByConversation.get(conversation.id);
       const listingId = conversation.listing_id;
       const peerId =
         conversation.buyer_id === user.id
@@ -519,18 +513,6 @@ export default async function MensagensPage({
 
   return (
     <div className="flex flex-col gap-3">
-      {messageError ? (
-        <p
-          role="alert"
-          className="rounded-md border border-destructive/30 bg-card px-4 py-3 text-sm text-destructive"
-        >
-          {messageError === "invalid"
-            ? "Digite uma mensagem com até 2000 caracteres."
-            : messageError === "unavailable"
-              ? "Esta conversa não está disponível para sua conta."
-              : "Não foi possível enviar a mensagem. Tente novamente."}
-        </p>
-      ) : null}
       <div className="flex h-[calc(100dvh-13rem)] min-h-[28rem] gap-4">
         <ConversationList
           conversations={conversations}
@@ -559,13 +541,11 @@ export default async function MensagensPage({
             read: message.sender_id === user.id && message.read_at !== null,
           }))}
           backHref="/mensagens"
+          conversationId={selectedConversation.id}
+          currentUserId={user.id}
           action={sendMessageAction.bind(null, selectedConversation.id)}
           headerSlot={
             <div className="flex flex-col gap-2">
-              <ChatRealtime
-                conversationId={selectedConversation.id}
-                messageCount={messageRows?.length ?? 0}
-              />
               <p className="truncate rounded-md bg-card px-3 py-2 text-xs text-muted-foreground">
                 Anúncio: {selectedConversation.listing?.title}
               </p>
