@@ -73,6 +73,14 @@ const traits: SeedTrait[] = [
 	{ key: "estuda-em-casa", label: "Estuda em casa", trait_group: "rotina" },
 	{ key: "pratica-esportes", label: "Pratica esportes", trait_group: "estilo de vida" },
 	{ key: "sustentavel", label: "Tem hábitos sustentáveis", trait_group: "hábitos" },
+	{ key: "ouve-musica-alta", label: "Ouve música alta", trait_group: "convivência" },
+	{ key: "fone-de-ouvido", label: "Usa fone pra não incomodar", trait_group: "convivência" },
+	{ key: "limpa-na-hora", label: "Limpa a louça/bagunça na hora", trait_group: "organização" },
+	{ key: "tolera-bagunca", label: "Tolera bagunça eventual", trait_group: "organização" },
+	{ key: "gosta-de-festa", label: "Gosta de receber amigos pra festa em casa", trait_group: "estilo de vida" },
+	{ key: "prefere-tranquilo", label: "Prefere fim de semana tranquilo em casa", trait_group: "estilo de vida" },
+	{ key: "compartilha-comida", label: "Compartilha comida com facilidade", trait_group: "hábitos" },
+	{ key: "trabalha-estuda-fora", label: "Passa a maior parte do dia fora (trabalho/estágio)", trait_group: "rotina" },
 ];
 
 const traitAssignments: Record<string, { self: string[]; wanted: string[] }> = {
