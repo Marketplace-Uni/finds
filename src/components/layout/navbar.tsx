@@ -23,13 +23,17 @@ type NavbarProps = {
  */
 export function Navbar({ user = null, unreadCount = 0 }: NavbarProps) {
   return (
-    <header className="bg-nav text-nav-foreground">
+    <header id="site-navbar" className="sticky top-0 z-40 bg-nav text-nav-foreground">
       {/* No celular a busca cai para a segunda linha: logo e ações não cabem
           junto com ela. A partir de md tudo volta para uma linha só. */}
-      <div className="mx-auto flex max-w-conteudo flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:px-6 md:h-16 md:flex-nowrap md:py-0">
+      <div
+        data-navbar-row
+        className="mx-auto flex max-w-conteudo flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:px-6 md:h-16 md:flex-nowrap md:py-0"
+      >
         {/* Logo em verde-limão, a pedido da Lia (07/10). */}
         <Link
           href="/"
+          data-navbar-brand
           className="shrink-0 text-secondary"
           aria-label="Finds, página inicial"
         >
@@ -119,7 +123,11 @@ export function Navbar({ user = null, unreadCount = 0 }: NavbarProps) {
             <UserMenu user={user} />
           </nav>
         ) : (
-          <nav className="ml-auto flex items-center gap-2 md:ml-0" aria-label="Entrar ou criar conta">
+          <nav
+            data-navbar-guest-actions
+            className="ml-auto flex items-center gap-2 md:ml-0"
+            aria-label="Entrar ou criar conta"
+          >
             <Button
               asChild
               variant="ghost"

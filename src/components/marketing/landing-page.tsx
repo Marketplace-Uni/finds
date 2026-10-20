@@ -5,6 +5,7 @@ import { LogoFinds } from "@/src/components/layout/logo-finds";
 import { Zeca } from "@/src/components/ui/zeca";
 import { ZecaCarrossel } from "@/src/components/ui/zeca-carrossel";
 import { TIPOS_ANUNCIO, HOVER_CLASSES_POR_TOKEN } from "@/src/components/listings/tipos-anuncio";
+import { LandingScrollFx } from "@/src/components/marketing/landing-scroll-fx";
 import { cn } from "@/src/lib/utils";
 
 const PASSOS = [
@@ -45,15 +46,29 @@ export function LandingPage({ className }: { className?: string }) {
         (abaixo) continua com seu próprio `max-w-conteudo`. O `-mt-8` cancela
         o `py-8` desse mesmo `<main>` (fixo, igual em toda tela logada) pra
         colar o marrom na navbar, sem tirar o respiro das outras páginas.
+
+        O truque de margem negativa fica neste `<div>` de fora, não na
+        `<section id="landing-hero">`: o GSAP ScrollTrigger pina essa section
+        (ver landing-scroll-fx.tsx), e margem no elemento pinado faz o cálculo
+        da altura do "spacer" sair errado (o scroll parava de avançar depois
+        do pin, escondendo as seções de baixo atrás da section "presa").
       */}
-      <section className="relative left-1/2 -mt-8 w-screen -mx-[50vw] overflow-hidden bg-nav px-6 py-20">
+      <div className="relative left-1/2 -mt-8 w-screen -mx-[50vw]">
+      <section
+        id="landing-hero"
+        className="relative overflow-hidden bg-nav px-6 py-20"
+      >
+        <LandingScrollFx />
         {/*
           O Zeca volta aqui a pedido do Guilherme (18/10) — a Lia tinha
           pedido pra tirar o mascote desse tipo de painel em 14/10 (ver
           docs/DESIGN.md). Vale confirmar com ela/o Caike no próximo
           checkpoint.
         */}
-        <div className="relative z-10 mx-auto flex max-w-conteudo flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between">
+        <div
+          data-hero-content
+          className="relative z-10 mx-auto flex max-w-conteudo flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between"
+        >
           <div className="flex flex-col items-start gap-5">
             {/* Respiro extra entre a marca e a chamada. */}
             <LogoFinds className="mb-6 h-12 w-auto text-secondary" />
@@ -98,6 +113,7 @@ export function LandingPage({ className }: { className?: string }) {
           aria-hidden
         />
       </section>
+      </div>
 
       <section className="px-6 py-16">
         <div className="mx-auto max-w-conteudo">
