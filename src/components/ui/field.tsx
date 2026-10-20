@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ChevronDown } from "lucide-react";
 
 import { cn } from "@/src/lib/utils";
 
@@ -61,6 +62,47 @@ export function TextField({
         className={controlClass}
         {...inputProps}
       />
+    </Field>
+  );
+}
+
+type SelectFieldProps = Omit<FieldProps, "children"> &
+  Omit<React.ComponentProps<"select">, "id" | "className"> & {
+    /** As `<option>` do select. */
+    children: ReactNode;
+  };
+
+/**
+ * `<select>` com seta própria (`ChevronDown`) no lugar da seta nativa do
+ * navegador — ela encostava na borda direita do controle, sem respiro. Usa
+ * `appearance-none` + a seta posicionada por cima, centralizada verticalmente
+ * e com um respiro da borda (`right-3`).
+ */
+export function SelectField({
+  label,
+  htmlFor,
+  hint,
+  error,
+  className,
+  children,
+  ...selectProps
+}: SelectFieldProps) {
+  return (
+    <Field label={label} htmlFor={htmlFor} hint={hint} error={error} className={className}>
+      <div className="relative">
+        <select
+          id={htmlFor}
+          aria-invalid={error ? true : undefined}
+          className={cn(controlClass, "appearance-none pr-9")}
+          {...selectProps}
+        >
+          {children}
+        </select>
+        <ChevronDown
+          className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground"
+          aria-hidden
+        />
+      </div>
     </Field>
   );
 }

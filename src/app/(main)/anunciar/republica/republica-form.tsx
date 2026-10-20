@@ -4,7 +4,7 @@ import { useActionState, useState } from "react";
 
 import { cn } from "@/src/lib/utils";
 import { WizardShell } from "@/src/components/ui/wizard";
-import { Field, TextAreaField, TextField, controlClass } from "@/src/components/ui/field";
+import { Field, SelectField, TextAreaField, TextField, controlClass } from "@/src/components/ui/field";
 import { PhotoPicker } from "@/src/components/ui/photo-picker";
 import { ListingPreviewCard } from "@/src/components/listings/listing-preview-card";
 import type { FilterOption } from "@/src/components/discovery/filters-sidebar";
@@ -198,25 +198,23 @@ export function RepublicaForm({ campuses }: { campuses: FilterOption[] }) {
           </div>
         </Field>
 
-        <Field label="Campus" htmlFor="campus_id">
-          <select
-            id="campus_id"
-            name="campus_id"
-            className={controlClass}
-            required
-            defaultValue={v(state, "campus_id") ?? ""}
-            onChange={(e) => setPreview((p) => ({ ...p, campusId: e.target.value }))}
-          >
-            <option value="" disabled>
-              Selecione...
+        <SelectField
+          label="Campus"
+          htmlFor="campus_id"
+          name="campus_id"
+          required
+          defaultValue={v(state, "campus_id") ?? ""}
+          onChange={(e) => setPreview((p) => ({ ...p, campusId: e.target.value }))}
+        >
+          <option value="" disabled>
+            Selecione...
+          </option>
+          {campuses.map((campus) => (
+            <option key={campus.value} value={campus.value}>
+              {campus.label}
             </option>
-            {campuses.map((campus) => (
-              <option key={campus.value} value={campus.value}>
-                {campus.label}
-              </option>
-            ))}
-          </select>
-        </Field>
+          ))}
+        </SelectField>
 
         <TextField
           label="Vagas"
@@ -229,25 +227,23 @@ export function RepublicaForm({ campuses }: { campuses: FilterOption[] }) {
           onChange={(e) => setPreview((p) => ({ ...p, vacancies: e.target.value }))}
         />
 
-        <Field label="Gênero" htmlFor="gender">
-          <select
-            id="gender"
-            name="gender"
-            className={controlClass}
-            required
-            defaultValue={v(state, "gender") ?? ""}
-            onChange={(e) => setPreview((p) => ({ ...p, gender: e.target.value }))}
-          >
-            <option value="" disabled>
-              Selecione...
+        <SelectField
+          label="Gênero"
+          htmlFor="gender"
+          name="gender"
+          required
+          defaultValue={v(state, "gender") ?? ""}
+          onChange={(e) => setPreview((p) => ({ ...p, gender: e.target.value }))}
+        >
+          <option value="" disabled>
+            Selecione...
+          </option>
+          {GENEROS.map((genero) => (
+            <option key={genero.value} value={genero.value}>
+              {genero.label}
             </option>
-            {GENEROS.map((genero) => (
-              <option key={genero.value} value={genero.value}>
-                {genero.label}
-              </option>
-            ))}
-          </select>
-        </Field>
+          ))}
+        </SelectField>
 
         <TextField
           label="Bairro"

@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 
 import { WizardShell } from "@/src/components/ui/wizard";
-import { Field, TextAreaField, TextField, controlClass } from "@/src/components/ui/field";
+import { SelectField, TextAreaField, TextField } from "@/src/components/ui/field";
 import { PhotoPicker } from "@/src/components/ui/photo-picker";
 import { ListingPreviewCard } from "@/src/components/listings/listing-preview-card";
 import type { FilterOption } from "@/src/components/discovery/filters-sidebar";
@@ -116,82 +116,74 @@ export function ServicoForm({ campuses }: { campuses: FilterOption[] }) {
             onChange={(e) => setPreview((p) => ({ ...p, price: e.target.value }))}
           />
 
-          <Field label="Campus" htmlFor="campus_id">
-            <select
-              id="campus_id"
-              name="campus_id"
-              className={controlClass}
-              required
-              defaultValue={v(state, "campus_id") ?? ""}
-              onChange={(e) => setPreview((p) => ({ ...p, campusId: e.target.value }))}
-            >
-              <option value="" disabled>
-                Selecione...
+          <SelectField
+            label="Campus"
+            htmlFor="campus_id"
+            name="campus_id"
+            required
+            defaultValue={v(state, "campus_id") ?? ""}
+            onChange={(e) => setPreview((p) => ({ ...p, campusId: e.target.value }))}
+          >
+            <option value="" disabled>
+              Selecione...
+            </option>
+            {campuses.map((campus) => (
+              <option key={campus.value} value={campus.value}>
+                {campus.label}
               </option>
-              {campuses.map((campus) => (
-                <option key={campus.value} value={campus.value}>
-                  {campus.label}
-                </option>
-              ))}
-            </select>
-          </Field>
+            ))}
+          </SelectField>
 
-          <Field label="Categoria" htmlFor="category">
-            <select
-              id="category"
-              name="category"
-              className={controlClass}
-              defaultValue={v(state, "category") ?? ""}
-              onChange={(e) => setPreview((p) => ({ ...p, category: e.target.value }))}
-            >
-              <option value="">Selecione...</option>
-              {CATEGORIAS.map((categoria) => (
-                <option key={categoria} value={categoria}>
-                  {categoria}
-                </option>
-              ))}
-            </select>
-          </Field>
-
-          <Field label="Modalidade" htmlFor="modality">
-            <select
-              id="modality"
-              name="modality"
-              className={controlClass}
-              required
-              defaultValue={v(state, "modality") ?? ""}
-              onChange={(e) => setPreview((p) => ({ ...p, modality: e.target.value }))}
-            >
-              <option value="" disabled>
-                Selecione...
+          <SelectField
+            label="Categoria"
+            htmlFor="category"
+            name="category"
+            defaultValue={v(state, "category") ?? ""}
+            onChange={(e) => setPreview((p) => ({ ...p, category: e.target.value }))}
+          >
+            <option value="">Selecione...</option>
+            {CATEGORIAS.map((categoria) => (
+              <option key={categoria} value={categoria}>
+                {categoria}
               </option>
-              {MODALIDADES.map((modalidade) => (
-                <option key={modalidade.value} value={modalidade.value}>
-                  {modalidade.label}
-                </option>
-              ))}
-            </select>
-          </Field>
+            ))}
+          </SelectField>
 
-          <Field label="Como cobra" htmlFor="price_unit">
-            <select
-              id="price_unit"
-              name="price_unit"
-              className={controlClass}
-              required
-              defaultValue={v(state, "price_unit") ?? ""}
-              onChange={(e) => setPreview((p) => ({ ...p, priceUnit: e.target.value }))}
-            >
-              <option value="" disabled>
-                Selecione...
+          <SelectField
+            label="Modalidade"
+            htmlFor="modality"
+            name="modality"
+            required
+            defaultValue={v(state, "modality") ?? ""}
+            onChange={(e) => setPreview((p) => ({ ...p, modality: e.target.value }))}
+          >
+            <option value="" disabled>
+              Selecione...
+            </option>
+            {MODALIDADES.map((modalidade) => (
+              <option key={modalidade.value} value={modalidade.value}>
+                {modalidade.label}
               </option>
-              {UNIDADES_PRECO.map((unidade) => (
-                <option key={unidade.value} value={unidade.value}>
-                  {unidade.label}
-                </option>
-              ))}
-            </select>
-          </Field>
+            ))}
+          </SelectField>
+
+          <SelectField
+            label="Como cobra"
+            htmlFor="price_unit"
+            name="price_unit"
+            required
+            defaultValue={v(state, "price_unit") ?? ""}
+            onChange={(e) => setPreview((p) => ({ ...p, priceUnit: e.target.value }))}
+          >
+            <option value="" disabled>
+              Selecione...
+            </option>
+            {UNIDADES_PRECO.map((unidade) => (
+              <option key={unidade.value} value={unidade.value}>
+                {unidade.label}
+              </option>
+            ))}
+          </SelectField>
         </div>
 
         <PhotoPicker

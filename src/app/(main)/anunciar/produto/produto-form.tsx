@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 
 import { WizardShell } from "@/src/components/ui/wizard";
-import { Field, TextAreaField, TextField, controlClass } from "@/src/components/ui/field";
+import { SelectField, TextAreaField, TextField } from "@/src/components/ui/field";
 import { PhotoPicker } from "@/src/components/ui/photo-picker";
 import { ListingPreviewCard } from "@/src/components/listings/listing-preview-card";
 import type { FilterOption } from "@/src/components/discovery/filters-sidebar";
@@ -114,62 +114,56 @@ export function ProdutoForm({ campuses }: { campuses: FilterOption[] }) {
             onChange={(e) => setPreview((p) => ({ ...p, price: e.target.value }))}
           />
 
-          <Field label="Campus" htmlFor="campus_id">
-            <select
-              id="campus_id"
-              name="campus_id"
-              className={controlClass}
-              required
-              defaultValue={v(state, "campus_id") ?? ""}
-              onChange={(e) => setPreview((p) => ({ ...p, campusId: e.target.value }))}
-            >
-              <option value="" disabled>
-                Selecione...
+          <SelectField
+            label="Campus"
+            htmlFor="campus_id"
+            name="campus_id"
+            required
+            defaultValue={v(state, "campus_id") ?? ""}
+            onChange={(e) => setPreview((p) => ({ ...p, campusId: e.target.value }))}
+          >
+            <option value="" disabled>
+              Selecione...
+            </option>
+            {campuses.map((campus) => (
+              <option key={campus.value} value={campus.value}>
+                {campus.label}
               </option>
-              {campuses.map((campus) => (
-                <option key={campus.value} value={campus.value}>
-                  {campus.label}
-                </option>
-              ))}
-            </select>
-          </Field>
+            ))}
+          </SelectField>
 
-          <Field label="Categoria" htmlFor="category">
-            <select
-              id="category"
-              name="category"
-              className={controlClass}
-              defaultValue={v(state, "category") ?? ""}
-              onChange={(e) => setPreview((p) => ({ ...p, category: e.target.value }))}
-            >
-              <option value="">Selecione...</option>
-              {CATEGORIAS.map((categoria) => (
-                <option key={categoria} value={categoria}>
-                  {categoria}
-                </option>
-              ))}
-            </select>
-          </Field>
-
-          <Field label="Condição" htmlFor="condition">
-            <select
-              id="condition"
-              name="condition"
-              className={controlClass}
-              required
-              defaultValue={v(state, "condition") ?? ""}
-              onChange={(e) => setPreview((p) => ({ ...p, condition: e.target.value }))}
-            >
-              <option value="" disabled>
-                Selecione...
+          <SelectField
+            label="Categoria"
+            htmlFor="category"
+            name="category"
+            defaultValue={v(state, "category") ?? ""}
+            onChange={(e) => setPreview((p) => ({ ...p, category: e.target.value }))}
+          >
+            <option value="">Selecione...</option>
+            {CATEGORIAS.map((categoria) => (
+              <option key={categoria} value={categoria}>
+                {categoria}
               </option>
-              {CONDICOES.map((condicao) => (
-                <option key={condicao.value} value={condicao.value}>
-                  {condicao.label}
-                </option>
-              ))}
-            </select>
-          </Field>
+            ))}
+          </SelectField>
+
+          <SelectField
+            label="Condição"
+            htmlFor="condition"
+            name="condition"
+            required
+            defaultValue={v(state, "condition") ?? ""}
+            onChange={(e) => setPreview((p) => ({ ...p, condition: e.target.value }))}
+          >
+            <option value="" disabled>
+              Selecione...
+            </option>
+            {CONDICOES.map((condicao) => (
+              <option key={condicao.value} value={condicao.value}>
+                {condicao.label}
+              </option>
+            ))}
+          </SelectField>
 
           <TextField
             label="Marca (opcional)"

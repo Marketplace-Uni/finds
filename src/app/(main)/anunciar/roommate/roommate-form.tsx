@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 
 import { WizardShell } from "@/src/components/ui/wizard";
-import { Field, TextAreaField, TextField, controlClass } from "@/src/components/ui/field";
+import { Field, SelectField, TextAreaField, TextField, controlClass } from "@/src/components/ui/field";
 import { DateFieldBR } from "@/src/components/ui/date-field-br";
 import { PhotoPicker } from "@/src/components/ui/photo-picker";
 import { ListingPreviewCard } from "@/src/components/listings/listing-preview-card";
@@ -149,65 +149,59 @@ export function RoommateForm({ campuses }: { campuses: FilterOption[] }) {
           </div>
         </Field>
 
-        <Field label="Campus" htmlFor="campus_id">
-          <select
-            id="campus_id"
-            name="campus_id"
-            className={controlClass}
-            required
-            defaultValue={v(state, "campus_id") ?? ""}
-            onChange={(e) => setPreview((p) => ({ ...p, campusId: e.target.value }))}
-          >
-            <option value="" disabled>
-              Selecione...
+        <SelectField
+          label="Campus"
+          htmlFor="campus_id"
+          name="campus_id"
+          required
+          defaultValue={v(state, "campus_id") ?? ""}
+          onChange={(e) => setPreview((p) => ({ ...p, campusId: e.target.value }))}
+        >
+          <option value="" disabled>
+            Selecione...
+          </option>
+          {campuses.map((campus) => (
+            <option key={campus.value} value={campus.value}>
+              {campus.label}
             </option>
-            {campuses.map((campus) => (
-              <option key={campus.value} value={campus.value}>
-                {campus.label}
-              </option>
-            ))}
-          </select>
-        </Field>
+          ))}
+        </SelectField>
 
-        <Field label="Modo" htmlFor="mode">
-          <select
-            id="mode"
-            name="mode"
-            className={controlClass}
-            required
-            defaultValue={v(state, "mode") ?? ""}
-            onChange={(e) => setPreview((p) => ({ ...p, mode: e.target.value }))}
-          >
-            <option value="" disabled>
-              Selecione...
+        <SelectField
+          label="Modo"
+          htmlFor="mode"
+          name="mode"
+          required
+          defaultValue={v(state, "mode") ?? ""}
+          onChange={(e) => setPreview((p) => ({ ...p, mode: e.target.value }))}
+        >
+          <option value="" disabled>
+            Selecione...
+          </option>
+          {MODOS.map((modo) => (
+            <option key={modo.value} value={modo.value}>
+              {modo.label}
             </option>
-            {MODOS.map((modo) => (
-              <option key={modo.value} value={modo.value}>
-                {modo.label}
-              </option>
-            ))}
-          </select>
-        </Field>
+          ))}
+        </SelectField>
 
-        <Field label="Tipo de moradia" htmlFor="housing_type">
-          <select
-            id="housing_type"
-            name="housing_type"
-            className={controlClass}
-            required
-            defaultValue={v(state, "housing_type") ?? ""}
-            onChange={(e) => setPreview((p) => ({ ...p, housingType: e.target.value }))}
-          >
-            <option value="" disabled>
-              Selecione...
+        <SelectField
+          label="Tipo de moradia"
+          htmlFor="housing_type"
+          name="housing_type"
+          required
+          defaultValue={v(state, "housing_type") ?? ""}
+          onChange={(e) => setPreview((p) => ({ ...p, housingType: e.target.value }))}
+        >
+          <option value="" disabled>
+            Selecione...
+          </option>
+          {TIPOS_MORADIA.map((tipo) => (
+            <option key={tipo.value} value={tipo.value}>
+              {tipo.label}
             </option>
-            {TIPOS_MORADIA.map((tipo) => (
-              <option key={tipo.value} value={tipo.value}>
-                {tipo.label}
-              </option>
-            ))}
-          </select>
-        </Field>
+          ))}
+        </SelectField>
 
         <TextField
           label="Bairro"
@@ -227,25 +221,23 @@ export function RoommateForm({ campuses }: { campuses: FilterOption[] }) {
           defaultValue={v(state, "move_in_date")}
         />
 
-        <Field label="Preferência de gênero" htmlFor="gender_preference">
-          <select
-            id="gender_preference"
-            name="gender_preference"
-            className={controlClass}
-            required
-            defaultValue={v(state, "gender_preference") ?? ""}
-            onChange={(e) => setPreview((p) => ({ ...p, genderPreference: e.target.value }))}
-          >
-            <option value="" disabled>
-              Selecione...
+        <SelectField
+          label="Preferência de gênero"
+          htmlFor="gender_preference"
+          name="gender_preference"
+          required
+          defaultValue={v(state, "gender_preference") ?? ""}
+          onChange={(e) => setPreview((p) => ({ ...p, genderPreference: e.target.value }))}
+        >
+          <option value="" disabled>
+            Selecione...
+          </option>
+          {PREFERENCIAS_GENERO.map((preferencia) => (
+            <option key={preferencia.value} value={preferencia.value}>
+              {preferencia.label}
             </option>
-            {PREFERENCIAS_GENERO.map((preferencia) => (
-              <option key={preferencia.value} value={preferencia.value}>
-                {preferencia.label}
-              </option>
-            ))}
-          </select>
-        </Field>
+          ))}
+        </SelectField>
         </div>
 
         <PhotoPicker
