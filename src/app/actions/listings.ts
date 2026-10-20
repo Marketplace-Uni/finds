@@ -436,12 +436,25 @@ export async function updateListing(
 
 export async function deleteListing(id: string) {
   const supabase = await createClient()
-  
+
+  // Pega os paths ANTES de apagar: `listing_images` tem `ON DELETE CASCADE`
+  // pra `listing_id`, então depois do delete essas linhas já não existem
+  // mais no banco (os arquivos no Storage, porém, não são apagados sozinhos
+  // por um cascade — por isso o passo de limpeza abaixo).
+  const { data: images } = await supabase.from('listing_images').select('path').eq('listing_id', id)
+
   // O RLS do banco já garante que só o dono consegue deletar
   const { error } = await supabase.from('listings').delete().eq('id', id)
-  
+
   if (error) throw new Error("Erro ao excluir anúncio")
-  
+
+  // Limpeza do Storage é melhor-esforço: o anúncio já está excluído do banco
+  // (o que importa pra consistência) mesmo que isto falhe por um motivo
+  // transitório — mesmo critério já usado em `updateListing()`.
+  if (images && images.length > 0) {
+    await supabase.storage.from('listing-images').remove(images.map((image) => image.path))
+  }
+
   revalidatePath('/meus-anuncios')
   redirect('/meus-anuncios')
 }
