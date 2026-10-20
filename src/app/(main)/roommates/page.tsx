@@ -4,7 +4,7 @@ import { fetchTraitLabels, fetchUserTraits, fetchUserTraitsBulk } from "@/src/li
 import { matchingTraitKeys, matchScore } from "@/src/lib/match";
 import { MatchDeck, type MatchCandidate } from "@/src/components/match/match-deck";
 import { Button } from "@/src/components/ui/button";
-import { EmptyState, ErrorState } from "@/src/components/ui/states";
+import { EmptyState, ErrorState, InlineNotice } from "@/src/components/ui/states";
 import Link from "next/link";
 
 export default async function RoommatesPage() {
@@ -92,6 +92,21 @@ export default async function RoommatesPage() {
           Ordenado pela sua compatibilidade de convivência.
         </p>
       </div>
+
+      {myTraits.self.size === 0 ? (
+        <InlineNotice
+          title='Você ainda não marcou nada em "Eu sou"'
+          description="Seu score de compatibilidade pode estar mais baixo do que seria — complete seu perfil de convivência pra um cálculo mais justo."
+          action={
+            <Link
+              href="/configuracoes/convivencia"
+              className="shrink-0 text-sm font-semibold text-primary hover:underline"
+            >
+              Completar perfil
+            </Link>
+          }
+        />
+      ) : null}
 
       <MatchDeck candidates={candidates} />
     </div>
