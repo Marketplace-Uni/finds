@@ -2,6 +2,12 @@
   "name": "finds",
   "version": "0.1.0",
   "private": true,
+  "browserslist": [
+    "iOS >= 15",
+    "Safari >= 15",
+    "> 0.3%",
+    "not dead"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
