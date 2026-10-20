@@ -12,6 +12,9 @@ type PhotoPickerProps = {
   max?: number;
   label?: string;
   className?: string;
+  /** Avisa a URL de prévia de cada foto (a primeira é a capa), pra quem quiser
+   * mostrar uma pré-visualização do anúncio ao lado do formulário. */
+  onPhotosChange?: (urls: string[]) => void;
 };
 
 type Foto = { file: File; url: string };
@@ -29,6 +32,7 @@ export function PhotoPicker({
   max = 6,
   label = "Fotos do anúncio",
   className,
+  onPhotosChange,
 }: PhotoPickerProps) {
   const [fotos, setFotos] = useState<Foto[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -38,6 +42,11 @@ export function PhotoPicker({
     return () => {
       for (const foto of fotos) URL.revokeObjectURL(foto.url);
     };
+  }, [fotos]);
+
+  useEffect(() => {
+    onPhotosChange?.(fotos.map((foto) => foto.url));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fotos]);
 
   /** Reescreve o input com a lista atual, para o formulário enviar o certo. */

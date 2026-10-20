@@ -21,6 +21,8 @@ export type TipoAnuncio = {
   /** Trecho da URL em `/anunciar/<slug>` e `/como-funciona/<slug>`. */
   slug: "produto" | "servico" | "roommate" | "republica";
   titulo: string;
+  /** Igual ao `label` de `TYPE_OPTIONS` (filters-sidebar) — pro chip do tipo. */
+  tituloSingular: string;
   texto: string;
   Icone: LucideIcon;
   /** Token do tema usado pra cor do card/chip deste tipo. */
@@ -38,6 +40,7 @@ export const TIPOS_ANUNCIO: TipoAnuncio[] = [
     type: "product",
     slug: "produto",
     titulo: "Produtos",
+    tituloSingular: "Produto",
     texto: "Da calculadora que você não usa mais ao móvel que não cabe na mudança.",
     Icone: ShoppingBag,
     token: "primary",
@@ -46,6 +49,7 @@ export const TIPOS_ANUNCIO: TipoAnuncio[] = [
     type: "service",
     slug: "servico",
     titulo: "Serviços",
+    tituloSingular: "Serviço",
     texto: "Aula particular, conserto, design, frete. Quem faz bem está do seu lado.",
     Icone: Wrench,
     token: "secondary",
@@ -54,6 +58,7 @@ export const TIPOS_ANUNCIO: TipoAnuncio[] = [
     type: "roommate",
     slug: "roommate",
     titulo: "Roommates",
+    tituloSingular: "Roommate",
     texto: "Ache alguém para dividir moradia com a rotina parecida com a sua.",
     Icone: Handshake,
     token: "accent",
@@ -62,6 +67,7 @@ export const TIPOS_ANUNCIO: TipoAnuncio[] = [
     type: "republic",
     slug: "republica",
     titulo: "Repúblicas",
+    tituloSingular: "República",
     texto: "Vagas perto do campus, anunciadas por quem já mora lá.",
     Icone: House,
     token: "nav",
