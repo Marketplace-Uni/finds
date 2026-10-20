@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat, Anonymous_Pro } from "next/font/google";
 import "./globals.css";
+import "@/src/lib/polyfills";
 import { Toaster } from "@/src/components/ui/sonner";
 
 // A Lia usa a família completa da Montserrat (thin a bold, com itálicos).
