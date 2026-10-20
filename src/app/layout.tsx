@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat, Anonymous_Pro } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/src/components/ui/sonner";
 
 // A Lia usa a família completa da Montserrat (thin a bold, com itálicos).
 // Como é fonte variável, um único arquivo por estilo cobre todos os pesos.
@@ -28,7 +29,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="pt-BR"
       className={`${montserrat.variable} ${anonymousPro.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }
