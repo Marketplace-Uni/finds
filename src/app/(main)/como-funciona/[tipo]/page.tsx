@@ -82,10 +82,10 @@ export default async function ComoFuncionaPage({
 
       <div className="flex flex-wrap justify-center gap-3">
         <Button asChild className="rounded-pill px-8 py-6 text-base font-bold">
-          <Link href={`/anunciar/${tipo.slug}`}>Anunciar {tipo.tituloSingular.toLowerCase()}</Link>
+          <Link href="/cadastro">Criar conta</Link>
         </Button>
         <Button asChild variant="outline" className="rounded-pill px-8 py-6 text-base font-bold">
-          <Link href={`/busca?tipo=${tipo.slug}`}>Ver anúncios</Link>
+          <Link href="/entrar">Entrar</Link>
         </Button>
       </div>
     </div>
