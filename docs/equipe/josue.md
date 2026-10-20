@@ -47,10 +47,10 @@
 
 ## Sprint 3 · 12/10–18/10 · Produção
 
-- [ ] Aplicar todas as migrations no `finds-demo`; produção da Vercel apontando para lá
-- [ ] Imagens otimizadas (`next/image`, tamanhos adequados); o feed tem que carregar rápido no estande
-- [ ] **Teste de segurança:** logado como A, tentar ler e editar dados de B (rascunhos, mensagens, favoritos)
-- [ ] Ajustes do QA de design que caírem para você
+- [X] Aplicar todas as migrations no `finds-demo`; produção da Vercel apontando para lá
+- [X] Imagens otimizadas (`next/image`, tamanhos adequados); o feed tem que carregar rápido no estande
+- [X] **Teste de segurança:** logado como A, tentar ler e editar dados de B (rascunhos, mensagens, favoritos)
+- [X] Ajustes do QA de design que caírem para você
 
 ## Reta final · 19–20/10
 - [ ] Deploy final + bug bash + só correções

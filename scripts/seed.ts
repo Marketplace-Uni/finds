@@ -3,6 +3,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 
+const seedTarget = process.env.SUPABASE_SEED_TARGET || 'finds-dev';
+
 type SeedUser = {
 	id: string;
 	full_name: string;
