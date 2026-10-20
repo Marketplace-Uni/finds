@@ -17,6 +17,15 @@ import type { ListingType } from "@/src/lib/listing-details"
 const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png"])
 const ALLOWED_IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png"])
 
+// Mesmo limite do PhotoPicker/EditImagesField (client) — ali é só UX; aqui é
+// o que de fato impede alguém de mandar uma Server Action forjada com
+// dezenas de arquivos (abuso de Storage/custo), já que o "max" dos
+// componentes de cliente não tem nenhum efeito sobre o que chega no servidor.
+// Não pode ser `export`: um módulo "use server" só pode exportar funções
+// async — qualquer outro export (uma constante, por exemplo) faz o Next
+// rejeitar o arquivo inteiro.
+const MAX_IMAGES_PER_LISTING = 6
+
 export async function uploadImages(formData: FormData) {
   const supabase = await createClient()
   // Um <input type="file"> sem nada selecionado ainda manda um File vazio
@@ -24,6 +33,9 @@ export async function uploadImages(formData: FormData) {
   // tentava subir esse arquivo vazio e quebrava com "Erro no upload da
   // imagem" (achado testando o fluxo de /anunciar).
   const files = (formData.getAll("images") as File[]).filter((file) => file.size > 0)
+  if (files.length > MAX_IMAGES_PER_LISTING) {
+    throw new Error(`Envie no máximo ${MAX_IMAGES_PER_LISTING} fotos por vez.`)
+  }
   const uploadedUrls: string[] = []
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -319,7 +331,7 @@ export async function updateListing(
   // esconderia a tentativa em vez de recusá-la com uma mensagem clara.
   const { data: current, error: currentError } = await supabase
     .from("listings")
-    .select("owner_id, listing_images(path)")
+    .select("owner_id, listing_images(id, path)")
     .eq("id", id)
     .maybeSingle()
 
@@ -348,12 +360,30 @@ export async function updateListing(
   // pertencia a este anúncio de verdade — nunca confiar direto no `path` que
   // chega no campo oculto, ou alguém poderia forjar o path de outro anúncio
   // (de outro usuário) para "herdar" uma foto que não é dele.
-  const pathsAtuais = (current.listing_images ?? []).map((image) => image.path)
-  const pathsMantidos = formData
-    .getAll("existing_image_paths")
-    .filter((value): value is string => typeof value === "string")
-    .filter((path) => pathsAtuais.includes(path))
+  const fotosAtuais = current.listing_images ?? []
+  const pathsAtuais = fotosAtuais.map((image) => image.path)
+  const idsAtuais = fotosAtuais.map((image) => image.id)
+  const pathsMantidos = [
+    ...new Set(
+      formData
+        .getAll("existing_image_paths")
+        .filter((value): value is string => typeof value === "string")
+        .filter((path) => pathsAtuais.includes(path)),
+    ),
+  ]
   const pathsRemovidos = pathsAtuais.filter((path) => !pathsMantidos.includes(path))
+
+  // O "max" do EditImagesField é só UX — quem manda a Server Action direto
+  // não passa por ele. Conferir aqui antes de subir qualquer arquivo evita
+  // gastar upload com um pedido que vai ser recusado de qualquer jeito.
+  const novosArquivos = (formData.getAll("images") as File[]).filter((file) => file.size > 0)
+  if (pathsMantidos.length + novosArquivos.length > MAX_IMAGES_PER_LISTING) {
+    return errorState(
+      _prevState,
+      `Envie no máximo ${MAX_IMAGES_PER_LISTING} fotos no total.`,
+      formData,
+    )
+  }
 
   let novosPaths: string[] = []
   try {
@@ -369,18 +399,11 @@ export async function updateListing(
 
   const pathsFinais = [...pathsMantidos, ...novosPaths]
 
-  // Reescreve `listing_images` do zero com a lista final (mantidas + novas),
-  // em vez de tentar um diff fino de posição — mais simples e já cobre
-  // reordenar a capa quando a primeira foto é removida.
-  const { error: deleteRowsError } = await supabase
-    .from("listing_images")
-    .delete()
-    .eq("listing_id", id)
-
-  if (deleteRowsError) {
-    return errorState(_prevState, "Não foi possível atualizar as fotos.", formData)
-  }
-
+  // Insere a lista final (mantidas + novas) ANTES de apagar as linhas
+  // antigas — nessa ordem, se o insert falhar, o anúncio fica exatamente
+  // como estava (nenhuma foto perdida). Reescrever do zero em vez de um
+  // diff fino de posição também já cobre reordenar a capa quando a primeira
+  // foto é removida.
   if (pathsFinais.length > 0) {
     const { error: insertRowsError } = await supabase.from("listing_images").insert(
       pathsFinais.map((path, index) => ({ listing_id: id, path, position: index })),
@@ -390,8 +413,17 @@ export async function updateListing(
     }
   }
 
-  // Limpeza do Storage é melhor-esforço: o anúncio já está consistente no
-  // banco (as linhas de `listing_images` acima não referenciam mais esses
+  // Só agora remove as linhas antigas — por `id`, nunca por `listing_id`,
+  // pra nunca correr o risco de apagar as linhas novas que acabamos de
+  // inserir pro mesmo anúncio. Melhor-esforço: se isso falhar, o anúncio já
+  // está salvo com a lista certa (só sobra uma linha duplicada apontando pra
+  // uma foto mantida — nada se perde).
+  if (idsAtuais.length > 0) {
+    await supabase.from("listing_images").delete().in("id", idsAtuais)
+  }
+
+  // Limpeza do Storage também é melhor-esforço: o anúncio já está consistente
+  // no banco (as linhas de `listing_images` acima não referenciam mais esses
   // arquivos) mesmo que a remoção física falhe por um motivo transitório.
   if (pathsRemovidos.length > 0) {
     await supabase.storage.from("listing-images").remove(pathsRemovidos)

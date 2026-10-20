@@ -33,6 +33,15 @@ export function LandingScrollFx() {
 
     gsap.registerPlugin(ScrollTrigger);
     const mm = gsap.matchMedia();
+    // `onEnter`/`onLeaveBack` disparam `gsap.to(...)` de forma assíncrona (em
+    // resposta ao scroll), fora do corpo síncrono do `mm.add()` — o
+    // matchMedia do GSAP só rastreia (pra reverter sozinho) o que é criado
+    // de forma síncrona ali dentro, então esses tweens não entram no
+    // `mm.revert()`. Sem essa flag, navegar pra outra rota bem no meio de
+    // uma dessas transições (0.2-0.3s) podia deixar os botões de
+    // Entrar/Criar conta escondidos na navbar — que é compartilhada entre
+    // todas as páginas — até um refresh manual.
+    let active = true;
 
     mm.add(
       { ativo: "(min-width: 1024px) and (prefers-reduced-motion: no-preference)" },
@@ -67,11 +76,13 @@ export function LandingScrollFx() {
           trigger: hero,
           start: "bottom top",
           onEnter: () => {
+            if (!active) return;
             navbarRow.classList.remove("justify-center");
             gsap.to(navbarBrand, { autoAlpha: 1, duration: 0.3 });
             gsap.to(guestActions, { autoAlpha: 1, width: "auto", overflow: "visible", duration: 0.3 });
           },
           onLeaveBack: () => {
+            if (!active) return;
             navbarRow.classList.add("justify-center");
             gsap.to(navbarBrand, { autoAlpha: 0, duration: 0.2 });
             gsap.to(guestActions, { autoAlpha: 0, width: 0, overflow: "hidden", duration: 0.2 });
@@ -85,7 +96,15 @@ export function LandingScrollFx() {
     );
 
     return () => {
+      active = false;
       mm.revert();
+      // Garante que a navbar (compartilhada entre páginas) nunca fica presa
+      // num estado escondido por causa de um tween que já estava em
+      // andamento quando este componente desmontou (ver comentário acima).
+      gsap.killTweensOf([navbarBrand, guestActions]);
+      // `clearProps` tira todo estilo inline que o GSAP aplicou, voltando
+      // pro visual padrão (sempre visível) definido pelas classes do Tailwind.
+      gsap.set([navbarBrand, guestActions], { clearProps: "all" });
       navbarRow.classList.remove("justify-center");
     };
   }, []);
