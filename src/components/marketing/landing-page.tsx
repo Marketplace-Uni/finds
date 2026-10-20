@@ -3,7 +3,8 @@ import { Handshake, House, ShoppingBag, Wrench } from "lucide-react";
 
 import { Button } from "@/src/components/ui/button";
 import { LogoFinds } from "@/src/components/layout/logo-finds";
-import { Zeca, type ZecaPose } from "@/src/components/ui/zeca";
+import { Zeca } from "@/src/components/ui/zeca";
+import { ZecaCarrossel } from "@/src/components/ui/zeca-carrossel";
 import { cn } from "@/src/lib/utils";
 
 const TIPOS = [
@@ -28,52 +29,6 @@ const TIPOS = [
     texto: "Ache alguém para dividir moradia com a rotina parecida com a sua.",
   },
 ];
-
-/** Poses mostradas na vitrine do mascote, uma de cada vez. */
-const POSES_VITRINE: ZecaPose[] = [1, 2, 4, 3, 7];
-
-/** Duração de um ciclo completo (todas as poses, uma vez cada). */
-const VITRINE_DURACAO_S = 20;
-
-/**
- * "Vitrine" do Zeca: as poses se revezam sozinhas, uma de cada vez, com um
- * crossfade suave — só CSS (`@keyframes` + `animation-delay` negativo por
- * pose), sem JavaScript nem `use client`, já que a landing inteira é Server
- * Component. Pedido do Guilherme (18/10); não tinha equivalente no Figma.
- *
- * A pose de cada vez some deslizando só a opacidade, perto do limite da sua
- * fatia do ciclo (0–2% entra, 18–20% sai, numa fatia de 20% = 1/5 do ciclo) —
- * o fim do fade-out de uma pose cai exatamente onde começa o fade-in da
- * próxima, sem brecha nem sobreposição longa.
- */
-function MascoteVitrine() {
-  const fatia = VITRINE_DURACAO_S / POSES_VITRINE.length;
-
-  return (
-    <div className="relative hidden h-72 w-72 shrink-0 lg:block" aria-hidden>
-      <style>{`
-        @keyframes finds-mascote-vitrine {
-          0%, 100% { opacity: 0; }
-          2% { opacity: 1; }
-          18% { opacity: 1; }
-          20% { opacity: 0; }
-        }
-      `}</style>
-      {POSES_VITRINE.map((pose, index) => (
-        <div
-          key={pose}
-          className="absolute inset-0 flex items-center justify-center"
-          style={{
-            animation: `finds-mascote-vitrine ${VITRINE_DURACAO_S}s ease-in-out infinite`,
-            animationDelay: `-${index * fatia}s`,
-          }}
-        >
-          <Zeca pose={pose} className="h-64 w-auto text-secondary" />
-        </div>
-      ))}
-    </div>
-  );
-}
 
 const PASSOS = [
   {
@@ -154,7 +109,11 @@ export function LandingPage({ className }: { className?: string }) {
             </div>
           </div>
 
-          <MascoteVitrine />
+          <ZecaCarrossel
+            poses={[1, 2, 4, 3, 7]}
+            boxClassName="hidden h-72 w-72 shrink-0 lg:block"
+            zecaClassName="h-64 w-auto text-secondary"
+          />
         </div>
 
         <span

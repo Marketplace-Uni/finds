@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import { cn } from "@/src/lib/utils";
 import { Zeca, type ZecaPose } from "@/src/components/ui/zeca";
-import { LogoFinds } from "@/src/components/layout/logo-finds";
+import { ZecaCarrossel } from "@/src/components/ui/zeca-carrossel";
 
 type StateProps = {
   title: string;
@@ -44,8 +44,9 @@ export function EmptyState({
 
 /**
  * Tela de carregamento, para `loading.tsx` (o Suspense fallback de cada
- * rota). Versão simples feita pelo Kaike porque o Caike ainda não desenhou
- * uma no Figma — ele refina depois, como já aconteceu com `ui/dialog.tsx`.
+ * rota). O mascote circula pelas mesmas poses da vitrine da landing
+ * (`ZecaCarrossel`), pra dar a sensação de "algo em andamento" em vez de um
+ * logo parado piscando.
  */
 export function LoadingState({
   description = "Carregando...",
@@ -63,7 +64,12 @@ export function LoadingState({
       role="status"
       aria-live="polite"
     >
-      <LogoFinds className="h-10 w-auto animate-pulse text-primary" />
+      <ZecaCarrossel
+        poses={[1, 7]}
+        duracaoS={4}
+        boxClassName="h-16 w-16"
+        zecaClassName="h-16 w-auto text-primary"
+      />
       <p className="text-sm text-muted-foreground">{description}</p>
     </div>
   );
