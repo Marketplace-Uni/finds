@@ -16,6 +16,19 @@ export const CLASSES_POR_TOKEN: Record<TokenMarca, string> = {
   nav: "bg-nav text-nav-foreground",
 };
 
+/**
+ * Mesma cor, só que como `hover:` — para um elemento que é, ele mesmo, o alvo
+ * do hover (`group-hover:` exigiria um ANCESTRAL com `.group`, não o próprio
+ * elemento hover: `.group:hover .group-hover\:bg-x` nunca bate quando as duas
+ * classes estão no mesmo nó).
+ */
+export const HOVER_CLASSES_POR_TOKEN: Record<TokenMarca, string> = {
+  primary: "hover:bg-primary hover:text-primary-foreground",
+  secondary: "hover:bg-secondary hover:text-secondary-foreground",
+  accent: "hover:bg-accent hover:text-accent-foreground",
+  nav: "hover:bg-nav hover:text-nav-foreground",
+};
+
 export type TipoAnuncio = {
   type: ListingType;
   /** Trecho da URL em `/anunciar/<slug>` e `/como-funciona/<slug>`. */

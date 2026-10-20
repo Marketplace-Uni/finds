@@ -1,34 +1,11 @@
 import Link from "next/link";
-import { Handshake, House, ShoppingBag, Wrench } from "lucide-react";
 
 import { Button } from "@/src/components/ui/button";
 import { LogoFinds } from "@/src/components/layout/logo-finds";
 import { Zeca } from "@/src/components/ui/zeca";
 import { ZecaCarrossel } from "@/src/components/ui/zeca-carrossel";
+import { TIPOS_ANUNCIO, HOVER_CLASSES_POR_TOKEN } from "@/src/components/listings/tipos-anuncio";
 import { cn } from "@/src/lib/utils";
-
-const TIPOS = [
-  {
-    Icone: ShoppingBag,
-    titulo: "Produtos",
-    texto: "Da calculadora que você não usa mais ao móvel que não cabe na mudança.",
-  },
-  {
-    Icone: Wrench,
-    titulo: "Serviços",
-    texto: "Aula particular, conserto, design, frete. Quem faz bem está do seu lado.",
-  },
-  {
-    Icone: House,
-    titulo: "Repúblicas",
-    texto: "Vagas perto do campus, anunciadas por quem já mora lá.",
-  },
-  {
-    Icone: Handshake,
-    titulo: "Roommates",
-    texto: "Ache alguém para dividir moradia com a rotina parecida com a sua.",
-  },
-];
 
 const PASSOS = [
   {
@@ -132,11 +109,23 @@ export function LandingPage({ className }: { className?: string }) {
           </p>
 
           <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {TIPOS.map(({ Icone, titulo, texto }) => (
-              <li key={titulo} className="flex flex-col gap-3 rounded-lg bg-card p-6">
-                <Icone className="size-7 text-primary" aria-hidden />
-                <h3 className="font-bold text-foreground">{titulo}</h3>
-                <p className="text-sm text-foreground/80">{texto}</p>
+            {TIPOS_ANUNCIO.map(({ slug, titulo, texto, Icone, token }) => (
+              <li key={slug}>
+                <Link
+                  href={`/como-funciona/${slug}`}
+                  className={cn(
+                    "group flex h-full flex-col gap-3 rounded-lg bg-card p-6 transition-all duration-300 hover:scale-105 hover:shadow-md",
+                    HOVER_CLASSES_POR_TOKEN[token],
+                  )}
+                >
+                  <Icone className="size-7 text-primary transition-colors group-hover:text-current" aria-hidden />
+                  <h3 className="font-bold text-foreground transition-colors group-hover:text-current">
+                    {titulo}
+                  </h3>
+                  <p className="text-sm text-foreground/80 transition-colors group-hover:text-current">
+                    {texto}
+                  </p>
+                </Link>
               </li>
             ))}
           </ul>
