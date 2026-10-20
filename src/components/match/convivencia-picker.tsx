@@ -4,6 +4,7 @@ import { useActionState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/src/components/ui/button";
+import { capitalize } from "@/src/lib/format";
 import { cn } from "@/src/lib/utils";
 import type { ConvivenciaState } from "@/src/app/(main)/configuracoes/convivencia/actions";
 
@@ -97,7 +98,7 @@ function Coluna({
 
       {Object.entries(grupos).map(([grupo, lista]) => (
         <fieldset key={grupo}>
-          <legend className="mb-2 text-sm font-medium text-foreground">{grupo}</legend>
+          <legend className="mb-2 text-sm font-medium text-foreground">{capitalize(grupo)}</legend>
           <div className="flex flex-wrap gap-2">
             {lista.map((trait) => (
               <TraitChip
