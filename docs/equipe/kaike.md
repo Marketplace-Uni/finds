@@ -72,3 +72,9 @@
 - [x] Revisão de segurança adversarial do diff da sessão + correção dos 3 achados "Importante" (limite de fotos no servidor, ordem insert-antes-de-delete em `updateListing()`, cleanup do GSAP) — nenhum achado "Crítico"
 - [x] Lote de ajustes de UI da reta final: seta dos selects de `/anunciar`, preview ao vivo também em "Editar Anúncio", efeito no menu da conta, toast de confirmação no perfil de convivência
 - [x] Dependências novas instaladas: `gsap` (scroll da landing) e `sonner` (toasts) — ver `docs/ARQUITETURA.md`
+- [x] Abre a [issue #43](https://github.com/Marketplace-Uni/finds/issues/43) detalhando o bloqueio de infraestrutura do Realtime, pra quem tiver acesso ao painel do Supabase resolver
+- [x] Fresta branca ao abrir o menu da conta (Radix compensando a barra de rolagem com `margin-right` no body) — corrigido em `globals.css`
+- [x] Opções de categoria em `/anunciar` (produto/serviço) e grupos de traits do perfil de convivência com a primeira letra maiúscula
+- [x] Landing: "Como funciona" virou 3 seções com efeito de foco ao rolar (GSAP), texto de um lado e o Zeca do outro
+- [x] Roommates: corrigido o bug do scroll do `MatchDeck` pulando de pessoa cedo demais (snap obrigatório + altura fixa); adicionado efeito de "scroll expand" (GSAP) e foto clicável pro anúncio
+- [x] Plano de revisão do algoritmo de match + expansão das tags de convivência — `docs/PLANO-MATCH-CONVIVENCIA.md` (algoritmo já validado como correto com dado real; achados e sugestão de 8 tags novas documentados, nada implementado ainda)
