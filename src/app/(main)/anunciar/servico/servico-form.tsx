@@ -8,7 +8,7 @@ import { PhotoPicker } from "@/src/components/ui/photo-picker";
 import { ListingPreviewCard } from "@/src/components/listings/listing-preview-card";
 import type { FilterOption } from "@/src/components/discovery/filters-sidebar";
 import { createListingForm, type ListingFormState } from "@/src/app/actions/listings";
-import { formatPrice } from "@/src/lib/format";
+import { capitalize, formatPrice } from "@/src/lib/format";
 
 const initialState: ListingFormState = {};
 const criarAnuncio = createListingForm.bind(null, "service");
@@ -144,7 +144,7 @@ export function ServicoForm({ campuses }: { campuses: FilterOption[] }) {
             <option value="">Selecione...</option>
             {CATEGORIAS.map((categoria) => (
               <option key={categoria} value={categoria}>
-                {categoria}
+                {capitalize(categoria)}
               </option>
             ))}
           </SelectField>

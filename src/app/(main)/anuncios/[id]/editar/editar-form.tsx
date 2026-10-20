@@ -12,7 +12,7 @@ import type { FilterOption } from "@/src/components/discovery/filters-sidebar";
 import type { ListingType } from "@/src/lib/listing-details";
 import { formatPriceRange } from "@/src/lib/listing-details";
 import { updateListing, type ListingFormState } from "@/src/app/actions/listings";
-import { formatPrice } from "@/src/lib/format";
+import { capitalize, formatPrice } from "@/src/lib/format";
 
 const initialState: ListingFormState = {};
 
@@ -328,7 +328,7 @@ export function EditarForm({
               <option value="">Selecione...</option>
               {CATEGORIAS_PRODUTO.map((categoria) => (
                 <option key={categoria} value={categoria}>
-                  {categoria}
+                  {capitalize(categoria)}
                 </option>
               ))}
             </SelectField>
@@ -371,7 +371,7 @@ export function EditarForm({
               <option value="">Selecione...</option>
               {CATEGORIAS_SERVICO.map((categoria) => (
                 <option key={categoria} value={categoria}>
-                  {categoria}
+                  {capitalize(categoria)}
                 </option>
               ))}
             </SelectField>
