@@ -5,6 +5,7 @@ import { useActionState, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar";
 import { Button } from "@/src/components/ui/button";
 import { Field, TextAreaField, TextField, controlClass } from "@/src/components/ui/field";
+import { PendingOverlay } from "@/src/components/ui/pending-overlay";
 import type { FilterOption } from "@/src/components/discovery/filters-sidebar";
 import type { Profile } from "@/src/lib/auth";
 import { coursesForCampus } from "@/src/lib/courses";
@@ -37,6 +38,7 @@ export function EditarPerfilForm({
 
   return (
     <form action={formAction} className="flex flex-col gap-5">
+      <PendingOverlay visible={isPending} label="Salvando seu perfil..." />
       <div className="flex items-center gap-4">
         <Avatar size="lg" className="size-20 border-2 border-secondary">
           <AvatarImage src={preview ?? undefined} alt="" />

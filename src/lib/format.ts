@@ -8,6 +8,16 @@ export function formatPrice(value: number) {
   return brl.format(value);
 }
 
+/**
+ * "material de estudo" -> "Material de estudo" — só a primeira letra, pro
+ * rótulo de opções que no banco/schema/filtros continuam em minúsculo (ver
+ * `src/lib/validations/listings.ts`); usar isto só no texto exibido, nunca
+ * no `value` salvo.
+ */
+export function capitalize(value: string): string {
+  return value.length > 0 ? value.charAt(0).toUpperCase() + value.slice(1) : value;
+}
+
 const MINUTE_MS = 60_000;
 const HOUR_MS = 60 * MINUTE_MS;
 const DAY_MS = 24 * HOUR_MS;

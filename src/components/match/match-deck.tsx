@@ -6,6 +6,7 @@ import { cn } from "@/src/lib/utils";
 import { formatPrice } from "@/src/lib/format";
 import { Zeca } from "@/src/components/ui/zeca";
 import { EstrelaFinds } from "@/src/components/ui/estrela-finds";
+import { MatchDeckFx } from "@/src/components/match/match-deck-fx";
 
 export type MatchCandidate = {
   id: string;
@@ -69,10 +70,23 @@ function SetaDeck({
  * Uma tela por candidato, navegando por scroll — o jeito "um de cada vez" do
  * Tinder, mas sem arrastar com o mouse, que no desktop é ruim.
  *
- * O `scroll-snap` faz o navegador encaixar um candidato por vez, então não
- * precisa de JavaScript nem de client component. A foto fica de um lado e a
- * pessoa do outro: aqui o que importa é **com quem** se vai morar, não o
- * imóvel.
+ * Antes o scroll usava `snap-mandatory` + `snap-always` com cada card numa
+ * altura *fixa* de uma tela — qualquer scroll, por menor que fosse, pulava
+ * pra pessoa seguinte inteira, mesmo sem dar tempo de ler a bio/tags de quem
+ * tinha texto mais longo (esse era o bug). Sem nenhum `scroll-snap-type`
+ * agora, o scroll é só o scroll normal do navegador: cada card tem uma
+ * altura *mínima* (não fixa) de uma tela, então cresce quando precisa e
+ * continua rolável por dentro do próprio deck até o fim do conteúdo, sem
+ * nada "puxando" de volta pro topo nem pulando pra frente sozinho — chegar
+ * na pessoa seguinte é sempre uma decisão de quem está rolando (ou das
+ * setas, que continuam levando direto pra qualquer uma pelo link `#match-N`).
+ * A foto fica de um lado e a pessoa do outro: aqui o que importa é **com
+ * quem** se vai morar, não o imóvel; a foto também linka pro anúncio, pra
+ * quem quiser ver os detalhes dele.
+ *
+ * O "encaixe plenamente em foco" de cada card enquanto rola é dado pelo
+ * `MatchDeckFx` (cliente, GSAP) — só o acabamento visual, desktop apenas;
+ * a correção do scroll em si (acima) é só CSS e vale pra qualquer tela.
  */
 export function MatchDeck({
   candidates,
@@ -86,17 +100,22 @@ export function MatchDeck({
 }) {
   return (
     <div
+      data-match-deck
       className={cn(
-        // Sem `scroll-smooth`: o encaixe do snap já é animado pelo navegador, e
-        // as duas animações juntas brigavam — era o que deixava o rolar longo
-        // travado. `overscroll-contain` impede que o scroll vaze para a página
-        // ao chegar no fim da pilha.
-        "h-[calc(100svh-8rem)] snap-y snap-mandatory overflow-y-auto overscroll-y-contain",
+        // Sem `scroll-snap-type`: testado com `snap-proximity`, mas mesmo
+        // ele reajustava de volta pro topo do card depois de um scroll
+        // pequeno (o próprio Chrome considerava "perto o suficiente" do
+        // início) — continuava impedindo ler um card mais longo aos poucos.
+        // `overscroll-contain` impede que o scroll vaze para a página ao
+        // chegar no fim da pilha.
+        "h-[calc(100svh-8rem)] overflow-y-auto overscroll-y-contain scroll-smooth",
         "sem-barra-de-rolagem",
         className,
       )}
       aria-label="Pessoas compatíveis com você"
     >
+      <MatchDeckFx />
+
       {candidates.map((candidate, index) => {
         const pct =
           typeof candidate.score === "number"
@@ -107,7 +126,7 @@ export function MatchDeck({
           <section
             key={candidate.id}
             id={`match-${index}`}
-            className="relative flex h-full snap-start snap-always items-center py-4"
+            className="relative flex min-h-full items-center py-4"
           >
             {/* As setas repetem em cada tela na mesma posição, então parecem
                 fixas enquanto a pilha rola. Substituem a barra do navegador,
@@ -133,14 +152,21 @@ export function MatchDeck({
               </SetaDeck>
             </nav>
 
-            <article className="grid h-full w-full gap-6 overflow-hidden rounded-lg bg-card lg:grid-cols-2">
-              <div className="relative min-h-48 bg-muted">
+            <article
+              data-match-card
+              className="grid w-full gap-6 overflow-hidden rounded-lg bg-card lg:grid-cols-2"
+            >
+              <Link
+                href={candidate.href}
+                aria-label={`Ver anúncio de ${candidate.personName}`}
+                className="group relative block min-h-48 overflow-hidden bg-muted"
+              >
                 {candidate.imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={candidate.imageUrl}
                     alt=""
-                    className="size-full object-cover"
+                    className="size-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
                   />
                 ) : (
                   <div
@@ -167,7 +193,7 @@ export function MatchDeck({
                     </div>
                   </div>
                 ) : null}
-              </div>
+              </Link>
 
               <div className="flex flex-col justify-center gap-4 p-6 lg:p-8">
                 <header className="flex flex-col gap-1">
@@ -258,7 +284,7 @@ export function MatchDeck({
       })}
 
       {/* Fim da pilha: sem isto a última pessoa parece um erro de carregamento. */}
-      <section className="flex h-full snap-start snap-always flex-col items-center justify-center gap-4 text-center">
+      <section className="flex min-h-full flex-col items-center justify-center gap-4 text-center">
         <Zeca pose={5} className="h-32 w-auto text-primary" />
         <p className="text-lg font-bold text-foreground">
           Por enquanto é isso

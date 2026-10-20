@@ -18,7 +18,9 @@ export default async function EditarAnuncioPage({ params }: { params: Promise<{ 
 
   const { data: listing, error } = await supabase
     .from("listings")
-    .select("id, owner_id, type, title, description, price, campus_id, details")
+    .select(
+      "id, owner_id, type, title, description, price, campus_id, details, listing_images(path, position)",
+    )
     .eq("id", id)
     .maybeSingle();
 
@@ -33,6 +35,13 @@ export default async function EditarAnuncioPage({ params }: { params: Promise<{ 
 
   const campuses = await fetchCampusOptions();
 
+  const images = [...(listing.listing_images ?? [])]
+    .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+    .map((image) => ({
+      path: image.path,
+      url: supabase.storage.from("listing-images").getPublicUrl(image.path).data.publicUrl,
+    }));
+
   return (
     <EditarForm
       listing={{
@@ -43,6 +52,7 @@ export default async function EditarAnuncioPage({ params }: { params: Promise<{ 
         price: listing.price,
         campus_id: listing.campus_id,
         details: (listing.details as Record<string, unknown>) ?? {},
+        images,
       }}
       campuses={campuses}
     />

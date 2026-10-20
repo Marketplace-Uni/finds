@@ -1,14 +1,18 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { cn } from "@/src/lib/utils";
 import { WizardShell } from "@/src/components/ui/wizard";
-import { Field, TextAreaField, TextField, controlClass } from "@/src/components/ui/field";
+import { Field, SelectField, TextAreaField, TextField, controlClass } from "@/src/components/ui/field";
 import { DateFieldBR } from "@/src/components/ui/date-field-br";
+import { EditImagesField } from "@/src/components/listings/edit-images-field";
+import { ListingPreviewCard } from "@/src/components/listings/listing-preview-card";
 import type { FilterOption } from "@/src/components/discovery/filters-sidebar";
 import type { ListingType } from "@/src/lib/listing-details";
+import { formatPriceRange } from "@/src/lib/listing-details";
 import { updateListing, type ListingFormState } from "@/src/app/actions/listings";
+import { capitalize, formatPrice } from "@/src/lib/format";
 
 const initialState: ListingFormState = {};
 
@@ -103,7 +107,17 @@ const AMENIDADES = [
   { value: "contas inclusas", label: "Contas inclusas" },
 ];
 
-function AmenidadeChip({ value, label, checked }: { value: string; label: string; checked: boolean }) {
+function AmenidadeChip({
+  value,
+  label,
+  checked,
+  onChange,
+}: {
+  value: string;
+  label: string;
+  checked: boolean;
+  onChange: (value: string, marcado: boolean) => void;
+}) {
   const id = `amenities-${value}`;
   return (
     <div>
@@ -114,6 +128,7 @@ function AmenidadeChip({ value, label, checked }: { value: string; label: string
         value={value}
         defaultChecked={checked}
         className="peer sr-only"
+        onChange={(e) => onChange(value, e.target.checked)}
       />
       <label
         htmlFor={id}
@@ -142,6 +157,7 @@ export function EditarForm({
     price: number | null;
     campus_id: string | null;
     details: Details;
+    images: { path: string; url: string }[];
   };
   campuses: FilterOption[];
 }) {
@@ -149,59 +165,146 @@ export function EditarForm({
   const [state, formAction, isPending] = useActionState(action, initialState);
   const d = listing.details;
 
-  return (
-    <WizardShell
-      title={TITULOS[listing.type]}
-      step={1}
-      totalSteps={1}
-      backHref={`/anuncios/${listing.id}`}
-      action={formAction}
-      submitLabel={isPending ? "Salvando..." : "Salvar alterações"}
-    >
-      {/*
-        `key` muda a cada erro: força o React a remontar os campos com os
-        valores ecoados pela action, em vez de reverter pros dados antigos do
-        banco — `defaultValue`/`defaultChecked` sozinhos não bastam pra
-        `<select>`/checkbox depois do reset automático que o React faz no fim
-        de uma Server Action (ele volta pro valor de quando o campo montou).
-      */}
-      <div key={state.attempt ?? 0} className="contents">
-      <TextField
-        label="Título"
-        htmlFor="title"
-        name="title"
-        required
-        minLength={5}
-        defaultValue={fieldValue(state, listing.title, "title")}
-      />
-      <TextAreaField
-        label="Descrição"
-        htmlFor="description"
-        name="description"
-        required
-        minLength={20}
-        defaultValue={fieldValue(state, listing.description, "description")}
-      />
-      {listing.type === "product" || listing.type === "service" ? (
-        <TextField
-          label="Preço (R$)"
-          htmlFor="price"
-          name="price"
-          type="number"
-          min={0}
-          step="0.01"
-          required
-          defaultValue={fieldValue(state, String(listing.price ?? 0), "price")}
-        />
-      ) : null}
+  // Estado da prévia ao vivo — mesmo padrão dos 4 formulários de /anunciar,
+  // só que seedado com os dados atuais do anúncio em vez de campos vazios.
+  const [preview, setPreview] = useState({
+    title: fieldValue(state, listing.title, "title"),
+    description: fieldValue(state, listing.description, "description"),
+    price: fieldValue(state, String(listing.price ?? ""), "price"),
+    campusId: fieldValue(state, listing.campus_id ?? "", "campus_id"),
+    category: fieldValue(state, str(d, "category"), "category"),
+    condition: fieldValue(state, str(d, "condition"), "condition"),
+    brand: fieldValue(state, str(d, "brand"), "brand"),
+    modality: fieldValue(state, str(d, "modality"), "modality"),
+    priceUnit: fieldValue(state, str(d, "price_unit"), "price_unit"),
+    priceMin: fieldValue(state, str(d, "price_min") || String(listing.price ?? ""), "price_min"),
+    priceMax: fieldValue(state, str(d, "price_max") || String(listing.price ?? ""), "price_max"),
+    mode: fieldValue(state, str(d, "mode"), "mode"),
+    housingType: fieldValue(state, str(d, "housing_type"), "housing_type"),
+    neighborhood: fieldValue(state, str(d, "neighborhood"), "neighborhood"),
+    genderPreference: fieldValue(state, str(d, "gender_preference"), "gender_preference"),
+    gender: fieldValue(state, str(d, "gender"), "gender"),
+    vacancies: fieldValue(state, str(d, "vacancies") || "1", "vacancies"),
+    amenities: amenidadesMarcadas(state, d),
+    photos: listing.images.map((image) => image.url),
+  });
 
-      <Field label="Campus" htmlFor="campus_id">
-        <select
-          id="campus_id"
+  function alternarAmenidade(value: string, marcado: boolean) {
+    setPreview((p) => ({
+      ...p,
+      amenities: marcado ? [...p.amenities, value] : p.amenities.filter((a) => a !== value),
+    }));
+  }
+
+  const campusLabel = campuses.find((campus) => campus.value === preview.campusId)?.label;
+  const precoNumero = Number(preview.price);
+  const min = Number(preview.priceMin);
+  const max = Number(preview.priceMax);
+  const condicaoLabel = CONDICOES.find((c) => c.value === preview.condition)?.label;
+  const modalidadeLabel = MODALIDADES.find((m) => m.value === preview.modality)?.label;
+  const unidadeLabel = UNIDADES_PRECO.find((u) => u.value === preview.priceUnit)?.label;
+  const modoLabel = MODOS.find((m) => m.value === preview.mode)?.label;
+  const moradiaLabel = TIPOS_MORADIA.find((t) => t.value === preview.housingType)?.label;
+  const generoPreferenciaLabel = PREFERENCIAS_GENERO.find((g) => g.value === preview.genderPreference)?.label;
+  const generoRepublicaLabel = GENEROS_REPUBLICA.find((g) => g.value === preview.gender)?.label;
+
+  let priceLabel: string | null = null;
+  let categories: string[] = [];
+  let attributes: string[] = [];
+  let specs: { label: string; value: string }[] = [];
+
+  if (listing.type === "product") {
+    priceLabel = Number.isFinite(precoNumero) && preview.price !== "" ? formatPrice(precoNumero) : null;
+    categories = preview.category ? [preview.category] : [];
+    attributes = condicaoLabel ? [condicaoLabel] : [];
+    specs = preview.brand ? [{ label: "marca", value: preview.brand }] : [];
+  } else if (listing.type === "service") {
+    priceLabel =
+      Number.isFinite(precoNumero) && preview.price !== ""
+        ? `${formatPrice(precoNumero)}${unidadeLabel ? ` ${unidadeLabel.toLowerCase()}` : ""}`
+        : null;
+    categories = preview.category ? [preview.category] : [];
+    specs = modalidadeLabel ? [{ label: "modalidade", value: modalidadeLabel }] : [];
+  } else if (listing.type === "roommate") {
+    priceLabel =
+      Number.isFinite(min) && Number.isFinite(max) && preview.priceMin !== "" && preview.priceMax !== ""
+        ? `${formatPriceRange(min, max)} por mês`
+        : null;
+    attributes = [modoLabel, moradiaLabel].filter((v): v is string => Boolean(v));
+    specs = [
+      preview.neighborhood ? { label: "bairro", value: preview.neighborhood } : null,
+      generoPreferenciaLabel ? { label: "gênero", value: generoPreferenciaLabel } : null,
+    ].filter((spec): spec is { label: string; value: string } => spec !== null);
+  } else if (listing.type === "republic") {
+    priceLabel =
+      Number.isFinite(min) && Number.isFinite(max) && preview.priceMin !== "" && preview.priceMax !== ""
+        ? `${formatPriceRange(min, max)} por mês`
+        : null;
+    categories = preview.amenities;
+    attributes = generoRepublicaLabel ? [generoRepublicaLabel] : [];
+    specs = [
+      preview.neighborhood ? { label: "bairro", value: preview.neighborhood } : null,
+      preview.vacancies ? { label: "vagas", value: preview.vacancies } : null,
+    ].filter((spec): spec is { label: string; value: string } => spec !== null);
+  }
+
+  return (
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_320px]">
+      <WizardShell
+        title={TITULOS[listing.type]}
+        step={1}
+        totalSteps={1}
+        backHref={`/anuncios/${listing.id}`}
+        action={formAction}
+        submitLabel={isPending ? "Salvando..." : "Salvar alterações"}
+      >
+        {/*
+          `key` muda a cada erro: força o React a remontar os campos com os
+          valores ecoados pela action, em vez de reverter pros dados antigos do
+          banco — `defaultValue`/`defaultChecked` sozinhos não bastam pra
+          `<select>`/checkbox depois do reset automático que o React faz no fim
+          de uma Server Action (ele volta pro valor de quando o campo montou).
+        */}
+        <div key={state.attempt ?? 0} className="contents">
+        <TextField
+          label="Título"
+          htmlFor="title"
+          name="title"
+          required
+          minLength={5}
+          defaultValue={fieldValue(state, listing.title, "title")}
+          onChange={(e) => setPreview((p) => ({ ...p, title: e.target.value }))}
+        />
+        <TextAreaField
+          label="Descrição"
+          htmlFor="description"
+          name="description"
+          required
+          minLength={20}
+          defaultValue={fieldValue(state, listing.description, "description")}
+          onChange={(e) => setPreview((p) => ({ ...p, description: e.target.value }))}
+        />
+        {listing.type === "product" || listing.type === "service" ? (
+          <TextField
+            label="Preço (R$)"
+            htmlFor="price"
+            name="price"
+            type="number"
+            min={0}
+            step="0.01"
+            required
+            defaultValue={fieldValue(state, String(listing.price ?? 0), "price")}
+            onChange={(e) => setPreview((p) => ({ ...p, price: e.target.value }))}
+          />
+        ) : null}
+
+        <SelectField
+          label="Campus"
+          htmlFor="campus_id"
           name="campus_id"
-          className={controlClass}
           required
           defaultValue={fieldValue(state, listing.campus_id ?? "", "campus_id")}
+          onChange={(e) => setPreview((p) => ({ ...p, campusId: e.target.value }))}
         >
           <option value="" disabled>
             Selecione...
@@ -211,33 +314,31 @@ export function EditarForm({
               {campus.label}
             </option>
           ))}
-        </select>
-      </Field>
+        </SelectField>
 
-      {listing.type === "product" ? (
-        <>
-          <Field label="Categoria" htmlFor="category">
-            <select
-              id="category"
+        {listing.type === "product" ? (
+          <>
+            <SelectField
+              label="Categoria"
+              htmlFor="category"
               name="category"
-              className={controlClass}
               defaultValue={fieldValue(state, str(d, "category"), "category")}
+              onChange={(e) => setPreview((p) => ({ ...p, category: e.target.value }))}
             >
               <option value="">Selecione...</option>
               {CATEGORIAS_PRODUTO.map((categoria) => (
                 <option key={categoria} value={categoria}>
-                  {categoria}
+                  {capitalize(categoria)}
                 </option>
               ))}
-            </select>
-          </Field>
-          <Field label="Condição" htmlFor="condition">
-            <select
-              id="condition"
+            </SelectField>
+            <SelectField
+              label="Condição"
+              htmlFor="condition"
               name="condition"
-              className={controlClass}
               required
               defaultValue={fieldValue(state, str(d, "condition"), "condition")}
+              onChange={(e) => setPreview((p) => ({ ...p, condition: e.target.value }))}
             >
               <option value="" disabled>
                 Selecione...
@@ -247,41 +348,40 @@ export function EditarForm({
                   {condicao.label}
                 </option>
               ))}
-            </select>
-          </Field>
-          <TextField
-            label="Marca (opcional)"
-            htmlFor="brand"
-            name="brand"
-            defaultValue={fieldValue(state, str(d, "brand"), "brand")}
-          />
-        </>
-      ) : null}
+            </SelectField>
+            <TextField
+              label="Marca (opcional)"
+              htmlFor="brand"
+              name="brand"
+              defaultValue={fieldValue(state, str(d, "brand"), "brand")}
+              onChange={(e) => setPreview((p) => ({ ...p, brand: e.target.value }))}
+            />
+          </>
+        ) : null}
 
-      {listing.type === "service" ? (
-        <>
-          <Field label="Categoria" htmlFor="category">
-            <select
-              id="category"
+        {listing.type === "service" ? (
+          <>
+            <SelectField
+              label="Categoria"
+              htmlFor="category"
               name="category"
-              className={controlClass}
               defaultValue={fieldValue(state, str(d, "category"), "category")}
+              onChange={(e) => setPreview((p) => ({ ...p, category: e.target.value }))}
             >
               <option value="">Selecione...</option>
               {CATEGORIAS_SERVICO.map((categoria) => (
                 <option key={categoria} value={categoria}>
-                  {categoria}
+                  {capitalize(categoria)}
                 </option>
               ))}
-            </select>
-          </Field>
-          <Field label="Modalidade" htmlFor="modality">
-            <select
-              id="modality"
+            </SelectField>
+            <SelectField
+              label="Modalidade"
+              htmlFor="modality"
               name="modality"
-              className={controlClass}
               required
               defaultValue={fieldValue(state, str(d, "modality"), "modality")}
+              onChange={(e) => setPreview((p) => ({ ...p, modality: e.target.value }))}
             >
               <option value="" disabled>
                 Selecione...
@@ -291,15 +391,14 @@ export function EditarForm({
                   {modalidade.label}
                 </option>
               ))}
-            </select>
-          </Field>
-          <Field label="Como cobra" htmlFor="price_unit">
-            <select
-              id="price_unit"
+            </SelectField>
+            <SelectField
+              label="Como cobra"
+              htmlFor="price_unit"
               name="price_unit"
-              className={controlClass}
               required
               defaultValue={fieldValue(state, str(d, "price_unit"), "price_unit")}
+              onChange={(e) => setPreview((p) => ({ ...p, priceUnit: e.target.value }))}
             >
               <option value="" disabled>
                 Selecione...
@@ -309,57 +408,58 @@ export function EditarForm({
                   {unidade.label}
                 </option>
               ))}
-            </select>
-          </Field>
-        </>
-      ) : null}
+            </SelectField>
+          </>
+        ) : null}
 
-      {listing.type === "roommate" ? (
-        <>
-          <Field
-            label="Faixa de preço (R$)"
-            htmlFor="price_min"
-            hint="Quanto você está disposto a pagar ou pedir por mês."
-          >
-            <div className="flex items-center gap-2">
-              <label htmlFor="price_min" className="sr-only">
-                Preço mínimo
-              </label>
-              <input
-                id="price_min"
-                name="price_min"
-                type="number"
-                min={0}
-                step="0.01"
-                placeholder="De"
-                required
-                defaultValue={fieldValue(state, str(d, "price_min") || String(listing.price ?? ""), "price_min")}
-                className={controlClass}
-              />
-              <span className="shrink-0 text-sm text-muted-foreground">até</span>
-              <label htmlFor="price_max" className="sr-only">
-                Preço máximo
-              </label>
-              <input
-                id="price_max"
-                name="price_max"
-                type="number"
-                min={0}
-                step="0.01"
-                placeholder="Até"
-                required
-                defaultValue={fieldValue(state, str(d, "price_max") || String(listing.price ?? ""), "price_max")}
-                className={controlClass}
-              />
-            </div>
-          </Field>
-          <Field label="Modo" htmlFor="mode">
-            <select
-              id="mode"
+        {listing.type === "roommate" ? (
+          <>
+            <Field
+              label="Faixa de preço (R$)"
+              htmlFor="price_min"
+              hint="Quanto você está disposto a pagar ou pedir por mês."
+            >
+              <div className="flex items-center gap-2">
+                <label htmlFor="price_min" className="sr-only">
+                  Preço mínimo
+                </label>
+                <input
+                  id="price_min"
+                  name="price_min"
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  placeholder="De"
+                  required
+                  defaultValue={fieldValue(state, str(d, "price_min") || String(listing.price ?? ""), "price_min")}
+                  className={controlClass}
+                  onChange={(e) => setPreview((p) => ({ ...p, priceMin: e.target.value }))}
+                />
+                <span className="shrink-0 text-sm text-muted-foreground">até</span>
+                <label htmlFor="price_max" className="sr-only">
+                  Preço máximo
+                </label>
+                <input
+                  id="price_max"
+                  name="price_max"
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  placeholder="Até"
+                  required
+                  defaultValue={fieldValue(state, str(d, "price_max") || String(listing.price ?? ""), "price_max")}
+                  className={controlClass}
+                  onChange={(e) => setPreview((p) => ({ ...p, priceMax: e.target.value }))}
+                />
+              </div>
+            </Field>
+            <SelectField
+              label="Modo"
+              htmlFor="mode"
               name="mode"
-              className={controlClass}
               required
               defaultValue={fieldValue(state, str(d, "mode"), "mode")}
+              onChange={(e) => setPreview((p) => ({ ...p, mode: e.target.value }))}
             >
               <option value="" disabled>
                 Selecione...
@@ -369,15 +469,14 @@ export function EditarForm({
                   {modo.label}
                 </option>
               ))}
-            </select>
-          </Field>
-          <Field label="Tipo de moradia" htmlFor="housing_type">
-            <select
-              id="housing_type"
+            </SelectField>
+            <SelectField
+              label="Tipo de moradia"
+              htmlFor="housing_type"
               name="housing_type"
-              className={controlClass}
               required
               defaultValue={fieldValue(state, str(d, "housing_type"), "housing_type")}
+              onChange={(e) => setPreview((p) => ({ ...p, housingType: e.target.value }))}
             >
               <option value="" disabled>
                 Selecione...
@@ -387,30 +486,30 @@ export function EditarForm({
                   {tipo.label}
                 </option>
               ))}
-            </select>
-          </Field>
-          <TextField
-            label="Bairro"
-            htmlFor="neighborhood"
-            name="neighborhood"
-            required
-            minLength={2}
-            defaultValue={fieldValue(state, str(d, "neighborhood"), "neighborhood")}
-          />
-          <DateFieldBR
-            label="Data de entrada"
-            htmlFor="move_in_date"
-            name="move_in_date"
-            required
-            defaultValue={fieldValue(state, str(d, "move_in_date"), "move_in_date")}
-          />
-          <Field label="Preferência de gênero" htmlFor="gender_preference">
-            <select
-              id="gender_preference"
+            </SelectField>
+            <TextField
+              label="Bairro"
+              htmlFor="neighborhood"
+              name="neighborhood"
+              required
+              minLength={2}
+              defaultValue={fieldValue(state, str(d, "neighborhood"), "neighborhood")}
+              onChange={(e) => setPreview((p) => ({ ...p, neighborhood: e.target.value }))}
+            />
+            <DateFieldBR
+              label="Data de entrada"
+              htmlFor="move_in_date"
+              name="move_in_date"
+              required
+              defaultValue={fieldValue(state, str(d, "move_in_date"), "move_in_date")}
+            />
+            <SelectField
+              label="Preferência de gênero"
+              htmlFor="gender_preference"
               name="gender_preference"
-              className={controlClass}
               required
               defaultValue={fieldValue(state, str(d, "gender_preference"), "gender_preference")}
+              onChange={(e) => setPreview((p) => ({ ...p, genderPreference: e.target.value }))}
             >
               <option value="" disabled>
                 Selecione...
@@ -420,66 +519,68 @@ export function EditarForm({
                   {preferencia.label}
                 </option>
               ))}
-            </select>
-          </Field>
-        </>
-      ) : null}
+            </SelectField>
+          </>
+        ) : null}
 
-      {listing.type === "republic" ? (
-        <>
-          <Field
-            label="Faixa de preço (R$)"
-            htmlFor="price_min"
-            hint="Quanto cada vaga custa por mês — pode ser uma faixa, se variar."
-          >
-            <div className="flex items-center gap-2">
-              <label htmlFor="price_min" className="sr-only">
-                Preço mínimo
-              </label>
-              <input
-                id="price_min"
-                name="price_min"
-                type="number"
-                min={0}
-                step="0.01"
-                placeholder="De"
-                required
-                defaultValue={fieldValue(state, str(d, "price_min") || String(listing.price ?? ""), "price_min")}
-                className={controlClass}
-              />
-              <span className="shrink-0 text-sm text-muted-foreground">até</span>
-              <label htmlFor="price_max" className="sr-only">
-                Preço máximo
-              </label>
-              <input
-                id="price_max"
-                name="price_max"
-                type="number"
-                min={0}
-                step="0.01"
-                placeholder="Até"
-                required
-                defaultValue={fieldValue(state, str(d, "price_max") || String(listing.price ?? ""), "price_max")}
-                className={controlClass}
-              />
-            </div>
-          </Field>
-          <TextField
-            label="Vagas"
-            htmlFor="vacancies"
-            name="vacancies"
-            type="number"
-            min={1}
-            required
-            defaultValue={fieldValue(state, str(d, "vacancies") || "1", "vacancies")}
-          />
-          <Field label="Gênero" htmlFor="gender">
-            <select
-              id="gender"
+        {listing.type === "republic" ? (
+          <>
+            <Field
+              label="Faixa de preço (R$)"
+              htmlFor="price_min"
+              hint="Quanto cada vaga custa por mês — pode ser uma faixa, se variar."
+            >
+              <div className="flex items-center gap-2">
+                <label htmlFor="price_min" className="sr-only">
+                  Preço mínimo
+                </label>
+                <input
+                  id="price_min"
+                  name="price_min"
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  placeholder="De"
+                  required
+                  defaultValue={fieldValue(state, str(d, "price_min") || String(listing.price ?? ""), "price_min")}
+                  className={controlClass}
+                  onChange={(e) => setPreview((p) => ({ ...p, priceMin: e.target.value }))}
+                />
+                <span className="shrink-0 text-sm text-muted-foreground">até</span>
+                <label htmlFor="price_max" className="sr-only">
+                  Preço máximo
+                </label>
+                <input
+                  id="price_max"
+                  name="price_max"
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  placeholder="Até"
+                  required
+                  defaultValue={fieldValue(state, str(d, "price_max") || String(listing.price ?? ""), "price_max")}
+                  className={controlClass}
+                  onChange={(e) => setPreview((p) => ({ ...p, priceMax: e.target.value }))}
+                />
+              </div>
+            </Field>
+            <TextField
+              label="Vagas"
+              htmlFor="vacancies"
+              name="vacancies"
+              type="number"
+              min={1}
+              required
+              defaultValue={fieldValue(state, str(d, "vacancies") || "1", "vacancies")}
+              onChange={(e) => setPreview((p) => ({ ...p, vacancies: e.target.value }))}
+            />
+            <SelectField
+              label="Gênero"
+              htmlFor="gender"
               name="gender"
-              className={controlClass}
               required
               defaultValue={fieldValue(state, str(d, "gender"), "gender")}
+              onChange={(e) => setPreview((p) => ({ ...p, gender: e.target.value }))}
             >
               <option value="" disabled>
                 Selecione...
@@ -489,44 +590,60 @@ export function EditarForm({
                   {genero.label}
                 </option>
               ))}
-            </select>
-          </Field>
-          <TextField
-            label="Bairro"
-            htmlFor="neighborhood"
-            name="neighborhood"
-            required
-            minLength={2}
-            defaultValue={fieldValue(state, str(d, "neighborhood"), "neighborhood")}
-          />
-          <div className="flex flex-col gap-1.5">
-            <span className="inline-flex w-fit rounded-md bg-primary px-4 py-1 text-xs font-medium text-primary-foreground">
-              Comodidades
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {AMENIDADES.map((item) => (
-                <AmenidadeChip
-                  key={item.value}
-                  value={item.value}
-                  label={item.label}
-                  checked={amenidadesMarcadas(state, d).includes(item.value)}
-                />
-              ))}
+            </SelectField>
+            <TextField
+              label="Bairro"
+              htmlFor="neighborhood"
+              name="neighborhood"
+              required
+              minLength={2}
+              defaultValue={fieldValue(state, str(d, "neighborhood"), "neighborhood")}
+              onChange={(e) => setPreview((p) => ({ ...p, neighborhood: e.target.value }))}
+            />
+            <div className="flex flex-col gap-1.5">
+              <span className="inline-flex w-fit rounded-md bg-primary px-4 py-1 text-xs font-medium text-primary-foreground">
+                Comodidades
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {AMENIDADES.map((item) => (
+                  <AmenidadeChip
+                    key={item.value}
+                    value={item.value}
+                    label={item.label}
+                    checked={amenidadesMarcadas(state, d).includes(item.value)}
+                    onChange={alternarAmenidade}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        </>
-      ) : null}
-      </div>
+          </>
+        ) : null}
+        </div>
 
-      <p className="text-xs text-muted-foreground">
-        Edição de fotos ainda não disponível aqui — ver PENDENCIAS-KAIKE.md.
-      </p>
+        <EditImagesField
+          initialImages={listing.images}
+          onPhotosChange={(urls) => setPreview((p) => ({ ...p, photos: urls }))}
+        />
 
-      {state.error ? (
-        <p className="text-xs font-medium text-destructive" role="alert">
-          {state.error}
-        </p>
-      ) : null}
-    </WizardShell>
+        {state.error ? (
+          <p className="text-xs font-medium text-destructive" role="alert">
+            {state.error}
+          </p>
+        ) : null}
+      </WizardShell>
+
+      <ListingPreviewCard
+        className="lg:sticky lg:top-24"
+        type={listing.type}
+        title={preview.title}
+        description={preview.description}
+        priceLabel={priceLabel}
+        campusLabel={campusLabel}
+        categories={categories}
+        attributes={attributes}
+        specs={specs}
+        photoUrl={preview.photos[0] ?? null}
+      />
+    </div>
   );
 }

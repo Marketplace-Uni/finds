@@ -1,95 +1,33 @@
 import Link from "next/link";
-import { Handshake, House, ShoppingBag, Wrench } from "lucide-react";
 
 import { Button } from "@/src/components/ui/button";
 import { LogoFinds } from "@/src/components/layout/logo-finds";
-import { Zeca, type ZecaPose } from "@/src/components/ui/zeca";
+import { Zeca } from "@/src/components/ui/zeca";
+import { ZecaCarrossel } from "@/src/components/ui/zeca-carrossel";
+import { TIPOS_ANUNCIO, HOVER_CLASSES_POR_TOKEN } from "@/src/components/listings/tipos-anuncio";
+import { LandingScrollFx } from "@/src/components/marketing/landing-scroll-fx";
+import { ComoFuncionaFx } from "@/src/components/marketing/como-funciona-fx";
+import type { ZecaPose } from "@/src/components/ui/zeca";
 import { cn } from "@/src/lib/utils";
 
-const TIPOS = [
-  {
-    Icone: ShoppingBag,
-    titulo: "Produtos",
-    texto: "Da calculadora que você não usa mais ao móvel que não cabe na mudança.",
-  },
-  {
-    Icone: Wrench,
-    titulo: "Serviços",
-    texto: "Aula particular, conserto, design, frete. Quem faz bem está do seu lado.",
-  },
-  {
-    Icone: House,
-    titulo: "Repúblicas",
-    texto: "Vagas perto do campus, anunciadas por quem já mora lá.",
-  },
-  {
-    Icone: Handshake,
-    titulo: "Roommates",
-    texto: "Ache alguém para dividir moradia com a rotina parecida com a sua.",
-  },
-];
-
-/** Poses mostradas na vitrine do mascote, uma de cada vez. */
-const POSES_VITRINE: ZecaPose[] = [1, 2, 4, 3, 7];
-
-/** Duração de um ciclo completo (todas as poses, uma vez cada). */
-const VITRINE_DURACAO_S = 20;
-
-/**
- * "Vitrine" do Zeca: as poses se revezam sozinhas, uma de cada vez, com um
- * crossfade suave — só CSS (`@keyframes` + `animation-delay` negativo por
- * pose), sem JavaScript nem `use client`, já que a landing inteira é Server
- * Component. Pedido do Guilherme (18/10); não tinha equivalente no Figma.
- *
- * A pose de cada vez some deslizando só a opacidade, perto do limite da sua
- * fatia do ciclo (0–2% entra, 18–20% sai, numa fatia de 20% = 1/5 do ciclo) —
- * o fim do fade-out de uma pose cai exatamente onde começa o fade-in da
- * próxima, sem brecha nem sobreposição longa.
- */
-function MascoteVitrine() {
-  const fatia = VITRINE_DURACAO_S / POSES_VITRINE.length;
-
-  return (
-    <div className="relative hidden h-72 w-72 shrink-0 lg:block" aria-hidden>
-      <style>{`
-        @keyframes finds-mascote-vitrine {
-          0%, 100% { opacity: 0; }
-          2% { opacity: 1; }
-          18% { opacity: 1; }
-          20% { opacity: 0; }
-        }
-      `}</style>
-      {POSES_VITRINE.map((pose, index) => (
-        <div
-          key={pose}
-          className="absolute inset-0 flex items-center justify-center"
-          style={{
-            animation: `finds-mascote-vitrine ${VITRINE_DURACAO_S}s ease-in-out infinite`,
-            animationDelay: `-${index * fatia}s`,
-          }}
-        >
-          <Zeca pose={pose} className="h-64 w-auto text-secondary" />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-const PASSOS = [
+const PASSOS: { numero: string; titulo: string; texto: string; pose: ZecaPose }[] = [
   {
     numero: "1",
     titulo: "Entre com seu e-mail @ufu.br",
     texto: "Só quem é da UFU participa. É isso que faz o Finds ser diferente.",
+    pose: 1,
   },
   {
     numero: "2",
     titulo: "Anuncie ou procure",
     texto: "Publique em poucos passos ou use os filtros para achar pelo seu campus.",
+    pose: 3,
   },
   {
     numero: "3",
     titulo: "Combine pelo chat",
     texto: "Converse, proponha a negociação e encontre a pessoa na universidade.",
+    pose: 2,
   },
 ];
 
@@ -113,15 +51,29 @@ export function LandingPage({ className }: { className?: string }) {
         (abaixo) continua com seu próprio `max-w-conteudo`. O `-mt-8` cancela
         o `py-8` desse mesmo `<main>` (fixo, igual em toda tela logada) pra
         colar o marrom na navbar, sem tirar o respiro das outras páginas.
+
+        O truque de margem negativa fica neste `<div>` de fora, não na
+        `<section id="landing-hero">`: o GSAP ScrollTrigger pina essa section
+        (ver landing-scroll-fx.tsx), e margem no elemento pinado faz o cálculo
+        da altura do "spacer" sair errado (o scroll parava de avançar depois
+        do pin, escondendo as seções de baixo atrás da section "presa").
       */}
-      <section className="relative left-1/2 -mt-8 w-screen -mx-[50vw] overflow-hidden bg-nav px-6 py-20">
+      <div className="relative left-1/2 -mt-8 w-screen -mx-[50vw]">
+      <section
+        id="landing-hero"
+        className="relative overflow-hidden bg-nav px-6 py-20"
+      >
+        <LandingScrollFx />
         {/*
           O Zeca volta aqui a pedido do Guilherme (18/10) — a Lia tinha
           pedido pra tirar o mascote desse tipo de painel em 14/10 (ver
           docs/DESIGN.md). Vale confirmar com ela/o Caike no próximo
           checkpoint.
         */}
-        <div className="relative z-10 mx-auto flex max-w-conteudo flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between">
+        <div
+          data-hero-content
+          className="relative z-10 mx-auto flex max-w-conteudo flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between"
+        >
           <div className="flex flex-col items-start gap-5">
             {/* Respiro extra entre a marca e a chamada. */}
             <LogoFinds className="mb-6 h-12 w-auto text-secondary" />
@@ -154,7 +106,11 @@ export function LandingPage({ className }: { className?: string }) {
             </div>
           </div>
 
-          <MascoteVitrine />
+          <ZecaCarrossel
+            poses={[1, 2, 4, 3, 7]}
+            boxClassName="hidden h-72 w-72 shrink-0 lg:block"
+            zecaClassName="h-64 w-auto text-secondary"
+          />
         </div>
 
         <span
@@ -162,6 +118,7 @@ export function LandingPage({ className }: { className?: string }) {
           aria-hidden
         />
       </section>
+      </div>
 
       <section className="px-6 py-16">
         <div className="mx-auto max-w-conteudo">
@@ -173,36 +130,60 @@ export function LandingPage({ className }: { className?: string }) {
           </p>
 
           <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {TIPOS.map(({ Icone, titulo, texto }) => (
-              <li key={titulo} className="flex flex-col gap-3 rounded-lg bg-card p-6">
-                <Icone className="size-7 text-primary" aria-hidden />
-                <h3 className="font-bold text-foreground">{titulo}</h3>
-                <p className="text-sm text-foreground/80">{texto}</p>
+            {TIPOS_ANUNCIO.map(({ slug, titulo, texto, Icone, token }) => (
+              <li key={slug}>
+                <Link
+                  href={`/como-funciona/${slug}`}
+                  className={cn(
+                    "group flex h-full flex-col gap-3 rounded-lg bg-card p-6 transition-all duration-300 hover:scale-105 hover:shadow-md",
+                    HOVER_CLASSES_POR_TOKEN[token],
+                  )}
+                >
+                  <Icone className="size-7 text-primary transition-colors group-hover:text-current" aria-hidden />
+                  <h3 className="font-bold text-foreground transition-colors group-hover:text-current">
+                    {titulo}
+                  </h3>
+                  <p className="text-sm text-foreground/80 transition-colors group-hover:text-current">
+                    {texto}
+                  </p>
+                </Link>
               </li>
             ))}
           </ul>
         </div>
       </section>
 
-      <section className="bg-card px-6 py-16">
-        <div className="mx-auto max-w-conteudo">
-          <h2 className="mb-8 text-2xl font-bold text-foreground">Como funciona</h2>
+      <div className="bg-card">
+        <ComoFuncionaFx />
+        <h2 className="mx-auto max-w-conteudo px-6 pt-16 text-2xl font-bold text-foreground">
+          Como funciona
+        </h2>
 
-          <ol className="grid gap-8 lg:grid-cols-3">
-            {PASSOS.map(({ numero, titulo, texto }) => (
-              <li key={numero} className="flex gap-4">
+        {PASSOS.map(({ numero, titulo, texto, pose }, index) => (
+          <section
+            key={numero}
+            data-como-funciona-step
+            className="px-6 py-16 lg:min-h-[70vh] lg:py-0"
+          >
+            <div
+              className={cn(
+                "mx-auto flex max-w-conteudo flex-col items-center gap-10 lg:h-full lg:flex-row lg:justify-between",
+                index % 2 === 1 && "lg:flex-row-reverse",
+              )}
+            >
+              <div className="flex max-w-md flex-col items-start gap-3 text-left">
                 <span className="grid size-10 shrink-0 place-items-center rounded-pill bg-primary text-lg font-bold text-primary-foreground">
                   {numero}
                 </span>
-                <div>
-                  <h3 className="font-bold text-foreground">{titulo}</h3>
-                  <p className="mt-1 text-sm text-foreground/80">{texto}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
+                <h3 className="text-xl font-bold text-foreground">{titulo}</h3>
+                <p className="text-foreground/80">{texto}</p>
+              </div>
+
+              <Zeca pose={pose} className="h-48 w-auto shrink-0 text-primary lg:h-64" />
+            </div>
+          </section>
+        ))}
+      </div>
 
       <section className="px-6 py-20">
         <div className="mx-auto flex max-w-conteudo flex-col items-center gap-5 text-center">

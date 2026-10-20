@@ -1,35 +1,27 @@
 import Link from "next/link"
 
 import { requireCompleteProfile } from "@/src/lib/auth"
+import { TIPOS_ANUNCIO, CLASSES_POR_TOKEN } from "@/src/components/listings/tipos-anuncio"
 
 export default async function AnunciarPage() {
   await requireCompleteProfile("/anunciar")
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-8">O que você quer anunciar?</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Link href="/anunciar/produto" className="p-6 border rounded-lg hover:shadow-lg transition-shadow bg-white">
-          <h2 className="text-xl font-semibold mb-2">Produto</h2>
-          <p className="text-gray-600">Venda materiais, eletrônicos, roupas e mais.</p>
-        </Link>
-        
-        <Link href="/anunciar/servico" className="p-6 border rounded-lg hover:shadow-lg transition-shadow bg-white">
-          <h2 className="text-xl font-semibold mb-2">Serviço</h2>
-          <p className="text-gray-600">Ofereça aulas, manutenções, fretes e trabalhos.</p>
-        </Link>
+    <div className="container mx-auto max-w-4xl p-6">
+      <h1 className="mb-8 text-3xl font-bold text-foreground">O que você quer anunciar?</h1>
 
-        {/* Sprint 2 - Agora habilitados! */}
-        <Link href="/anunciar/roommate" className="p-6 border rounded-lg hover:shadow-lg transition-shadow bg-white">
-          <h2 className="text-xl font-semibold mb-2">Roommate</h2>
-          <p className="text-gray-600">Ofereça ou procure vagas para dividir moradia.</p>
-        </Link>
-        
-        <Link href="/anunciar/republica" className="p-6 border rounded-lg hover:shadow-lg transition-shadow bg-white">
-          <h2 className="text-xl font-semibold mb-2">República</h2>
-          <p className="text-gray-600">Anuncie vagas masculinas, femininas ou mistas.</p>
-        </Link>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {TIPOS_ANUNCIO.map(({ slug, titulo, texto, Icone, token }) => (
+          <Link
+            key={slug}
+            href={`/anunciar/${slug}`}
+            className={`group flex flex-col gap-3 rounded-xl p-6 transition-all duration-200 hover:scale-105 hover:shadow-lg ${CLASSES_POR_TOKEN[token]}`}
+          >
+            <Icone className="size-8 transition-transform duration-200 group-hover:scale-110" aria-hidden />
+            <h2 className="text-xl font-semibold">{titulo}</h2>
+            <p className="text-sm opacity-90">{texto}</p>
+          </Link>
+        ))}
       </div>
     </div>
   )

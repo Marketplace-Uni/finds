@@ -37,7 +37,7 @@ export function UserMenu({ user }: { user: NavbarUser }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="flex items-center gap-1.5 rounded-pill p-0.5 outline-none focus-visible:ring-2 focus-visible:ring-secondary"
+        className="group flex items-center gap-1.5 rounded-pill p-0.5 outline-none transition-colors hover:bg-primary/60 focus-visible:ring-2 focus-visible:ring-secondary"
         aria-label="Abrir menu da conta"
       >
         <Avatar className="size-9 border-2 border-secondary">
@@ -46,7 +46,10 @@ export function UserMenu({ user }: { user: NavbarUser }) {
             {initials(user.name)}
           </AvatarFallback>
         </Avatar>
-        <ChevronDown className="size-4 text-nav-foreground" aria-hidden />
+        <ChevronDown
+          className="size-4 text-nav-foreground transition-transform duration-200 group-hover:text-primary-foreground group-data-[state=open]:rotate-180"
+          aria-hidden
+        />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-56">

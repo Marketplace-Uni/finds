@@ -12,6 +12,8 @@
 | Backend | **Supabase** | Resolve de uma vez Postgres, Auth, Storage (fotos) e **Realtime (chat)**. Ninguém escreve backend "na mão" |
 | Deploy | **Vercel** | Grátis, deploy automático da `main` e **preview por PR** (é por esse link que o Caike mostra as telas para a designer) |
 | Design | **Figma + Figma MCP no Claude Code** | Ver [DESIGN.md](DESIGN.md) |
+| Animação | **GSAP** (+ ScrollTrigger) | Adicionado na Reta final pro efeito de scroll da landing (navbar ↔ hero). Só roda em telas grandes e nunca se `prefers-reduced-motion` estiver ativo |
+| Feedback | **sonner** | Adicionado na Reta final pros toasts (favoritar, salvar perfil de convivência). `<Toaster />` montado uma vez em `src/app/layout.tsx` |
 
 ### Ambientes
 

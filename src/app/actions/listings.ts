@@ -17,6 +17,15 @@ import type { ListingType } from "@/src/lib/listing-details"
 const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png"])
 const ALLOWED_IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png"])
 
+// Mesmo limite do PhotoPicker/EditImagesField (client) — ali é só UX; aqui é
+// o que de fato impede alguém de mandar uma Server Action forjada com
+// dezenas de arquivos (abuso de Storage/custo), já que o "max" dos
+// componentes de cliente não tem nenhum efeito sobre o que chega no servidor.
+// Não pode ser `export`: um módulo "use server" só pode exportar funções
+// async — qualquer outro export (uma constante, por exemplo) faz o Next
+// rejeitar o arquivo inteiro.
+const MAX_IMAGES_PER_LISTING = 6
+
 export async function uploadImages(formData: FormData) {
   const supabase = await createClient()
   // Um <input type="file"> sem nada selecionado ainda manda um File vazio
@@ -24,6 +33,9 @@ export async function uploadImages(formData: FormData) {
   // tentava subir esse arquivo vazio e quebrava com "Erro no upload da
   // imagem" (achado testando o fluxo de /anunciar).
   const files = (formData.getAll("images") as File[]).filter((file) => file.size > 0)
+  if (files.length > MAX_IMAGES_PER_LISTING) {
+    throw new Error(`Envie no máximo ${MAX_IMAGES_PER_LISTING} fotos por vez.`)
+  }
   const uploadedUrls: string[] = []
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -289,8 +301,7 @@ export async function createListingForm(
 }
 
 /**
- * Edita um anúncio existente (só o dono). Não mexe nas fotos nesta rodada —
- * ver PENDENCIAS-KAIKE.md.
+ * Edita um anúncio existente (só o dono) — campos de texto/seleção e fotos.
  */
 export async function updateListing(
   id: string,
@@ -314,6 +325,23 @@ export async function updateListing(
     return errorState(_prevState, parsed.error.issues[0]?.message ?? "Dados inválidos.", formData)
   }
 
+  // Confere dono e fotos atuais ANTES de escrever qualquer coisa. Nunca
+  // confiar só no `.eq("owner_id", user.id)` do update: ele simplesmente não
+  // afeta nenhuma linha se o anúncio for de outra pessoa (sem erro), o que
+  // esconderia a tentativa em vez de recusá-la com uma mensagem clara.
+  const { data: current, error: currentError } = await supabase
+    .from("listings")
+    .select("owner_id, listing_images(id, path)")
+    .eq("id", id)
+    .maybeSingle()
+
+  if (currentError || !current) {
+    return errorState(_prevState, "Anúncio não encontrado.", formData)
+  }
+  if (current.owner_id !== user.id) {
+    return errorState(_prevState, "Você não tem permissão para editar este anúncio.", formData)
+  }
+
   const { error } = await supabase
     .from("listings")
     .update({
@@ -327,6 +355,79 @@ export async function updateListing(
     .eq("owner_id", user.id)
 
   if (error) return errorState(_prevState, "Não foi possível salvar as alterações.", formData)
+
+  // Fotos: o que ficou marcado como "mantido" no formulário só é aceito se já
+  // pertencia a este anúncio de verdade — nunca confiar direto no `path` que
+  // chega no campo oculto, ou alguém poderia forjar o path de outro anúncio
+  // (de outro usuário) para "herdar" uma foto que não é dele.
+  const fotosAtuais = current.listing_images ?? []
+  const pathsAtuais = fotosAtuais.map((image) => image.path)
+  const idsAtuais = fotosAtuais.map((image) => image.id)
+  const pathsMantidos = [
+    ...new Set(
+      formData
+        .getAll("existing_image_paths")
+        .filter((value): value is string => typeof value === "string")
+        .filter((path) => pathsAtuais.includes(path)),
+    ),
+  ]
+  const pathsRemovidos = pathsAtuais.filter((path) => !pathsMantidos.includes(path))
+
+  // O "max" do EditImagesField é só UX — quem manda a Server Action direto
+  // não passa por ele. Conferir aqui antes de subir qualquer arquivo evita
+  // gastar upload com um pedido que vai ser recusado de qualquer jeito.
+  const novosArquivos = (formData.getAll("images") as File[]).filter((file) => file.size > 0)
+  if (pathsMantidos.length + novosArquivos.length > MAX_IMAGES_PER_LISTING) {
+    return errorState(
+      _prevState,
+      `Envie no máximo ${MAX_IMAGES_PER_LISTING} fotos no total.`,
+      formData,
+    )
+  }
+
+  let novosPaths: string[] = []
+  try {
+    novosPaths = await uploadImages(formData)
+  } catch (err) {
+    // Os campos de texto já foram salvos acima; só as fotos falharam.
+    return errorState(
+      _prevState,
+      err instanceof Error ? err.message : "Erro ao enviar as fotos.",
+      formData,
+    )
+  }
+
+  const pathsFinais = [...pathsMantidos, ...novosPaths]
+
+  // Insere a lista final (mantidas + novas) ANTES de apagar as linhas
+  // antigas — nessa ordem, se o insert falhar, o anúncio fica exatamente
+  // como estava (nenhuma foto perdida). Reescrever do zero em vez de um
+  // diff fino de posição também já cobre reordenar a capa quando a primeira
+  // foto é removida.
+  if (pathsFinais.length > 0) {
+    const { error: insertRowsError } = await supabase.from("listing_images").insert(
+      pathsFinais.map((path, index) => ({ listing_id: id, path, position: index })),
+    )
+    if (insertRowsError) {
+      return errorState(_prevState, "Não foi possível atualizar as fotos.", formData)
+    }
+  }
+
+  // Só agora remove as linhas antigas — por `id`, nunca por `listing_id`,
+  // pra nunca correr o risco de apagar as linhas novas que acabamos de
+  // inserir pro mesmo anúncio. Melhor-esforço: se isso falhar, o anúncio já
+  // está salvo com a lista certa (só sobra uma linha duplicada apontando pra
+  // uma foto mantida — nada se perde).
+  if (idsAtuais.length > 0) {
+    await supabase.from("listing_images").delete().in("id", idsAtuais)
+  }
+
+  // Limpeza do Storage também é melhor-esforço: o anúncio já está consistente
+  // no banco (as linhas de `listing_images` acima não referenciam mais esses
+  // arquivos) mesmo que a remoção física falhe por um motivo transitório.
+  if (pathsRemovidos.length > 0) {
+    await supabase.storage.from("listing-images").remove(pathsRemovidos)
+  }
 
   revalidatePath(`/anuncios/${id}`)
   revalidatePath("/meus-anuncios")
