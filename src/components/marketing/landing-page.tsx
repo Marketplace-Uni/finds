@@ -6,23 +6,28 @@ import { Zeca } from "@/src/components/ui/zeca";
 import { ZecaCarrossel } from "@/src/components/ui/zeca-carrossel";
 import { TIPOS_ANUNCIO, HOVER_CLASSES_POR_TOKEN } from "@/src/components/listings/tipos-anuncio";
 import { LandingScrollFx } from "@/src/components/marketing/landing-scroll-fx";
+import { ComoFuncionaFx } from "@/src/components/marketing/como-funciona-fx";
+import type { ZecaPose } from "@/src/components/ui/zeca";
 import { cn } from "@/src/lib/utils";
 
-const PASSOS = [
+const PASSOS: { numero: string; titulo: string; texto: string; pose: ZecaPose }[] = [
   {
     numero: "1",
     titulo: "Entre com seu e-mail @ufu.br",
     texto: "Só quem é da UFU participa. É isso que faz o Finds ser diferente.",
+    pose: 1,
   },
   {
     numero: "2",
     titulo: "Anuncie ou procure",
     texto: "Publique em poucos passos ou use os filtros para achar pelo seu campus.",
+    pose: 3,
   },
   {
     numero: "3",
     titulo: "Combine pelo chat",
     texto: "Converse, proponha a negociação e encontre a pessoa na universidade.",
+    pose: 2,
   },
 ];
 
@@ -148,25 +153,37 @@ export function LandingPage({ className }: { className?: string }) {
         </div>
       </section>
 
-      <section className="bg-card px-6 py-16">
-        <div className="mx-auto max-w-conteudo">
-          <h2 className="mb-8 text-2xl font-bold text-foreground">Como funciona</h2>
+      <div className="bg-card">
+        <ComoFuncionaFx />
+        <h2 className="mx-auto max-w-conteudo px-6 pt-16 text-2xl font-bold text-foreground">
+          Como funciona
+        </h2>
 
-          <ol className="grid gap-8 lg:grid-cols-3">
-            {PASSOS.map(({ numero, titulo, texto }) => (
-              <li key={numero} className="flex gap-4">
+        {PASSOS.map(({ numero, titulo, texto, pose }, index) => (
+          <section
+            key={numero}
+            data-como-funciona-step
+            className="px-6 py-16 lg:min-h-[70vh] lg:py-0"
+          >
+            <div
+              className={cn(
+                "mx-auto flex max-w-conteudo flex-col items-center gap-10 lg:h-full lg:flex-row lg:justify-between",
+                index % 2 === 1 && "lg:flex-row-reverse",
+              )}
+            >
+              <div className="flex max-w-md flex-col items-start gap-3 text-left">
                 <span className="grid size-10 shrink-0 place-items-center rounded-pill bg-primary text-lg font-bold text-primary-foreground">
                   {numero}
                 </span>
-                <div>
-                  <h3 className="font-bold text-foreground">{titulo}</h3>
-                  <p className="mt-1 text-sm text-foreground/80">{texto}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
+                <h3 className="text-xl font-bold text-foreground">{titulo}</h3>
+                <p className="text-foreground/80">{texto}</p>
+              </div>
+
+              <Zeca pose={pose} className="h-48 w-auto shrink-0 text-primary lg:h-64" />
+            </div>
+          </section>
+        ))}
+      </div>
 
       <section className="px-6 py-20">
         <div className="mx-auto flex max-w-conteudo flex-col items-center gap-5 text-center">
