@@ -80,14 +80,21 @@ export async function fetchUserTraitsBulk(userIds: string[]): Promise<Map<string
 
 /**
  * Substitui o conjunto de `user_traits` do usuário pelas keys recebidas do
- * `<ConvivenciaPicker>`. A PK é `(user_id, trait_id)`: uma trait só pode ser
- * "sou" OU "procuro" por vez — se a mesma key vier nos dois grupos (não
- * deveria, mas o form é só HTML), "procuro" tem prioridade.
+ * `<ConvivenciaPicker>`. A PK na migration é `(user_id, trait_id, kind)` —
+ * três colunas, não duas: ela permite a mesma trait existir como "self" E
+ * "wanted" ao mesmo tempo. A regra de negócio é "uma trait só pode ser 'sou'
+ * OU 'procuro' por vez" (se a mesma key vier nos dois grupos, não deveria,
+ * mas o form é só HTML — "procuro" tem prioridade); por isso o código, não o
+ * banco, garante isso aqui.
  *
- * Grava a lista nova (upsert, não conflita com o que já existe) antes de
- * apagar o que ficou de fora — mesmo padrão usado em `updateListing()` pras
- * fotos: se o passo de gravação falhar por algo transitório, a pessoa não
- * perde o perfil de convivência inteiro, só a tentativa de salvar.
+ * Grava a lista nova antes de apagar o que ficou de fora (mesmo padrão
+ * usado em `updateListing()` pras fotos: se o passo de gravação falhar por
+ * algo transitório, a pessoa não perde o perfil de convivência inteiro, só
+ * a tentativa de salvar). O `onConflict` do upsert precisa bater exatamente
+ * com a PK real (`user_id,trait_id,kind`); como ela inclui `kind`, trocar
+ * uma trait de grupo não é "atualizada" pelo upsert — a linha do grupo
+ * antigo fica sobrando e é removida depois, junto com o que não faz mais
+ * parte da seleção.
  */
 export async function saveUserTraits(
   userId: string,
@@ -105,44 +112,51 @@ export async function saveUserTraits(
   const idByKey = new Map((traitRows ?? []).map((trait) => [trait.key, trait.id]));
 
   const rows: { user_id: string; trait_id: string; kind: "self" | "wanted" }[] = [];
-  const seenTraitIds = new Set<string>();
+  const kindByTraitId = new Map<string, "self" | "wanted">();
 
   for (const key of selection.procuro) {
     const traitId = idByKey.get(key);
-    if (!traitId || seenTraitIds.has(traitId)) continue;
-    seenTraitIds.add(traitId);
+    if (!traitId || kindByTraitId.has(traitId)) continue;
+    kindByTraitId.set(traitId, "wanted");
     rows.push({ user_id: userId, trait_id: traitId, kind: "wanted" });
   }
   for (const key of selection.sou) {
     const traitId = idByKey.get(key);
-    if (!traitId || seenTraitIds.has(traitId)) continue;
-    seenTraitIds.add(traitId);
+    if (!traitId || kindByTraitId.has(traitId)) continue;
+    kindByTraitId.set(traitId, "self");
     rows.push({ user_id: userId, trait_id: traitId, kind: "self" });
   }
 
   const { data: currentRows, error: currentError } = await supabase
     .from("user_traits")
-    .select("trait_id")
+    .select("trait_id, kind")
     .eq("user_id", userId);
   if (currentError) throw currentError;
 
   if (rows.length > 0) {
     const { error: upsertError } = await supabase
       .from("user_traits")
-      .upsert(rows, { onConflict: "user_id,trait_id" });
+      .upsert(rows, { onConflict: "user_id,trait_id,kind" });
     if (upsertError) throw upsertError;
   }
 
-  const idsToRemove = (currentRows ?? [])
-    .map((row) => row.trait_id)
-    .filter((traitId) => !seenTraitIds.has(traitId));
+  // Sobra do que não faz mais parte da seleção, e da versão antiga (outro
+  // `kind`) de uma trait que trocou de grupo — o upsert acima não some com
+  // ela sozinho porque `kind` faz parte da PK.
+  const staleRows = (currentRows ?? []).filter(
+    (row) => kindByTraitId.get(row.trait_id) !== row.kind,
+  );
 
-  if (idsToRemove.length > 0) {
+  for (const kind of ["self", "wanted"] as const) {
+    const traitIds = staleRows.filter((row) => row.kind === kind).map((row) => row.trait_id);
+    if (traitIds.length === 0) continue;
+
     const { error: deleteError } = await supabase
       .from("user_traits")
       .delete()
       .eq("user_id", userId)
-      .in("trait_id", idsToRemove);
+      .eq("kind", kind)
+      .in("trait_id", traitIds);
     if (deleteError) throw deleteError;
   }
 }
