@@ -22,7 +22,7 @@ export default function CadastroPage() {
 
   async function onSubmit(data: CadastroInput) {
     setErroServidor(null);
-    const resultado = await cadastrar(data);
+    const resultado = await cadastrar(data, window.location.origin);
     if (resultado.error) setErroServidor(resultado.error);
   }
 

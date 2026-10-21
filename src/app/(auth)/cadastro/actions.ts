@@ -14,8 +14,20 @@ function mapCadastroError(message: string): string {
   return "Não foi possível criar sua conta. Tente novamente em instantes.";
 }
 
-/** Cria a conta (Supabase Auth) e envia o e-mail de confirmação @ufu.br. */
-export async function cadastrar(input: CadastroInput): Promise<AuthActionResult> {
+/**
+ * Cria a conta (Supabase Auth) e envia o e-mail de confirmação @ufu.br.
+ *
+ * `origin` vem do cliente (`window.location.origin`), mesmo padrão de
+ * `recuperarSenha()`: sem `emailRedirectTo` explícito, o Supabase usa o
+ * "Site URL" do projeto (painel do Supabase) como destino do link — por
+ * isso o link de confirmação ia pra localhost mesmo em produção. Esse
+ * endereço também precisa estar nas "Redirect URLs" do projeto Supabase
+ * (finds-dev/finds-demo), senão o Supabase rejeita o redirect (ver issue #28).
+ */
+export async function cadastrar(
+  input: CadastroInput,
+  origin: string,
+): Promise<AuthActionResult> {
   const parsed = cadastroSchema.safeParse(input);
   if (!parsed.success) {
     return { error: "Confira os campos destacados e tente de novo." };
@@ -32,6 +44,7 @@ export async function cadastrar(input: CadastroInput): Promise<AuthActionResult>
     password: senha,
     options: {
       data: { username, full_name: nome },
+      emailRedirectTo: `${origin}/entrar`,
     },
   });
 
