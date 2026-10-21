@@ -48,7 +48,7 @@ Ideia central: continuar com **Supabase Realtime** (ele já é o WebSocket certo
 
 Confirmar em **Database → Replication** nos dois projetos Supabase que a tabela `messages` está marcada para `INSERT` (e `UPDATE`, por causa do `read_at`). Sem isso, nenhum dos passos seguintes entrega mensagem em tempo real de verdade — eles só vão funcionar via polling de fallback (o `setInterval` de 5s que já existe em `chat-realtime.tsx:102`).
 
-### Passo 2 — Resolver o N+1 da "última mensagem por conversa"
+### Passo 2 — Resolver o N+1 da "última mensagem por conversa" ✅ implementado em 20/10/2026
 
 Trocar as até-50 queries de `src/app/(main)/mensagens/page.tsx:375-387` por uma única consulta. Duas opções, em ordem de preferência:
 
@@ -57,7 +57,9 @@ Trocar as até-50 queries de `src/app/(main)/mensagens/page.tsx:375-387` por uma
 
 Começar pela Opção A — resolve o problema sem mexer no schema.
 
-### Passo 3 — Lista de mensagens vira client component com estado próprio
+**Implementado:** Opção A, em `src/lib/chat/last-message.ts` (`pickLastMessagePerConversation`), testado em `last-message.test.ts`. Uma única query em `messages` com `IN (conversationIds)`, pega só a primeira ocorrência de cada conversa.
+
+### Passo 3 — Lista de mensagens vira client component com estado próprio ✅ implementado em 20/10/2026
 
 Hoje `ChatPanel` é renderizado inteiro pelo servidor a cada `page.tsx`. Extrair só a lista de bolhas (`<ul id="chat-mensagens">` + o `.map` de `MessageBubble`) para um novo client component, ex. `src/components/chat/message-list.tsx`:
 
@@ -65,7 +67,9 @@ Hoje `ChatPanel` é renderizado inteiro pelo servidor a cada `page.tsx`. Extrair
 - Guarda as mensagens em `useState`, inicializado com `initialMessages`.
 - `ChatPanel` continua Server Component (cabeçalho, negociação, formulário de envio) — só a lista de bolhas muda de dono.
 
-### Passo 4 — Realtime aplica o payload direto, sem `router.refresh()`
+**Implementado:** `src/components/chat/chat-conversation.tsx`, em vez do `message-list.tsx` sugerido aqui — consolidado junto com o passo 4/5 (recebimento e envio otimista moram no mesmo componente, já que os dois mexem no mesmo estado `messages`). `ChatPanel` continua decidindo entre esse componente "ao vivo" e o `<ul>`/`<form>` estático (usado só no `/preview-visual`, que não tem conversa de verdade).
+
+### Passo 4 — Realtime aplica o payload direto, sem `router.refresh()` ✅ implementado em 20/10/2026
 
 Em `ChatRealtime` (ou dentro do novo `MessageList`, consolidando os dois componentes), ao receber o evento `INSERT`:
 
@@ -73,7 +77,9 @@ Em `ChatRealtime` (ou dentro do novo `MessageList`, consolidando os dois compone
 - Dar `setMessages((atual) => [...atual, novaMensagem])` em vez de `router.refresh()`.
 - Isso elimina o recarregamento do servidor inteiro para quem está **recebendo** a mensagem — ela aparece assim que o evento chega pelo WebSocket, sem esperar um RSC novo.
 
-### Passo 5 — Envio otimista (quem manda vê a mensagem na hora)
+**Implementado:** `ChatConversation` assina `postgres_changes` (`INSERT` e `UPDATE`, filtrado por `conversation_id`), formata o payload com `formatMessageTime` (extraído pra `src/lib/chat/format.ts`, client-safe) e aplica direto com `setMessages`, sem `router.refresh()`.
+
+### Passo 5 — Envio otimista (quem manda vê a mensagem na hora) ✅ implementado em 20/10/2026
 
 Trocar o `<form action={sendMessageAction}>` simples por um client component que:
 
@@ -82,9 +88,15 @@ Trocar o `<form action={sendMessageAction}>` simples por um client component que
 - Quando a Server Action confirmar (ou quando o evento Realtime da própria mensagem chegar — o que vier primeiro), troca a mensagem otimista pela real; em caso de erro, marca a bolha como "não enviada" com opção de tentar de novo, em vez de simplesmente sumir.
 - **Remove o `revalidatePath("/mensagens")` do caminho de enviar mensagem** (`page.tsx:104`) — ele deixa de ser necessário porque o Realtime já entrega a mensagem pra todo mundo (inclusive o remetente, que já tem a versão otimista). Mantém `revalidatePath` só onde ainda faz sentido (ex. a lista de conversas reordenar por `last_message_at` — ver passo 6).
 
-### Passo 6 — Lista de conversas (coluna da esquerda) não precisa mais recarregar a cada mensagem
+**Implementado:** `sendMessageAction` (`mensagens/page.tsx`) virou `useActionState`-compatível, retornando `{error}` ou `{message, attempt}` em vez de redirecionar/revalidar. `ChatConversation.enviar()` adiciona a mensagem otimista (id temporário `temp-${crypto.randomUUID()}`) antes de chamar a action; a reconciliação (otimista → real, ou "não enviada" em erro) acontece tanto pela resposta da action quanto pelo evento Realtime da própria mensagem, o que chegar primeiro.
+
+### Passo 6 — Lista de conversas (coluna da esquerda) não precisa mais recarregar a cada mensagem ✅ implementado em 20/10/2026
 
 Hoje qualquer mensagem nova em qualquer conversa também re-renderiza a lista inteira de conversas (parte do mesmo `MensagensPage`). Com os passos acima, isso deixa de acontecer sozinho — o que é bom (menos trabalho), mas a lista de conversas vai ficar com a prévia/hora desatualizada até a pessoa navegar de novo. Tratar como P1 depois dos passos 1-5 (que já resolvem a lentidão em si): assinar também `postgres_changes` em `messages` sem o filtro de `conversation_id` (ou em `conversations`, no `UPDATE` de `last_message_at`) numa assinatura à parte, só para atualizar a prévia/ordem da lista à esquerda, sem tocar na conversa aberta.
+
+**Implementado:** `src/components/chat/conversation-list-live.tsx` — assina `postgres_changes` (`INSERT` em `messages`, filtro `conversation_id=in.(...)` com as conversas do usuário), atualiza a prévia/hora e move a conversa pro topo da lista, sem recarregar nada do servidor nem tocar na conversa aberta.
+
+**Resumo dos passos 2–6:** todo o código deste plano está implementado e testado (82 testes em `npm test`), verificado manualmente enviando/recebendo mensagens com 2 contas reais durante a implementação. O único passo que falta é o 1 — operacional, fora do alcance do código — ver `docs/PENDENCIAS-RESOLUCAO.md` item 🔴#5 e a [issue #43](https://github.com/Marketplace-Uni/finds/issues/43). Até isso ser resolvido no painel do Supabase, o chat funciona normalmente (sem o atraso do `router.refresh()`, já que isso não dependia do Realtime chegar) mas o recebimento em tempo real de verdade (passos 2-6) só é visível depois da correção de infraestrutura — o passo 7 (abaixo) é exceção, por usar Presence em vez de `postgres_changes`.
 
 ### Passo 7 (opcional, não bloqueia nada acima) — "digitando..." ✅ implementado em 20/10/2026
 
