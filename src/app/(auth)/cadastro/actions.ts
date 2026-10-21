@@ -14,6 +14,13 @@ function mapCadastroError(message: string): string {
   return "Não foi possível criar sua conta. Tente novamente em instantes.";
 }
 
+// Descobre automaticamente a URL correta (Localhost ou Vercel)
+function getOriginUrl() {
+  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
+  if (process.env.NEXT_PUBLIC_VERCEL_URL) return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
+  return "http://localhost:3000";
+}
+
 /** Cria a conta (Supabase Auth) e envia o e-mail de confirmação @ufu.br. */
 export async function cadastrar(input: CadastroInput): Promise<AuthActionResult> {
   const parsed = cadastroSchema.safeParse(input);
@@ -32,6 +39,7 @@ export async function cadastrar(input: CadastroInput): Promise<AuthActionResult>
     password: senha,
     options: {
       data: { username, full_name: nome },
+      emailRedirectTo: getOriginUrl(), // <--- Adicionado para corrigir o link do e-mail
     },
   });
 
