@@ -83,6 +83,13 @@ export function EntrarForm({ next }: { next?: string }) {
           Cadastre-se
         </Link>
       </p>
+
+      <p className="text-center text-sm text-muted-foreground">
+        Só quer testar?{" "}
+        <Link href="/como-testar" className="font-semibold text-primary">
+          Use uma conta de demonstração
+        </Link>
+      </p>
     </form>
   );
 }

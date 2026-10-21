@@ -9,7 +9,7 @@ Um marketplace **fechado para a comunidade da UFU**, onde a pessoa do outro lado
 ## Premissas
 
 - **Web desktop**, não mobile. O layout deve ser minimamente responsivo, mas o alvo é o notebook no estande.
-- **A demo é feita com as contas do próprio time.** Visitantes não vão se cadastrar no estande, então não precisamos nos preocupar com limite de envio de e-mail, moderação ou escala.
+- **A demo principal continua conduzida pelo time, com as contas do próprio time.** Como complemento self-service, existem 5 contas de demonstração pré-criadas (e-mails fictícios @ufu.br, sem cadastro real) documentadas em [docs/contas-teste.md](contas-teste.md) e explicadas em `/como-testar`, para visitantes que quiserem mexer sozinhos sem passar pelo cadastro/confirmação de e-mail — e sem esbarrar no limite de envio de e-mail do Supabase (free tier).
 - **O banco precisa estar populado.** Marketplace vazio não impressiona, e os dados de seed são tratados como feature (P0).
 - Capacidade estimada: ~1h por dia útil + um pouco mais nos fins de semana, o que dá **~35–40h por pessoa** no projeto inteiro. O escopo foi cortado para caber nisso.
 
@@ -72,3 +72,5 @@ Dois notebooks lado a lado, cada um logado com a conta de um dev.
 7. **Próximos passos** (20s): backlog e expansão para outras universidades.
 
 **Plano B:** gravar um vídeo da demo completa no dia 20/10, para o caso de a internet do estande falhar.
+
+**Complemento:** visitantes também podem logar sozinhos com uma conta de [docs/contas-teste.md](contas-teste.md), a partir de `/como-testar`.
